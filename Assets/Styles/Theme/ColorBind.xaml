@@ -1,0 +1,73 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Themes -->
+    <Color x:Key="PanelWColor">#FCFCFC</Color>
+    <Color x:Key="PanelBColor">#161616</Color>
+
+    <Color x:Key="TextWColor">#FCFCFC</Color>
+    <Color x:Key="TextBColor">#161616</Color>
+    <Color x:Key="TextGColor">#898989</Color>
+
+    <SolidColorBrush x:Key="PanelW" Color="{DynamicResource PanelWColor}"/>
+    <SolidColorBrush x:Key="PanelB" Color="{DynamicResource PanelBColor}"/>
+
+    <SolidColorBrush x:Key="TextW" Color="{DynamicResource TextWColor}"/>
+    <SolidColorBrush x:Key="TextB" Color="{DynamicResource TextBColor}"/>
+    <SolidColorBrush x:Key="TextG" Color="{DynamicResource TextGColor}"/>
+
+    <!-- Elements -->
+    <Color x:Key="BasicWColor">#FCFCFC</Color>
+    <Color x:Key="HoverWColor">#D9D9D9</Color>
+    <Color x:Key="PressedWColor">#878787</Color>
+    <Color x:Key="DisabledWColor">#B0B0B0</Color>
+
+    <Color x:Key="BasicBColor">#161616</Color>
+    <Color x:Key="HoverBColor">#202020</Color>
+    <Color x:Key="PressedBColor">#111111</Color>
+    <Color x:Key="DisabledBColor">#B0B0B0</Color>
+
+    <SolidColorBrush x:Key="BasicW" Color="{DynamicResource BasicWColor}"/>
+    <SolidColorBrush x:Key="HoverW" Color="{DynamicResource HoverWColor}"/>
+    <SolidColorBrush x:Key="PressedW" Color="{DynamicResource PressedWColor}"/>
+    <SolidColorBrush x:Key="DisabledW" Color="{DynamicResource DisabledWColor}"/>
+
+    <SolidColorBrush x:Key="BasicB" Color="{DynamicResource BasicBColor}"/>
+    <SolidColorBrush x:Key="HoverB" Color="{DynamicResource HoverBColor}"/>
+    <SolidColorBrush x:Key="PressedB" Color="{DynamicResource PressedBColor}"/>
+    <SolidColorBrush x:Key="DisabledB" Color="{DynamicResource DisabledBColor}"/>
+
+    <!-- BootStrap -->
+    <SolidColorBrush x:Key="cyancolor" Color="#0DCAF0"/>
+
+    <Color x:Key="BasicRedColor">#DC3545</Color>
+    <Color x:Key="HoverRedColor">#B82C3A</Color>
+    <Color x:Key="PressedRedColor">#661820</Color>
+    <Color x:Key="DisabledRedColor">#8F222D</Color>
+
+    <Color x:Key="BasicGreenColor">#198754</Color>
+    <Color x:Key="HoverGreenColor">#13633E</Color>
+    <Color x:Key="PressedGreenColor">#0B3B24</Color>
+    <Color x:Key="DisabledGreenColor">#22B571</Color>
+
+    <Color x:Key="BasicGrayColor">#6C757D</Color>
+    <Color x:Key="HoverGrayColor">#B6C6D4</Color>
+    <Color x:Key="PressedGrayColor">#4D5359</Color>
+    <Color x:Key="DisabledGrayColor">#93A0AB</Color>
+
+    <SolidColorBrush x:Key="BasicRed" Color="{DynamicResource BasicRedColor}"/>
+    <SolidColorBrush x:Key="HoverRed" Color="{DynamicResource HoverRedColor}"/>
+    <SolidColorBrush x:Key="PressedRed" Color="{DynamicResource PressedRedColor}"/>
+    <SolidColorBrush x:Key="DisabledRed" Color="{DynamicResource DisabledRedColor}"/>
+
+    <SolidColorBrush x:Key="BasicGreen" Color="{DynamicResource BasicGreenColor}"/>
+    <SolidColorBrush x:Key="HoverGreen" Color="{DynamicResource HoverGreenColor}"/>
+    <SolidColorBrush x:Key="PressedGreen" Color="{DynamicResource PressedGreenColor}"/>
+    <SolidColorBrush x:Key="DisabledGreen" Color="{DynamicResource DisabledGreenColor}"/>
+
+    <SolidColorBrush x:Key="BasicGray" Color="{DynamicResource BasicGrayColor}"/>
+    <SolidColorBrush x:Key="HoverGray" Color="{DynamicResource HoverGrayColor}"/>
+    <SolidColorBrush x:Key="PressedGray" Color="{DynamicResource PressedGrayColor}"/>
+    <SolidColorBrush x:Key="DisabledGray" Color="{DynamicResource DisabledGrayColor}"/>
+
+</ResourceDictionary>

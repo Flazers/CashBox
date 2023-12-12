@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="Cashbox.MVVM.Views.Pages.AuthView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:vm="clr-namespace:Cashbox.MVVM.ViewModels"
+      xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="1080" d:DesignWidth="1920">
+    <UserControl.DataContext>
+        <vm:AuthViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <Border Style="{StaticResource MainBorder}" MaxWidth="1200" MaxHeight="800">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="500"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Border CornerRadius="0 20 20 0" Grid.Column="1">
+                    <Border.Background>
+                        <ImageBrush ImageSource="/Assets/Image/Cat.png"/>
+                    </Border.Background>
+                </Border>
+
+                <Grid Margin="50 40" Grid.Column="0">
+
+                    <StackPanel VerticalAlignment="Top">
+                        <TextBlock Text="A5 Detailing" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 16"/>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Style="{DynamicResource AuthRB}" Command="{Binding SwipeAuthMethodVisibilityCommand}" IsChecked="{Binding IsAuthMethodPinEnabled}" Content="По пин-коду" Margin="0 0 20 0"/>
+                            <RadioButton Style="{DynamicResource AuthRB}" Command="{Binding SwipeAuthMethodVisibilityCommand}" IsChecked="{Binding IsAuthMethodLPEnabled}" Content="По логину"/>
+                        </StackPanel>
+                    </StackPanel>
+
+
+                    <StackPanel VerticalAlignment="Bottom" Visibility="{Binding AuthMethodPinVisibility}">
+                        <TextBox Style="{StaticResource TbPlaceholderTag}" Margin="0 0 0 20" IsReadOnly="True" MaxLength="6" FontSize="32" Height="90" FontWeight="Bold" HorizontalContentAlignment="Center" Tag="Пин-код"/>
+
+                        <WrapPanel Orientation="Horizontal" Margin="0 10 0 0">
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 20 10" Width="120" Height="120" Content="1" FontSize="32"/>
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 20 10" Width="120" Height="120" Content="2" FontSize="32"/>
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 0 10" Width="120" Height="120" Content="3" FontSize="32"/>
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 20 10" Width="120" Height="120" Content="4" FontSize="32"/>
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 20 10" Width="120" Height="120" Content="5" FontSize="32"/>
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 0 10" Width="120" Height="120" Content="6" FontSize="32"/>
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 20 10" Width="120" Height="120" Content="7" FontSize="32"/>
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 20 10" Width="120" Height="120" Content="8" FontSize="32"/>
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 0 10" Width="120" Height="120" Content="9" FontSize="32"/>
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 20 0" Width="120" Height="120" Content="Стереть" FontSize="20"/>
+                            <Button Style="{DynamicResource AuthBT}" Margin="0 0 20 0" Width="120" Height="120" Content="0" FontSize="32"/>
+                            <Button Style="{DynamicResource AuthBT}" Command="{Binding NavigateMainPageCommand}" Margin="0 0 0 0" Width="120" Height="120" Content="Войти" FontSize="20"/>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <StackPanel VerticalAlignment="Center" Visibility="{Binding AuthMethodLPVisibility}">
+                        <TextBlock Text="Аутентификация" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 20"/>
+                        <TextBox Style="{DynamicResource AuthTB}" Text="{Binding Login}" Tag="логин"/>
+                        <Grid Margin="0 10 0 20">
+                            <PasswordBox Style="{DynamicResource AuthPB}" Password="" Tag="пароль"/>
+                            <TextBox Style="{DynamicResource AuthTB}" Text="{Binding Password}" Tag="пароль"/>
+
+                            <Button Style="{DynamicResource AuthBTeye}" HorizontalAlignment="Right" Margin="0 0 10 0" VerticalAlignment="Center">
+                                <Icon:PackIconMaterial Width="20" x:Name="iconpas" Height="20" Kind="Eye"/>
+                            </Button>
+                        </Grid>
+                        <Button Style="{DynamicResource AuthBT}" Width="180" Height="60" FontSize="24" HorizontalAlignment="Left" Content="Войти"/>
+                    </StackPanel>
+
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

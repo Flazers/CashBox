@@ -1,0 +1,17 @@
+﻿<Window x:Class="Cashbox.Views.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:local="clr-namespace:Cashbox.Views.Windows"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="1080" Width="1920" 
+        Icon="/Assets/Icons/64x64.png"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Background="{StaticResource BasicW}">
+
+    <ContentControl Content="{Binding NavigationService.CurrentView}"/>
+    <!--<Frame Source="../Pages/LoadScreen.xaml" NavigationUIVisibility="Hidden"/>-->
+</Window>
