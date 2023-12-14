@@ -13,10 +13,10 @@
 
                 <ResourceDictionary Source="./Assets/Styles/Elements/TextBlock.xaml"/>
                 <ResourceDictionary Source="./Assets/Styles/Elements/Preset.xaml"/>
+                <ResourceDictionary Source="./Assets/Styles/Elements/Button.xaml"/>
                 <ResourceDictionary Source="./Assets/Styles/Elements/TextBox.xaml"/>
                 <ResourceDictionary Source="./Assets/Styles/Elements/PasswordBox.xaml"/>
                 <ResourceDictionary Source="./Assets/Styles/Elements/Border.xaml"/>
-                <ResourceDictionary Source="./Assets/Styles/Elements/Button.xaml"/>
                 <ResourceDictionary Source="./Assets/Styles/Elements/CheckBox.xaml"/>
                 <ResourceDictionary Source="./Assets/Styles/Elements/ComboBox.xaml"/>
                 <ResourceDictionary Source="./Assets/Styles/Elements/DatePicker.xaml"/>

@@ -1,11 +1,8 @@
 ﻿using Cashbox.Core.Commands;
-using Cashbox.MVVM.Models;
-using Cashbox.MVVM.ViewModels.Base;
 using Cashbox.Service;
-using Cashbox;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.ObjectModel;
 using System.Windows;
+using System.ComponentModel.DataAnnotations;
+using Cashbox.Core;
 
 namespace Cashbox.MVVM.ViewModels
 {
@@ -65,20 +62,25 @@ namespace Cashbox.MVVM.ViewModels
         #endregion
 
         #region SHpassword
+
+
+
         #endregion
 
         #region UserData
-        private string? _login;
-        public string? Login
+        private string _login = string.Empty;
+        [Required(AllowEmptyStrings = false)]
+        public string Login
         {
             get => _login;
             set => Set(ref _login, value);
         }
 
-        private string? _password;
-        public string? Password
+        private string _password = string.Empty;
+        [Required(AllowEmptyStrings = false)]
+        public string Password
         {
-            private get => _password;
+            get => _password;
             set => Set(ref _password, value);
         }
         #endregion
@@ -119,25 +121,16 @@ namespace Cashbox.MVVM.ViewModels
         private bool CanNavigateMainPageCommandExecute(object p) => true;
         private void OnNavigateMainPageCommandExecuted(object p)
         {
-            NavigationService.NavigateTo<LoadingViewModel>();
+            NavigationService?.NavigateTo<LoadingViewModel>();
         }
         #endregion
-
-        //CashBox.Data.AppContext db = new CashBox.Data.AppContext();
-        //public ObservableCollection<Roles> Roles { get; set; }
 
         public AuthViewModel(INavigationService? navService)
         {
             NavigationService = navService;
             NavigateMainPageCommand = new RelayCommand(OnNavigateMainPageCommandExecuted, CanNavigateMainPageCommandExecute);
             SwipeAuthMethodVisibilityCommand = new RelayCommand(OnSwipeAuthMethodVisibilityCommandExecuted, CanSwipeAuthMethodVisibilityCommandExecute);
-
-            //db.Database.EnsureCreated();
-            //db.Users.Load();
-            //db.Roles.Load();
-            //Roles = db.Roles.Local.ToObservableCollection(); 
-            //MessageBox.Show(db.Roles.ToList()[0].id.ToString());
-
+            
         }
     }
 }

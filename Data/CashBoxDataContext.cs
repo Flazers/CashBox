@@ -10,6 +10,9 @@ public partial class CashBoxDataContext : DbContext
     {
     }
 
+    private static CashBoxDataContext? _context;
+    public static CashBoxDataContext Context => _context ??= new CashBoxDataContext();
+
     public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options)
         : base(options)
     {
@@ -46,8 +49,10 @@ public partial class CashBoxDataContext : DbContext
     public virtual DbSet<UserInfo> UserInfos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlite("Data Source=Data\\DBCash.db");
+    {
+        optionsBuilder.UseSqlite("Data Source=Data\\DBCash.db");
+        Database.EnsureCreated();
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

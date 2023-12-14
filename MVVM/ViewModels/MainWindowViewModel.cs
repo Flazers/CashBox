@@ -10,17 +10,17 @@ namespace Cashbox.MVVM.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private INavigationService _navigationService;
-        public INavigationService NavigationService
+        private INavigationService? _navigationService;
+        public INavigationService? NavigationService
         {
             get => _navigationService;
             set => Set(ref _navigationService, value);
         }
 
-        public MainWindowViewModel(INavigationService navService)
+        public MainWindowViewModel(INavigationService? navService)
         {
             NavigationService = navService;
-            NavigationService.NavigateTo<LoadAppViewModel>();
+            NavigationService?.NavigateTo<LoadAppViewModel>();
         }
     }
 }

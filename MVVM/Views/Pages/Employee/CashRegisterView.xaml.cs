@@ -18,7 +18,7 @@ namespace Cashbox.MVVM.Views.Pages.Employee
     /// <summary>
     /// Логика взаимодействия для CashRegisterView.xaml
     /// </summary>
-    public partial class CashRegisterView : Page
+    public partial class CashRegisterView : UserControl
     {
         public CashRegisterView()
         {

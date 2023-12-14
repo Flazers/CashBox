@@ -11,7 +11,5 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         Background="{StaticResource BasicW}">
-
     <ContentControl Content="{Binding NavigationService.CurrentView}"/>
-    <!--<Frame Source="../Pages/LoadScreen.xaml" NavigationUIVisibility="Hidden"/>-->
 </Window>

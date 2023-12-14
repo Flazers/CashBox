@@ -1,16 +1,9 @@
 ﻿using Cashbox.Service;
-using Cashbox.MVVM.Views.Pages;
 using Cashbox.Views.Windows;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
 using System.Windows;
 using Cashbox.MVVM.ViewModels;
-using Cashbox.MVVM.ViewModels.Base;
-using System.IO.Packaging;
-using System;
+using Cashbox.Core;
 
 namespace Cashbox
 {
@@ -22,7 +15,6 @@ namespace Cashbox
         private readonly ServiceProvider _serviceProvider;
         public App()
         {
-            
 
             IServiceCollection services = new ServiceCollection();
 
