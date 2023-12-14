@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cashbox.Data;
+namespace Cashbox.MVVM.Models;
 
 public partial class CashBoxDataContext : DbContext
 {
@@ -50,7 +50,7 @@ public partial class CashBoxDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=Data\\DBCash.db");
+        optionsBuilder.UseSqlite("Data Source=MVVM\\Models\\DBCash.db");
         Database.EnsureCreated();
     }
 

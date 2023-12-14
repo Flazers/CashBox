@@ -48,6 +48,7 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="MVVM\Models\" />
   </ItemGroup>
 
 </Project>

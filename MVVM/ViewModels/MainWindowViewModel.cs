@@ -1,4 +1,4 @@
-﻿using Cashbox.MVVM.ViewModels.Base;
+﻿using Cashbox.Core;
 using Cashbox.Service;
 using System;
 using System.Collections.Generic;

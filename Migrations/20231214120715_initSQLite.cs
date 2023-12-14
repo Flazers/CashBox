@@ -15,9 +15,9 @@ namespace Cashbox.Migrations
                 name: "MoneyBox",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    money = table.Column<double>(type: "REAL", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    money = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,9 +28,9 @@ namespace Cashbox.Migrations
                 name: "PaymentMethod",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    method = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    method = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -41,9 +41,9 @@ namespace Cashbox.Migrations
                 name: "ProductCategory",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    category = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    category = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,9 +54,9 @@ namespace Cashbox.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    role = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    role = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,12 +67,12 @@ namespace Cashbox.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    login = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
-                    password = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
-                    pin = table.Column<int>(type: "INTEGER", nullable: false),
-                    TFA = table.Column<bool>(type: "INTEGER", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    login = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    password = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    pin = table.Column<int>(type: "int", nullable: false),
+                    TFA = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,16 +83,16 @@ namespace Cashbox.Migrations
                 name: "Product",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    articul_code = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: true),
-                    title = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
-                    description = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    articul_code = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
+                    title = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    description = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     image = table.Column<byte[]>(type: "image", nullable: true),
-                    brand = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
-                    category_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    purchase_сost = table.Column<double>(type: "REAL", nullable: false),
-                    sell_cost = table.Column<double>(type: "REAL", nullable: false)
+                    brand = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    category_id = table.Column<int>(type: "int", nullable: false),
+                    purchase_сost = table.Column<double>(type: "float", nullable: false),
+                    sell_cost = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -108,10 +108,10 @@ namespace Cashbox.Migrations
                 name: "AuthHistory",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     datetime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    user_id = table.Column<int>(type: "INTEGER", nullable: false)
+                    user_id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -127,13 +127,13 @@ namespace Cashbox.Migrations
                 name: "DailyReport",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    data = table.Column<DateOnly>(type: "TEXT", nullable: false),
-                    open_time = table.Column<TimeOnly>(type: "TEXT", nullable: false),
-                    close_time = table.Column<TimeOnly>(type: "TEXT", nullable: false),
-                    user_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    proceeds = table.Column<double>(type: "REAL", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    data = table.Column<DateOnly>(type: "date", nullable: false),
+                    open_time = table.Column<TimeOnly>(type: "time", nullable: false),
+                    close_time = table.Column<TimeOnly>(type: "time", nullable: false),
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    proceeds = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -149,13 +149,13 @@ namespace Cashbox.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     sell_datetime = table.Column<DateTime>(type: "datetime", nullable: false),
-                    payment_method_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    user_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    sell_cost = table.Column<double>(type: "REAL", nullable: false),
-                    discount = table.Column<double>(type: "REAL", nullable: false)
+                    payment_method_id = table.Column<int>(type: "int", nullable: false),
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    sell_cost = table.Column<double>(type: "float", nullable: false),
+                    discount = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -176,8 +176,8 @@ namespace Cashbox.Migrations
                 name: "TFAData",
                 columns: table => new
                 {
-                    user_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    code = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false)
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    code = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -193,14 +193,14 @@ namespace Cashbox.Migrations
                 name: "UserInfo",
                 columns: table => new
                 {
-                    user_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    name = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
-                    surname = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
-                    patronymic = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
-                    location = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
-                    phone = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
-                    role_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    isActive = table.Column<bool>(type: "INTEGER", nullable: false)
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    name = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    surname = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    patronymic = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    location = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    phone = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    role_id = table.Column<int>(type: "int", nullable: false),
+                    isActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -221,12 +221,12 @@ namespace Cashbox.Migrations
                 name: "Refund",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    product_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    reason = table.Column<string>(type: "TEXT", unicode: false, maxLength: 50, nullable: false),
-                    buy_date = table.Column<DateOnly>(type: "TEXT", nullable: false),
-                    isPurchased = table.Column<bool>(type: "INTEGER", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    product_id = table.Column<int>(type: "int", nullable: false),
+                    reason = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    buy_date = table.Column<DateOnly>(type: "date", nullable: false),
+                    isPurchased = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -242,8 +242,8 @@ namespace Cashbox.Migrations
                 name: "Stock",
                 columns: table => new
                 {
-                    product_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    amount = table.Column<int>(type: "INTEGER", nullable: false)
+                    product_id = table.Column<int>(type: "int", nullable: false),
+                    amount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -259,11 +259,11 @@ namespace Cashbox.Migrations
                 name: "AutoDReport",
                 columns: table => new
                 {
-                    daily_report_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    salary = table.Column<double>(type: "REAL", nullable: false),
-                    auto_proceeds = table.Column<double>(type: "REAL", nullable: false),
-                    forfeit = table.Column<double>(type: "REAL", nullable: false),
-                    award = table.Column<double>(type: "REAL", nullable: false)
+                    daily_report_id = table.Column<int>(type: "int", nullable: false),
+                    salary = table.Column<double>(type: "float", nullable: false),
+                    auto_proceeds = table.Column<double>(type: "float", nullable: false),
+                    forfeit = table.Column<double>(type: "float", nullable: false),
+                    award = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -279,13 +279,13 @@ namespace Cashbox.Migrations
                 name: "OrderProduct",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    order_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    product_id = table.Column<int>(type: "INTEGER", nullable: false),
-                    amount = table.Column<int>(type: "INTEGER", nullable: false),
-                    purchase_сost = table.Column<double>(type: "REAL", nullable: false),
-                    sell_cost = table.Column<double>(type: "REAL", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    order_id = table.Column<int>(type: "int", nullable: false),
+                    product_id = table.Column<int>(type: "int", nullable: false),
+                    amount = table.Column<int>(type: "int", nullable: false),
+                    purchase_сost = table.Column<double>(type: "float", nullable: false),
+                    sell_cost = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {

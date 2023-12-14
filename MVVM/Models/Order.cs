@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Cashbox.Data;
+namespace Cashbox.MVVM.Models;
 
 public partial class Order
 {
