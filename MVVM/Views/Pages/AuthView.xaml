@@ -8,9 +8,9 @@
       xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="1080" d:DesignWidth="1920">
-    <UserControl.DataContext>
+    <!--<UserControl.DataContext>
         <vm:AuthViewModel/>
-    </UserControl.DataContext>
+    </UserControl.DataContext>-->
     <Grid>
         <Border Style="{StaticResource MainBorder}" MaxWidth="1200" MaxHeight="800">
             <Grid>

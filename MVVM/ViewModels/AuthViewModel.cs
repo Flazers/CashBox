@@ -1,17 +1,11 @@
-﻿using Cashbox.Core;
-using Cashbox.Core.Commands;
-using Cashbox.Service;
+﻿using Cashbox.Core.Commands;
+using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
+using Cashbox.Service;
+using CashBox.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Cashbox.MVVM.ViewModels
 {
@@ -74,15 +68,15 @@ namespace Cashbox.MVVM.ViewModels
         #endregion
 
         #region UserData
-        private string _login;
-        public string Login
+        private string? _login;
+        public string? Login
         {
             get => _login;
             set => Set(ref _login, value);
         }
 
-        private string _password;
-        public string Password
+        private string? _password;
+        public string? Password
         {
             private get => _password;
             set => Set(ref _password, value);
@@ -90,7 +84,6 @@ namespace Cashbox.MVVM.ViewModels
         #endregion
 
         #endregion
-
 
 
         #region Commands
@@ -114,28 +107,37 @@ namespace Cashbox.MVVM.ViewModels
 
         #endregion
 
-        private INavigationService _navigationService;
-        public INavigationService NavigationService
+
+        #region Navigation
+        private INavigationService? _navigationService;
+        public INavigationService? NavigationService
         {
             get => _navigationService;
             set => Set(ref _navigationService, value);
         }
-
         public RelayCommand NavigateMainPageCommand { get; set; }
         private bool CanNavigateMainPageCommandExecute(object p) => true;
         private void OnNavigateMainPageCommandExecuted(object p)
         {
             NavigationService.NavigateTo<LoadingViewModel>();
         }
+        #endregion
 
-#if DEBUG
-        public AuthViewModel() {}
-#endif
-        public AuthViewModel(INavigationService navService)
+        //CashBox.Data.AppContext db = new CashBox.Data.AppContext();
+        //public ObservableCollection<Roles> Roles { get; set; }
+
+        public AuthViewModel(INavigationService? navService)
         {
             NavigationService = navService;
             NavigateMainPageCommand = new RelayCommand(OnNavigateMainPageCommandExecuted, CanNavigateMainPageCommandExecute);
             SwipeAuthMethodVisibilityCommand = new RelayCommand(OnSwipeAuthMethodVisibilityCommandExecuted, CanSwipeAuthMethodVisibilityCommandExecute);
+
+            //db.Database.EnsureCreated();
+            //db.Users.Load();
+            //db.Roles.Load();
+            //Roles = db.Roles.Local.ToObservableCollection(); 
+            //MessageBox.Show(db.Roles.ToList()[0].id.ToString());
+
         }
     }
 }

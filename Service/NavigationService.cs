@@ -6,15 +6,15 @@ namespace Cashbox.Service
 {
     public interface INavigationService
     {
-        ViewModelBase CurrentView { get; }
+        ViewModelBase? CurrentView { get; }
         void NavigateTo<T>() where T : ViewModelBase;
     }
     public class NavigationService : ViewModelBase, INavigationService
     {
-        private readonly Func<Type, ViewModelBase> _viewModelFactory;
+        private readonly Func<Type, ViewModelBase>? _viewModelFactory;
 
-        private ViewModelBase _currentView;
-        public ViewModelBase CurrentView
+        private ViewModelBase? _currentView;
+        public ViewModelBase? CurrentView
         {
             get => _currentView;
             private set => Set(ref _currentView, value);
@@ -27,7 +27,7 @@ namespace Cashbox.Service
 
         public void NavigateTo<TViewModel>() where TViewModel : ViewModelBase
         {
-            ViewModelBase viewModel = _viewModelFactory.Invoke(typeof(TViewModel));
+            ViewModelBase? viewModel = _viewModelFactory.Invoke(typeof(TViewModel));
             CurrentView = viewModel;
         }
     }
