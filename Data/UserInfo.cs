@@ -1,43 +1,27 @@
-namespace Cashbox.Data
+﻿using System;
+using System.Collections.Generic;
+
+namespace Cashbox.Data;
+
+public partial class UserInfo
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+    public int UserId { get; set; }
 
-    [Table("UserInfo")]
-    public partial class UserInfo
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int user_id { get; set; }
+    public string Name { get; set; } = null!;
 
-        [Required]
-        [StringLength(50)]
-        public string name { get; set; }
+    public string Surname { get; set; } = null!;
 
-        [Required]
-        [StringLength(50)]
-        public string surname { get; set; }
+    public string Patronymic { get; set; } = null!;
 
-        [Required]
-        [StringLength(50)]
-        public string patronymic { get; set; }
+    public string Location { get; set; } = null!;
 
-        [Required]
-        [StringLength(50)]
-        public string location { get; set; }
+    public string Phone { get; set; } = null!;
 
-        [Required]
-        [StringLength(50)]
-        public string phone { get; set; }
+    public int RoleId { get; set; }
 
-        public int role_id { get; set; }
+    public bool IsActive { get; set; }
 
-        public bool isActive { get; set; }
+    public virtual Role Role { get; set; } = null!;
 
-        public virtual Roles Roles { get; set; }
-
-        public virtual Users Users { get; set; }
-    }
+    public virtual User User { get; set; } = null!;
 }

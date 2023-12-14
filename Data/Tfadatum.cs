@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace Cashbox.Data;
 
-public partial class AuthHistory
+public partial class Tfadatum
 {
-    public int Id { get; set; }
-
-    public DateTime Datetime { get; set; }
-
     public int UserId { get; set; }
+
+    public string Code { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

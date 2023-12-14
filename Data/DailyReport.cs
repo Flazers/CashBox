@@ -1,28 +1,23 @@
-namespace Cashbox.Data
+﻿using System;
+using System.Collections.Generic;
+
+namespace Cashbox.Data;
+
+public partial class DailyReport
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+    public int Id { get; set; }
 
-    [Table("DailyReport")]
-    public partial class DailyReport
-    {
-        public int id { get; set; }
+    public DateOnly Data { get; set; }
 
-        [Column(TypeName = "date")]
-        public DateTime data { get; set; }
+    public TimeOnly OpenTime { get; set; }
 
-        public TimeSpan open_time { get; set; }
+    public TimeOnly CloseTime { get; set; }
 
-        public TimeSpan close_time { get; set; }
+    public int UserId { get; set; }
 
-        public int user_id { get; set; }
+    public double Proceeds { get; set; }
 
-        public double proceeds { get; set; }
+    public virtual AutoDreport? AutoDreport { get; set; }
 
-        public virtual AutoDReport AutoDReport { get; set; }
-
-        public virtual Users Users { get; set; }
-    }
+    public virtual User User { get; set; } = null!;
 }

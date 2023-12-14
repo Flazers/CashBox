@@ -2,7 +2,7 @@
 using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Base;
 using Cashbox.Service;
-using CashBox.Data;
+using Cashbox;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Windows;

@@ -22,6 +22,8 @@ namespace Cashbox
         private readonly ServiceProvider _serviceProvider;
         public App()
         {
+            
+
             IServiceCollection services = new ServiceCollection();
 
             services.AddSingleton<MainWindow>(provider => new MainWindow

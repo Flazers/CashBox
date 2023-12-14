@@ -1,20 +1,13 @@
-namespace Cashbox.Data
+﻿using System;
+using System.Collections.Generic;
+
+namespace Cashbox.Data;
+
+public partial class Stock
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
+    public int ProductId { get; set; }
 
+    public int Amount { get; set; }
 
-    [Table("Stock")]
-    public partial class Stock
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int product_id { get; set; }
-
-        public int amount { get; set; }
-
-        public virtual Product Product { get; set; }
-    }
+    public virtual Product Product { get; set; } = null!;
 }
