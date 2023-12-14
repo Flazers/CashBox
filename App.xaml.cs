@@ -4,6 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using Cashbox.MVVM.ViewModels;
 using Cashbox.Core;
+using Cashbox.MVVM.Models;
+using Microsoft.EntityFrameworkCore;
+using Cashbox.MVVM.ViewModels.Data;
+using System.Data;
 
 namespace Cashbox
 {
@@ -33,11 +37,17 @@ namespace Cashbox
 
             _serviceProvider = services.BuildServiceProvider();
         }
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             base.OnStartup(e);
+            CashBoxDataContext.Context.Database.EnsureCreated();
+            CashBoxDataContext.Context.Roles.Load();
+            CashBoxDataContext.Context.UserInfos.Load();
+            CashBoxDataContext.Context.Users.Load();
+            //await UserViewModel.CreateUser("admin", "admin", 111111, false, "name", "surname", "patronymic", "location", "phone", (await RoleViewModel.GetRoles())[0], true);
+
         }
     }
 }

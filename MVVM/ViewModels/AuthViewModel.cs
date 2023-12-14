@@ -3,31 +3,13 @@ using Cashbox.Service;
 using System.Windows;
 using System.ComponentModel.DataAnnotations;
 using Cashbox.Core;
+using Cashbox.MVVM.Models;
+using Cashbox.MVVM.ViewModels.Data;
 
 namespace Cashbox.MVVM.ViewModels
 {
     public class AuthViewModel : ViewModelBase
     {
-        //private INavigationService _navigationService;
-        //public INavigationService NavigationService
-        //{
-        //    get => _navigationService;
-        //    set => Set(ref _navigationService, value);
-        //}
-
-        //public RelayCommand NavigateMainPageCommand { get; set; }
-        //private bool CanNavigateMainPageCommandExecute(object p) => true;
-        //private void OnNavigateMainPageCommandExecuted(object p)
-        //{
-        //    NavigationService.NavigateTo<MainPageViewModel>();
-        //}
-
-        //public AuthPageViewModel(INavigationService navService)
-        //{
-        //    NavigationService = navService;
-        //    NavigateMainPageCommand = new RelayCommand(OnNavigateMainPageCommandExecuted, CanNavigateMainPageCommandExecute);
-        //}
-
         #region Props
 
         #region SwipeAuthMethod
@@ -61,13 +43,8 @@ namespace Cashbox.MVVM.ViewModels
 
         #endregion
 
-        #region SHpassword
-
-
-
-        #endregion
-
         #region UserData
+
         private string _login = string.Empty;
         [Required(AllowEmptyStrings = false)]
         public string Login
@@ -83,6 +60,23 @@ namespace Cashbox.MVVM.ViewModels
             get => _password;
             set => Set(ref _password, value);
         }
+
+        private int _pin;
+        [Required(AllowEmptyStrings = false)]
+        public int Pin
+        {
+            get => _pin;
+            set => Set(ref _pin, value);
+        }
+
+        private bool _tfa = false;
+        [Required(AllowEmptyStrings = false)]
+        public bool TFA
+        {
+            get => _tfa;
+            set => Set(ref _tfa, value);
+        }
+
         #endregion
 
         #endregion
@@ -105,6 +99,15 @@ namespace Cashbox.MVVM.ViewModels
                     AuthMethodLPVisibility = Visibility.Visible;
                     break;
             }
+        }
+
+        public RelayCommand AuthByLogPassCommand { get; set; }
+        private bool CanAuthByLogPassCommandExecute(object p) => true;
+        private async void OnAuthByLogPassCommandExecuted(object p)
+        {
+            UserViewModel? user = await UserViewModel.GetUserByLogPass(Login, Password);
+            if (user == null) { MessageBox.Show("lox"); return; }
+            MessageBox.Show(user.UserInfo?.Name);
         }
 
         #endregion
@@ -130,7 +133,7 @@ namespace Cashbox.MVVM.ViewModels
             NavigationService = navService;
             NavigateMainPageCommand = new RelayCommand(OnNavigateMainPageCommandExecuted, CanNavigateMainPageCommandExecute);
             SwipeAuthMethodVisibilityCommand = new RelayCommand(OnSwipeAuthMethodVisibilityCommandExecuted, CanSwipeAuthMethodVisibilityCommandExecute);
-            
+            AuthByLogPassCommand = new RelayCommand(OnAuthByLogPassCommandExecuted, CanAuthByLogPassCommandExecute);
         }
     }
 }
