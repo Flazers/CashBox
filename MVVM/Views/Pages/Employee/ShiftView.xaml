@@ -5,6 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages.Employee"
       mc:Ignorable="d" 
+      xmlns:vm="clr-namespace:Cashbox.MVVM.ViewModels.Employee"
+      d:DataContext="{d:DesignInstance Type=vm:ShiftViewModel}"
       d:DesignHeight="1000" d:DesignWidth="1700">
     <Grid>
         

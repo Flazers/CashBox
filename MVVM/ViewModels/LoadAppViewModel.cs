@@ -15,9 +15,9 @@ namespace Cashbox.MVVM.ViewModels
 
         public LoadAppViewModel(INavigationService navService)
         {
-            NavigationService = navService;
             Task.Run(() => { 
-                Thread.Sleep(1500);
+                Thread.Sleep(2500);
+                NavigationService = navService;
                 NavigationService.NavigateTo<AuthViewModel>();
             });
         }

@@ -24,14 +24,7 @@ namespace Cashbox.MVVM.Views.Pages
         public LoadScreen()
         {
             InitializeComponent();
-            DoubleAnimation animation = new DoubleAnimation()
-            {
-                From = 0,
-                To = 360,
-                Duration = TimeSpan.FromSeconds(1),
-                RepeatBehavior = RepeatBehavior.Forever,
-            };
-            angle.BeginAnimation(RotateTransform.AngleProperty, animation);
+
         }
     }
 }

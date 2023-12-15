@@ -18,9 +18,9 @@ namespace Cashbox.MVVM.Views.Pages.Admin
     /// <summary>
     /// Логика взаимодействия для MainView.xaml
     /// </summary>
-    public partial class MainView : UserControl
+    public partial class AMainView : UserControl
     {
-        public MainView()
+        public AMainView()
         {
             InitializeComponent();
         }

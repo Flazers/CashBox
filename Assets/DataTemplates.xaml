@@ -1,7 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:viewModel="clr-namespace:Cashbox.MVVM.ViewModels"
-                    xmlns:view="clr-namespace:Cashbox.MVVM.Views.Pages">
+                    xmlns:viewModelAdmin="clr-namespace:Cashbox.MVVM.ViewModels.Admin"
+                    xmlns:viewModelEmployee="clr-namespace:Cashbox.MVVM.ViewModels.Employee"
+                    xmlns:view="clr-namespace:Cashbox.MVVM.Views.Pages"
+                    xmlns:viewAdmin="clr-namespace:Cashbox.MVVM.Views.Pages.Admin"
+                    xmlns:viewEmployese="clr-namespace:Cashbox.MVVM.Views.Pages.Employee">
 
     <DataTemplate DataType="{x:Type TypeName=viewModel:AuthViewModel}">
         <view:AuthView/>
@@ -11,5 +15,32 @@
     </DataTemplate>
     <DataTemplate DataType="{x:Type TypeName=viewModel:LoadingViewModel}">
         <view:LoadingView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:AccountingViewModel}">
+        <viewAdmin:AccountingView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:AMainViewModel}">
+        <viewAdmin:AMainView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:EmployeesViewModel}">
+        <viewAdmin:EmployeesView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:HomeViewModel}">
+        <viewAdmin:HomeView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:ShiftViewModel}">
+        <viewAdmin:ShiftView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:StockViewModel}">
+        <viewAdmin:StockView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModelEmployee:CashRegisterViewModel}">
+        <viewEmployese:CashRegisterView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModelEmployee:EMainViewModel}">
+        <viewEmployese:EMainView/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModelEmployee:ShiftViewModel}">
+        <viewEmployese:ShiftView/>
     </DataTemplate>
 </ResourceDictionary>

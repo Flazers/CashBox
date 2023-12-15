@@ -18,7 +18,7 @@ namespace Cashbox.MVVM.Views.Pages.Admin
     /// <summary>
     /// Логика взаимодействия для AccountingView.xaml
     /// </summary>
-    public partial class AccountingView : Page
+    public partial class AccountingView : UserControl
     {
         public AccountingView()
         {

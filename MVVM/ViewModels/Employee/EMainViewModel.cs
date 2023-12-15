@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cashbox.MVVM.ViewModels.Admin
+namespace Cashbox.MVVM.ViewModels.Employee
 {
-    public class MainViewModel
+    public class EMainViewModel
     {
     }
 }

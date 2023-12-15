@@ -18,7 +18,7 @@ namespace Cashbox.MVVM.Views.Pages.Admin
     /// <summary>
     /// Логика взаимодействия для EmployeesView.xaml
     /// </summary>
-    public partial class EmployeesView : Page
+    public partial class EmployeesView : UserControl
     {
         public EmployeesView()
         {
