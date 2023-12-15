@@ -28,9 +28,8 @@ namespace Cashbox
             });
 
             services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<LoadAppViewModel>();
-            services.AddSingleton<AuthViewModel>(provider => new AuthViewModel(provider.GetRequiredService<INavigationService>()));
             services.AddSingleton<LoadingViewModel>();
+            services.AddSingleton<AuthViewModel>(provider => new AuthViewModel(provider.GetRequiredService<INavigationService>()));
             services.AddSingleton<INavigationService, NavigationService>();
 
             services.AddSingleton<Func<Type, ViewModelBase>>(serviceProvider => ViewModelType => (ViewModelBase)serviceProvider.GetRequiredService(ViewModelType));
@@ -42,10 +41,6 @@ namespace Cashbox
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             base.OnStartup(e);
-            CashBoxDataContext.Context.Database.EnsureCreated();
-            CashBoxDataContext.Context.Roles.Load();
-            CashBoxDataContext.Context.UserInfos.Load();
-            CashBoxDataContext.Context.Users.Load();
             //await UserViewModel.CreateUser("admin", "admin", 111111, false, "name", "surname", "patronymic", "location", "phone", (await RoleViewModel.GetRoles())[0], true);
 
         }

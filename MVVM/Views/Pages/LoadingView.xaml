@@ -14,12 +14,12 @@
             <Grid>
                 <TextBlock Text="A5 Detailing" Style="{StaticResource BigText}" VerticalAlignment="Top" Foreground="{StaticResource TextW}" HorizontalAlignment="Center"/>
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}" MaxWidth="300" TextWrapping="Wrap" TextAlignment="Center" Text="Аутентификация" HorizontalAlignment="Center"/>
+                    <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}" MaxWidth="300" TextWrapping="Wrap" TextAlignment="Center" Text="{Binding Title}" HorizontalAlignment="Center"/>
                     <Grid Margin="0 10 0 20">
-                        <ProgressBar Style="{DynamicResource ProgBar}" Value="50" Maximum="100" Width="400" Height="40"/>
-                        <Icon:PackIconMaterial Kind="Close" HorizontalAlignment="Center" Width="60" Visibility="Collapsed" Height="60" Foreground="{StaticResource TextW}"/>
+                        <ProgressBar Style="{DynamicResource ProgBar}" Value="{Binding ProgressLoadingApp}" Visibility="{Binding ElementProgress}" Maximum="{Binding MaxProgress}" Width="400" Height="40"/>
+                        <Icon:PackIconMaterial Kind="Close" HorizontalAlignment="Center" Width="60" Visibility="{Binding ElementError}" Height="60" Foreground="{StaticResource TextW}"/>
                     </Grid>
-                    <TextBlock Foreground="{StaticResource TextW}" Text="Поиск пользователя" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="400" Style="{StaticResource RegularText}" HorizontalAlignment="Center"/>
+                    <TextBlock Foreground="{StaticResource TextW}" Text="{Binding ProgressLoadingAppText}" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="400" Style="{StaticResource RegularText}" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Grid>
         </Border>

@@ -10,9 +10,6 @@
     <DataTemplate DataType="{x:Type TypeName=viewModel:AuthViewModel}">
         <view:AuthView/>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type TypeName=viewModel:LoadAppViewModel}">
-        <view:LoadScreen/>
-    </DataTemplate>
     <DataTemplate DataType="{x:Type TypeName=viewModel:LoadingViewModel}">
         <view:LoadingView/>
     </DataTemplate>

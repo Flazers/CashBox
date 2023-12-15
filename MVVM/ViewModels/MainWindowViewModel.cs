@@ -20,7 +20,7 @@ namespace Cashbox.MVVM.ViewModels
         public MainWindowViewModel(INavigationService? navService)
         {
             NavigationService = navService;
-            NavigationService?.NavigateTo<LoadAppViewModel>();
+            NavigationService?.NavigateTo<LoadingViewModel>();
         }
     }
 }

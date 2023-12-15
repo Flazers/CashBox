@@ -30,14 +30,6 @@ namespace Cashbox.Views.Windows
         public MainWindow()
         {
             InitializeComponent();
-            DoubleAnimation animation = new DoubleAnimation()
-            {
-                From = 0,
-                To = 360,
-                Duration = TimeSpan.FromSeconds(1),
-                RepeatBehavior = RepeatBehavior.Forever,
-            };
-            angle.BeginAnimation(RotateTransform.AngleProperty, animation);
         }
 
         private void MainWindow_Closing(object? sender, CancelEventArgs e)
