@@ -11,7 +11,6 @@ namespace Cashbox.MVVM.Models
     {
         private UserInfo() { }
 
-        // TODO: надо поменять на вьюмодел
         public static async Task<UserInfoViewModel?> CreateNewUserInfo(int userId, string name, string surname, string patronymic, string location, string phone, int roleId, bool isActive)
         {
             try

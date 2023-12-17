@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using Cashbox.Core;
 using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
+using System.Security;
 
 namespace Cashbox.MVVM.ViewModels
 {
@@ -53,7 +54,7 @@ namespace Cashbox.MVVM.ViewModels
             set => Set(ref _login, value);
         }
 
-        private string _password = string.Empty;
+        private string _password;
         [Required(AllowEmptyStrings = false)]
         public string Password
         {

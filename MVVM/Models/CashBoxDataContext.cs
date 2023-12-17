@@ -24,7 +24,7 @@ public partial class CashBoxDataContext : DbContext
 
     public virtual DbSet<DailyReport> DailyReports { get; set; }
 
-    public virtual DbSet<MoneyBox> MoneyBoxes { get; set; }
+    public virtual DbSet<AppSettings> AppSetting { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
 
@@ -50,8 +50,7 @@ public partial class CashBoxDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //optionsBuilder.UseSqlite("Data Source=MVVM\\Models\\DBCash.db");
-        optionsBuilder.UseSqlite("Data Source=C:\\Users\\Expert\\source\\repos\\Cach\\MVVM\\Models\\DBCash.db");
+        optionsBuilder.UseSqlite("Data Source=C:\\Users\\nicho\\source\\repos\\Cash\\MVVM\\Models\\Data.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -109,12 +108,13 @@ public partial class CashBoxDataContext : DbContext
                 .HasConstraintName("FK_DailyReport_Users");
         });
 
-        modelBuilder.Entity<MoneyBox>(entity =>
+        modelBuilder.Entity<AppSettings>(entity =>
         {
-            entity.ToTable("MoneyBox");
+            entity.ToTable("AppSettings");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Money).HasColumnName("money");
+            entity.Property(e => e.MoneyBox).HasColumnName("money_box");
+            entity.Property(e => e.MainEmail).HasColumnName("main_email");
         });
 
         modelBuilder.Entity<Order>(entity =>
