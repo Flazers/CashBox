@@ -19,7 +19,6 @@ namespace Cashbox
         private readonly ServiceProvider _serviceProvider;
         public App()
         {
-
             IServiceCollection services = new ServiceCollection();
 
             services.AddSingleton<MainWindow>(provider => new MainWindow
@@ -36,13 +35,11 @@ namespace Cashbox
 
             _serviceProvider = services.BuildServiceProvider();
         }
-        protected override async void OnStartup(StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs e)
         {
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             base.OnStartup(e);
-            //await UserViewModel.CreateUser("admin", "admin", 111111, false, "name", "surname", "patronymic", "location", "phone", (await RoleViewModel.GetRoles())[0], true);
-
         }
     }
 }
