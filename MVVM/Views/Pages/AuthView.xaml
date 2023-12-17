@@ -49,7 +49,7 @@
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding ErasePinCommand}" Margin="0 0 20 0" Width="120" Height="120" Content="Стереть" FontSize="20"/>
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding EnterPinCommand}" CommandParameter="0" Margin="0 0 20 0" Width="120" Height="120" Content="0" FontSize="32"/>
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding AuthByPinCommand}" Margin="0 0 0 0" Width="120" Height="120" Content="Войти" FontSize="20"/>
-                        </WrapPanel> 
+                        </WrapPanel>
                     </StackPanel>
 
                     <StackPanel VerticalAlignment="Center" Visibility="{Binding AuthMethodLPVisibility}">
