@@ -15,6 +15,18 @@ namespace Cashbox.MVVM.ViewModels.Data
         {
             _userInfo = userInfo;
             Role = new RoleViewModel(userInfo.Role);
+            SetFullName();
+        }
+        public void SetFullName()
+        {
+            FullName = $"{_userInfo.Surname} {_userInfo.Name} {_userInfo.Patronymic}";
+        }
+
+        private string _fullName = string.Empty;
+        public string FullName
+        {
+            get => _fullName;
+            private set => Set(ref _fullName, value);
         }
 
         public int UserId => _userInfo.UserId;
@@ -25,6 +37,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             set
             {
                 _userInfo.Name = value;
+                SetFullName();
                 OnPropertyChanged();
             }
         }
@@ -35,6 +48,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             set
             {
                 _userInfo.Surname = value;
+                SetFullName();
                 OnPropertyChanged();
             }
         }
@@ -45,6 +59,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             set
             {
                 _userInfo.Patronymic = value;
+                SetFullName();
                 OnPropertyChanged();
             }
         }

@@ -8,6 +8,8 @@ using Cashbox.MVVM.Models;
 using Microsoft.EntityFrameworkCore;
 using Cashbox.MVVM.ViewModels.Data;
 using System.Data;
+using Cashbox.MVVM.ViewModels.Admin;
+using Cashbox.MVVM.ViewModels.Employee;
 
 namespace Cashbox
 {
@@ -28,8 +30,19 @@ namespace Cashbox
 
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<LoadingViewModel>();
-            services.AddSingleton<AuthViewModel>(provider => new AuthViewModel(provider.GetRequiredService<INavigationService>()));
+            services.AddSingleton<AuthViewModel>();
             services.AddSingleton<INavigationService, NavigationService>();
+
+            services.AddSingleton<AMainViewModel>();
+            services.AddSingleton<HomeViewModel>();
+            services.AddSingleton<EmployeesViewModel>();
+            services.AddSingleton<StockViewModel>();
+            services.AddSingleton<AccountingViewModel>();
+            services.AddSingleton<MVVM.ViewModels.Admin.ShiftViewModel>();
+            services.AddSingleton<EMainViewModel>();
+            services.AddSingleton<CashRegisterViewModel>();
+            services.AddSingleton<MVVM.ViewModels.Employee.ShiftViewModel>();
+            services.AddSingleton<ISubNavigationService, SubNavigationService>();
 
             services.AddSingleton<Func<Type, ViewModelBase>>(serviceProvider => ViewModelType => (ViewModelBase)serviceProvider.GetRequiredService(ViewModelType));
 

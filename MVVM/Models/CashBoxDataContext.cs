@@ -24,7 +24,7 @@ public partial class CashBoxDataContext : DbContext
 
     public virtual DbSet<DailyReport> DailyReports { get; set; }
 
-    public virtual DbSet<AppSettings> AppSetting { get; set; }
+    public virtual DbSet<AppSettings> AppSettings { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
 
@@ -50,7 +50,8 @@ public partial class CashBoxDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=C:\\Users\\nicho\\source\\repos\\Cash\\MVVM\\Models\\Data.db");
+        //optionsBuilder.UseSqlite("Data Source=C:\\Users\\nicho\\source\\repos\\Cash\\MVVM\\Models\\Data.db");
+        optionsBuilder.UseSqlite("Data Source=C:\\Users\\Expert\\source\\repos\\Cach\\MVVM\\Models\\Data.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,12 +1,16 @@
-﻿
-using Cashbox.Core;
+﻿using Cashbox.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Cashbox.Service
 {
-    public class NavigationService : ViewModelBase, INavigationService
+    public class SubNavigationService : ViewModelBase, ISubNavigationService
     {
         private readonly Func<Type, ViewModelBase>? _viewModelFactory;
-        public NavigationService(Func<Type, ViewModelBase> viewModelFactory)
+        public SubNavigationService(Func<Type, ViewModelBase> viewModelFactory)
         {
             _viewModelFactory = viewModelFactory;
         }
@@ -23,6 +27,5 @@ namespace Cashbox.Service
             ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
             CurrentView = viewModel;
         }
-
     }
 }

@@ -6,6 +6,8 @@ using Cashbox.Core;
 using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using System.Security;
+using Cashbox.MVVM.ViewModels.Admin;
+using Cashbox.MVVM.ViewModels.Employee;
 
 namespace Cashbox.MVVM.ViewModels
 {
@@ -54,7 +56,7 @@ namespace Cashbox.MVVM.ViewModels
             set => Set(ref _login, value);
         }
 
-        private string _password;
+        private string _password = string.Empty;
         [Required(AllowEmptyStrings = false)]
         public string Password
         {
@@ -148,7 +150,15 @@ namespace Cashbox.MVVM.ViewModels
         {
             UserViewModel? user = await UserViewModel.GetUserByLogPass(Login, Password);
             if (user == null) { MessageBox.Show("lox"); return; }
-            MessageBox.Show(user.UserInfo?.Name);
+            switch (user.UserInfo?.Role.Id)
+            {
+                case 1:
+                    NavigationService?.NavigateTo<AMainViewModel>();
+                    break;
+                case 2:
+                    NavigationService?.NavigateTo<EMainViewModel>();
+                    break;
+            }
         }
 
         public RelayCommand AuthByPinCommand { get; set; }
@@ -157,7 +167,15 @@ namespace Cashbox.MVVM.ViewModels
         {
             UserViewModel? user = await UserViewModel.GetUserByPin(Pin);
             if (user == null) { MessageBox.Show("lox"); return; }
-            MessageBox.Show(user.UserInfo?.Name);
+            switch (user.UserInfo?.Role.Id)
+            {
+                case 1:
+                    NavigationService?.NavigateTo<AMainViewModel>();
+                    break;
+                case 2:
+                    NavigationService?.NavigateTo<EMainViewModel>();
+                    break;
+            }
         }
 
         #endregion
@@ -170,9 +188,9 @@ namespace Cashbox.MVVM.ViewModels
             get => _navigationService;
             set => Set(ref _navigationService, value);
         }
-        public RelayCommand NavigateMainPageCommand { get; set; }
-        private bool CanNavigateMainPageCommandExecute(object p) => true;
-        private void OnNavigateMainPageCommandExecuted(object p)
+        public RelayCommand NavigateViewCommand { get; set; }
+        private bool CanNavigateViewCommandExecute(object p) => true;
+        private void OnNavigateViewCommandExecuted(object p)
         {
             NavigationService?.NavigateTo<LoadingViewModel>();
         }
@@ -181,7 +199,7 @@ namespace Cashbox.MVVM.ViewModels
         public AuthViewModel(INavigationService? navService)
         {
             NavigationService = navService;
-            NavigateMainPageCommand = new RelayCommand(OnNavigateMainPageCommandExecuted, CanNavigateMainPageCommandExecute);
+            NavigateViewCommand = new RelayCommand(OnNavigateViewCommandExecuted, CanNavigateViewCommandExecute);
             ErasePinCommand = new RelayCommand(OnErasePinCommandExecuted, CanErasePinCommandExecute);
             SwipeAuthMethodVisibilityCommand = new RelayCommand(OnSwipeAuthMethodVisibilityCommandExecuted, CanSwipeAuthMethodVisibilityCommandExecute);
             EnterPinCommand = new RelayCommand(OnEnterPinCommandExecuted, CanEnterPinCommandExecute);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Employee
 {
-    public class EMainViewModel
+    public class EMainViewModel : ViewModelBase
     {
     }
 }
