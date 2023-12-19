@@ -9,9 +9,104 @@
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1700">
 
-    <Grid>
+    <StackPanel>
         <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
             <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Администратор: \{0}'}"/>
         </Border>
-    </Grid>
+
+        <StackPanel Margin="0 40 0 0" Orientation="Horizontal">
+            <StackPanel Margin="0 0 40 0" Width="600">
+                <Border Style="{StaticResource PanelBorder}" Height="460" Margin="0 0 0 40">
+                    <StackPanel>
+                        <Grid Margin="0 -10 0 30" Height="80">
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Выручка за месяц"/>
+                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                        <Grid Width="560" Height="330" Background="{StaticResource cyancolor}">
+                            <!--Нужен график-->
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource PanelBorder}" Height="280" Margin="0 0 0 40">
+                    <StackPanel>
+                        <Grid Margin="0 -10 0 30" Height="80">
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="История авторизаций"/>
+                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                        <ItemsControl Margin="10 0 10 10" ItemsSource="{Binding AuthHistory}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Height="40" Padding="5" Background="{StaticResource PanelW}" CornerRadius="10" Margin="0 0 0 15">
+                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Datetime}" Foreground="{StaticResource TextB}" Style="{StaticResource RegularText}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <Button Style="{DynamicResource ButtonOutPanel}" Content="Управление администраторами"/>
+
+            </StackPanel>
+
+            <StackPanel Margin="0 0 40 0" Width="520">
+                <Border Style="{StaticResource PanelBorder}" Height="420" Margin="0 0 0 40">
+                    <StackPanel>
+                        <Grid Margin="0 -10 0 30" Height="80">
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Часто покупают"/>
+                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                        <ItemsControl Margin="10 0" ItemsSource="{Binding AuthHistory}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Height="40" Padding="5" Background="{StaticResource PanelW}" CornerRadius="10" Margin="0 0 0 15">
+                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Datetime}" Foreground="{StaticResource TextB}" Style="{StaticResource RegularText}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource PanelBorder}" Height="420">
+                    <StackPanel>
+                        <Grid Margin="0 -10 0 30" Height="80">
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Топ по продажам"/>
+                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                        <ItemsControl Margin="10 0" ItemsSource="{Binding AuthHistory}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Height="40" Padding="5" Background="{StaticResource PanelW}" CornerRadius="10" Margin="0 0 0 15">
+                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Datetime}" Foreground="{StaticResource TextB}" Style="{StaticResource RegularText}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <StackPanel Width="500">
+                <Border Style="{StaticResource PanelBorder}" Height="880">
+                    <StackPanel>
+                        <Grid Margin="0 -10 0 30" Height="80">
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Детализация"/>
+                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                        <ItemsControl Margin="10 0" ItemsSource="{Binding AuthHistory}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Height="40" Padding="5" Background="{StaticResource PanelW}" CornerRadius="10" Margin="0 0 0 15">
+                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Datetime}" Foreground="{StaticResource TextB}" Style="{StaticResource RegularText}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+        
+    </StackPanel>
 </UserControl>

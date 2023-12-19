@@ -149,13 +149,16 @@ namespace Cashbox.MVVM.ViewModels
         private async void OnAuthByLogPassCommandExecuted(object p)
         {
             UserViewModel? user = await UserViewModel.GetUserByLogPass(Login, Password);
-            if (user == null) { MessageBox.Show("lox"); return; }
+            if (user == null) { MessageBox.Show("Пользователь не найден.", "Ошибка"); return; }
             switch (user.UserInfo?.Role.Id)
             {
                 case 1:
                     NavigationService?.NavigateTo<AMainViewModel>();
                     break;
                 case 2:
+                    NavigationService?.NavigateTo<AMainViewModel>();
+                    break;
+                case 3:
                     NavigationService?.NavigateTo<EMainViewModel>();
                     break;
             }
@@ -166,13 +169,16 @@ namespace Cashbox.MVVM.ViewModels
         private async void OnAuthByPinCommandExecuted(object p)
         {
             UserViewModel? user = await UserViewModel.GetUserByPin(Pin);
-            if (user == null) { MessageBox.Show("lox"); return; }
+            if (user == null) { MessageBox.Show("Пользователь не найден.", "Ошибка"); return; }
             switch (user.UserInfo?.Role.Id)
             {
                 case 1:
                     NavigationService?.NavigateTo<AMainViewModel>();
                     break;
                 case 2:
+                    NavigationService?.NavigateTo<AMainViewModel>();
+                    break;
+                case 3:
                     NavigationService?.NavigateTo<EMainViewModel>();
                     break;
             }
@@ -195,6 +201,15 @@ namespace Cashbox.MVVM.ViewModels
             NavigationService?.NavigateTo<LoadingViewModel>();
         }
         #endregion
+
+        public override void Clear()
+        {
+            Pin = 0;
+            StringPin = string.Empty;
+            Login = string.Empty;
+            Password = string.Empty;
+            TFA = false;
+        }
 
         public AuthViewModel(INavigationService? navService)
         {

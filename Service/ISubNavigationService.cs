@@ -11,6 +11,5 @@ namespace Cashbox.Service
     {
         ViewModelBase? CurrentView { get; }
         void NavigateTo<T>() where T : ViewModelBase;
-
     }
 }

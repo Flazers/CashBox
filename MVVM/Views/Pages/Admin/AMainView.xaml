@@ -56,7 +56,7 @@
                 </RadioButton>
             </StackPanel>
 
-            <Button Style="{DynamicResource NavBT}" Margin="0 0 0 20" VerticalAlignment="Bottom">
+            <Button Style="{DynamicResource NavBT}" Command="{Binding LogOutCommand}" Margin="0 0 0 20" VerticalAlignment="Bottom">
                 <StackPanel>
                     <Icon:PackIconMaterial Kind="LogoutVariant" HorizontalAlignment="Center" Width="40" Height="50"/>
                     <TextBlock Text="Выйти" Margin="0 5 0 0" FontSize="16" HorizontalAlignment="Center"/>

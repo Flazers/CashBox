@@ -1,5 +1,7 @@
 ﻿using Cashbox.Core;
 using Cashbox.Core.Commands;
+using Cashbox.MVVM.Models;
+using Cashbox.MVVM.ViewModels.Data;
 using Cashbox.Service;
 using System;
 using System.Collections.Generic;
@@ -72,9 +74,28 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 SubNavigationService?.NavigateTo<ShiftViewModel>();
         }
 
+        public RelayCommand LogOutCommand { get; set; }
+        private bool CanLogOutCommandExecute(object p) => true;
+        private void OnLogOutCommandExecuted(object p)
+        {
+            UserViewModel.LogOut();
+            NavigationService?.NavigateTo<AuthViewModel>();
+        }
+
         #endregion
 
         #region Navigation
+
+        public override void Clear()
+        {
+            IsHomeView = true;
+            IsEmployeeView = false;
+            IsStockView = false;
+            IsAccountingView = false;
+            IsShiftView = false;
+            NavigateSubViewCommand.Execute(this);
+        }
+
         private ISubNavigationService? _subNavigationService;
         public ISubNavigationService? SubNavigationService
         {
@@ -82,13 +103,22 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _subNavigationService, value);
         }
 
+        private INavigationService? _NavigationService;
+        public INavigationService? NavigationService
+        {
+            get => _NavigationService;
+            set => Set(ref _NavigationService, value);
+        }
+
         #endregion
 
-        public AMainViewModel(ISubNavigationService subNavService)
+        public AMainViewModel(ISubNavigationService subNavService, INavigationService navService)
         {
             SubNavigationService = subNavService;
+            NavigationService = navService;
             NavigateSubViewCommand = new RelayCommand(OnNavigateSubViewCommandExecuted, CanNavigateSubViewCommandExecute);
             NavigateSubViewCommand.Execute(this);
+            LogOutCommand = new RelayCommand(OnLogOutCommandExecuted, CanLogOutCommandExecute);
         }
 
     }

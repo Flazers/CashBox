@@ -9,7 +9,40 @@
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1700">
 
-    <Grid Background="Green">
-        
-    </Grid>
+    <StackPanel>
+        <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
+            <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Администратор: \{0}'}"/>
+        </Border>
+        <StackPanel Margin="0 40 0 0" Orientation="Horizontal">
+            <StackPanel Margin="0 0 40 0" Width="1140">
+                <Border Style="{StaticResource PanelBorder}" Height="880">
+                    <StackPanel>
+                        <Grid Margin="0 -10 0 30" Height="80">
+                            <DockPanel Margin="5 0" VerticalAlignment="Center">
+                                <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Выручка за месяц"/>
+                                <TextBox Style="{StaticResource Search}" Width="420" Height="50" HorizontalAlignment="Right"/>
+
+                            </DockPanel>
+                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                        
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <StackPanel Margin="0 0 40 0" Width="520">
+                <Border Style="{StaticResource PanelBorder}" Height="780" Margin="0 0 0 40">
+                    <StackPanel>
+                        <Grid Margin="0 -10 0 30" Height="80">
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Информация о сотруднике"/>
+                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Button Style="{DynamicResource ButtonOutPanel}" Content="Добавить сотрудника"/>
+            </StackPanel>
+            
+        </StackPanel>
+
+    </StackPanel>
 </UserControl>

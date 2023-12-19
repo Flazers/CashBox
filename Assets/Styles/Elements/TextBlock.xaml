@@ -22,4 +22,5 @@
     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock" x:Key="SmallText">
         <Setter Property="FontSize" Value="16"/>
     </Style>
+
 </ResourceDictionary>

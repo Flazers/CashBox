@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Media;
 
 namespace Cashbox.Core
 {
@@ -30,5 +31,8 @@ namespace Cashbox.Core
             if (!disposing || _Disposed) return;
             _Disposed = true;
         }
+
+        public virtual void Clear() { }
+        public virtual void OnLoad() { }
     }
 }

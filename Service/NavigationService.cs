@@ -22,7 +22,8 @@ namespace Cashbox.Service
         {
             ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
             CurrentView = viewModel;
+            CurrentView?.OnLoad();
+            CurrentView?.Clear();
         }
-
     }
 }

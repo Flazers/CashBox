@@ -1,4 +1,5 @@
 ﻿using Cashbox.MVVM.Models;
+using Cashbox.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,11 @@ namespace Cashbox.MVVM.ViewModels.Data
             _user = user;
             UserInfo = new UserInfoViewModel(user.UserInfo!);
         }
+
+        public static UserViewModel? GetCurrentUser() => User.CurrentUser;
+
+        public static void LogOut() => User.LogOut();
+        
 
         public static async Task<UserViewModel?> GetUserByLogPass(string login, string password) 
         { 

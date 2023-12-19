@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -88,7 +90,7 @@ namespace Cashbox.MVVM.ViewModels
             await Task.Delay(mainDelay);
 
             SetStatus("Проверка таблицы \"Roles\"", "loading", 2);
-            if (CashBoxDataContext.Context.Roles.Count() != 2)
+            if (CashBoxDataContext.Context.Roles.Count() != 3)
             {
                 SetStatus("Заполняю таблицу \"Roles\" ", "loading", 2);
                 await RoleViewModel.GetRoles();
@@ -123,7 +125,7 @@ namespace Cashbox.MVVM.ViewModels
             }
             await Task.Delay(mainDelay);
 
-            SetStatus("Загрузка базы данных в локальный кэш ", "loading", 6);
+            SetStatus("Загрузка базы данных в локальный кэш", "loading", 6);
             CashBoxDataContext.Context.Roles.Load();
             CashBoxDataContext.Context.UserInfos.Load();
             CashBoxDataContext.Context.Users.Load();
@@ -139,7 +141,20 @@ namespace Cashbox.MVVM.ViewModels
             CashBoxDataContext.Context.Tfadata.Load();
             await Task.Delay(mainDelay);
 
-            SetStatus("Запуск", "loading", 7);
+            try
+            {
+                SetStatus("Проверка интернет соединения", "loading", 7);
+                HttpClient client = new HttpClient();
+                HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show("Нет интернет соединения \nНекоторые функции могут быть недоступны", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                await Task.Delay(secondDelay);
+            }
+
+            await Task.Delay(mainDelay);
+            SetStatus("Запуск", "loading", 8);
             await Task.Delay(mainDelay);
 
             return true;
@@ -170,7 +185,7 @@ namespace Cashbox.MVVM.ViewModels
             Title = "Загрузка приложения";
             Task.Run(() =>
             {
-                if (!CheckApp(7).Result)
+                if (!CheckApp(8).Result)
                     return;
                 NavigationService = navService;
                 NavigationService.NavigateTo<AuthViewModel>();
