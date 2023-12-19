@@ -31,6 +31,7 @@ namespace Cashbox
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<LoadingViewModel>();
             services.AddSingleton<AuthViewModel>();
+            services.AddSingleton<TFAViewModel>();
             services.AddSingleton<INavigationService, NavigationService>();
 
             services.AddSingleton<AMainViewModel>();

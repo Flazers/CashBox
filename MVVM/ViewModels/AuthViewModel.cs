@@ -118,6 +118,14 @@ namespace Cashbox.MVVM.ViewModels
             }
         }
 
+        public RelayCommand CloseApplicationCommand { get; set; }
+        private bool CanCloseApplicationCommandExecute(object p) => true;
+        private void OnCloseApplicationCommandExecuted(object p)
+        {
+            Application.Current.Shutdown();
+        }
+
+
         public RelayCommand EnterPinCommand { get; set; }
         private bool CanEnterPinCommandExecute(object p) 
         {
@@ -173,7 +181,7 @@ namespace Cashbox.MVVM.ViewModels
             switch (user.UserInfo?.Role.Id)
             {
                 case 1:
-                    NavigationService?.NavigateTo<AMainViewModel>();
+                    NavigationService?.NavigateTo<TFAViewModel>();
                     break;
                 case 2:
                     NavigationService?.NavigateTo<AMainViewModel>();
@@ -220,6 +228,7 @@ namespace Cashbox.MVVM.ViewModels
             EnterPinCommand = new RelayCommand(OnEnterPinCommandExecuted, CanEnterPinCommandExecute);
             AuthByLogPassCommand = new RelayCommand(OnAuthByLogPassCommandExecuted, CanAuthByLogPassCommandExecute);
             AuthByPinCommand = new RelayCommand(OnAuthByPinCommandExecuted, CanAuthByPinCommandExecute);
+            CloseApplicationCommand = new RelayCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
         }
     }
 }
