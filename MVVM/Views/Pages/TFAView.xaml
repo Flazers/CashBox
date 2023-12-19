@@ -1,38 +1,24 @@
-﻿<UserControl x:Class="Cashbox.MVVM.Views.Pages.AuthView"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
-      xmlns:vm="clr-namespace:Cashbox.MVVM.ViewModels"
-      d:DataContext="{d:DesignInstance Type=vm:AuthViewModel}"
-      xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages" 
-      mc:Ignorable="d"
-      d:DesignHeight="1080" d:DesignWidth="1920">
+﻿<UserControl x:Class="Cashbox.MVVM.Views.Pages.TFAView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages"
+             mc:Ignorable="d" 
+             xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:viewmodels="clr-namespace:Cashbox.MVVM.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:TFAViewModel}"
+             d:DesignHeight="1080" d:DesignWidth="1920">
     <Grid>
-        <Border Style="{StaticResource MainBorder}" MaxWidth="1200" MaxHeight="800">
+        <Border Style="{StaticResource MainBorder}" Padding="40" MaxWidth="1200" MaxHeight="800">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="500"/>
+                    <ColumnDefinition Width="400"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Border CornerRadius="0 20 20 0" Grid.Column="1">
-                    <Border.Background>
-                        <ImageBrush ImageSource="/Assets/Image/Cat.png"/>
-                    </Border.Background>
-                </Border>
+                <Grid Grid.Column="0">
 
-                <Grid Margin="50 40" Grid.Column="0">
-
-                    <StackPanel VerticalAlignment="Top">
-                        <TextBlock Text="A5 Detailing" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 16"/>
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton Style="{DynamicResource AuthRB}" Command="{Binding SwipeAuthMethodVisibilityCommand}" IsChecked="{Binding IsAuthMethodPinEnabled}" Content="По пин-коду" Margin="0 0 20 0"/>
-                            <RadioButton Style="{DynamicResource AuthRB}" Command="{Binding SwipeAuthMethodVisibilityCommand}" IsChecked="{Binding IsAuthMethodLPEnabled}" Content="По логину"/>
-                        </StackPanel>
-                    </StackPanel>
-
+                    <TextBlock VerticalAlignment="Top" Text="A5 Detailing" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 16"/>
 
                     <StackPanel VerticalAlignment="Bottom" Visibility="{Binding AuthMethodPinVisibility}">
                         <TextBox Style="{StaticResource TbPlaceholderTag}" Margin="0 0 0 20" Text="{Binding StringPin}" IsReadOnly="True" MaxLength="6" FontSize="32" Height="90" FontWeight="Bold" HorizontalContentAlignment="Center" Tag="Пин-код"/>
@@ -53,17 +39,23 @@
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding AuthByPinCommand}" Margin="0 0 0 0" Width="120" Height="120" Content="ОК" FontSize="32"/>
                         </WrapPanel>
                     </StackPanel>
-
-                    <StackPanel VerticalAlignment="Center" Visibility="{Binding AuthMethodLPVisibility}">
-                        <TextBlock Text="Аутентификация" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 20"/>
-                        
-                        <TextBox Style="{DynamicResource AuthTB}" Text="{Binding Login}" Tag="логин"/>
-                        <TextBox Style="{DynamicResource AuthTB}" Margin="0 10 0 20" Text="{Binding Password}" Tag="пароль"/>
-                        
-                        <Button Style="{DynamicResource AuthBT}" Command="{Binding AuthByLogPassCommand}" Width="180" Height="60" FontSize="24" HorizontalAlignment="Left" Content="Войти"/>
-                    </StackPanel>
-
                 </Grid>
+
+                <DockPanel Grid.Column="1" Width="600" LastChildFill="True" HorizontalAlignment="Right">
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Двухфакторная аутентификация" TextAlignment="Center" TextWrapping="Wrap" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}"/>
+                        <TextBlock Margin="0 50 0 10" Text="Как использовать двухфакторную аутентификацию?" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}"/>
+                        <TextBlock Margin="10 0 0 5" Text="1. Скачайте приложение 'Google Authenticator'" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}"/>
+                        <TextBlock Margin="10 0 0 5" Text="2. В приложении отсканируйте QR-код" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}"/>
+                        <TextBlock Margin="10 0 0 5" Text="3. Введите код из приложения в поле 'Пин-код'" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}"/>
+                    </StackPanel>
+                    <Grid>
+                        <Border HorizontalAlignment="Center" Background="#fff" CornerRadius="5" Padding="20" VerticalAlignment="Center">
+                            <Image Source="{Binding s}"/>
+                        </Border>
+                    </Grid>
+                </DockPanel>
+                
             </Grid>
         </Border>
     </Grid>

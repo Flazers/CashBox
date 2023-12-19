@@ -17,7 +17,7 @@ namespace Cashbox.MVVM.ViewModels
 {
     public class LoadingViewModel : ViewModelBase
     {
-        #region Prop
+        #region Props
 
         private string _title = string.Empty;
         [Required(AllowEmptyStrings = false)]

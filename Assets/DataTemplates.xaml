@@ -13,6 +13,9 @@
     <DataTemplate DataType="{x:Type TypeName=viewModel:LoadingViewModel}">
         <view:LoadingView/>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModel:TFAViewModel}">
+        <view:TFAView/>
+    </DataTemplate>
     <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:AccountingViewModel}">
         <viewAdmin:AccountingView/>
     </DataTemplate>
