@@ -11,7 +11,19 @@ public partial class CashBoxDataContext : DbContext
     }
 
     private static CashBoxDataContext? _context;
-    public static CashBoxDataContext Context => _context ??= new CashBoxDataContext();
+
+    private static readonly object dataLock = new object();
+    
+    public static CashBoxDataContext Context 
+    {
+        get 
+        {
+            lock(dataLock)
+            {
+                return _context ??= new CashBoxDataContext();
+            }
+        }
+    }
 
     public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options)
         : base(options)
