@@ -1,5 +1,6 @@
 ﻿
 using Cashbox.Core;
+using System.Windows.Threading;
 
 namespace Cashbox.Service
 {
@@ -22,8 +23,8 @@ namespace Cashbox.Service
         {
             ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
             CurrentView = viewModel;
-            CurrentView?.OnLoad();
             CurrentView?.Clear();
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => { CurrentView?.OnLoad(); }));
         }
     }
 }

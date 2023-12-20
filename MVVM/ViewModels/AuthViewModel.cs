@@ -49,7 +49,6 @@ namespace Cashbox.MVVM.ViewModels
         #region UserData
 
         private string _login = string.Empty;
-        [Required(AllowEmptyStrings = false)]
         public string Login
         {
             get => _login;
@@ -57,7 +56,6 @@ namespace Cashbox.MVVM.ViewModels
         }
 
         private string _password = string.Empty;
-        [Required(AllowEmptyStrings = false)]
         public string Password
         {
             get => _password;
@@ -65,7 +63,6 @@ namespace Cashbox.MVVM.ViewModels
         }
 
         private int _pin;
-        [Required(AllowEmptyStrings = false)]
         public int Pin
         {
             get => _pin;
@@ -73,7 +70,6 @@ namespace Cashbox.MVVM.ViewModels
         }
 
         private string _stringPin = string.Empty;
-        [Required(AllowEmptyStrings = false)]
         public string StringPin
         {
             get => _stringPin;
@@ -87,7 +83,6 @@ namespace Cashbox.MVVM.ViewModels
         }
 
         private bool _tfa = false;
-        [Required(AllowEmptyStrings = false)]
         public bool TFA
         {
             get => _tfa;

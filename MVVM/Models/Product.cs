@@ -22,6 +22,7 @@ public partial class Product
     public double PurchaseСost { get; set; }
 
     public double SellCost { get; set; }
+    public bool isAvailable { get; set; }
 
     public virtual ProductCategory Category { get; set; } = null!;
 

@@ -17,10 +17,8 @@ namespace Cashbox.MVVM.ViewModels.Data
             Role = new RoleViewModel(userInfo.Role);
             SetFullName();
         }
-        public void SetFullName()
-        {
-            FullName = $"{_userInfo.Surname} {_userInfo.Name} {_userInfo.Patronymic}";
-        }
+
+        public void SetFullName() { FullName = $"{_userInfo.Surname} {_userInfo.Name} {_userInfo.Patronymic}"; }
 
         private string _fullName = string.Empty;
         public string FullName
