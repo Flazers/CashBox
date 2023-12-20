@@ -138,7 +138,6 @@ namespace Cashbox.MVVM.ViewModels
             CashBoxDataContext.Context.PaymentMethods.Load();
             CashBoxDataContext.Context.Refunds.Load();
             CashBoxDataContext.Context.Stocks.Load();
-            CashBoxDataContext.Context.Tfadata.Load();
             await Task.Delay(mainDelay);
 
             try

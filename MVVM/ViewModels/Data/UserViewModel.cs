@@ -1,4 +1,5 @@
-﻿using Cashbox.MVVM.Models;
+﻿using Cashbox.Core;
+using Cashbox.MVVM.Models;
 using Cashbox.Service;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class UserViewModel
+    public class UserViewModel : ViewModelBase
     {
         private readonly User _user;
         public UserViewModel(User user)
@@ -55,7 +56,5 @@ namespace Cashbox.MVVM.ViewModels.Data
         public virtual ICollection<DailyReport> DailyReports => _user.DailyReports;
 
         public virtual ICollection<Order> Orders => _user.Orders;
-
-        public virtual Tfadatum? Tfadatum => _user.Tfadatum; // может меняться
     }
 }

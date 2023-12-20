@@ -181,7 +181,7 @@ namespace Cashbox.MVVM.ViewModels
             switch (user.UserInfo?.Role.Id)
             {
                 case 1:
-                    NavigationService?.NavigateTo<TFAViewModel>();
+                    NavigationService?.NavigateTo<AMainViewModel>();
                     break;
                 case 2:
                     NavigationService?.NavigateTo<AMainViewModel>();

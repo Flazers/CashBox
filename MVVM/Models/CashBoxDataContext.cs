@@ -42,16 +42,14 @@ public partial class CashBoxDataContext : DbContext
 
     public virtual DbSet<Stock> Stocks { get; set; }
 
-    public virtual DbSet<Tfadatum> Tfadata { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserInfo> UserInfos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=C:\\Users\\nicho\\source\\repos\\Cash\\MVVM\\Models\\Data.db");
-        //optionsBuilder.UseSqlite("Data Source=C:\\Users\\Expert\\source\\repos\\Cach\\MVVM\\Models\\Data.db");
+        //optionsBuilder.UseSqlite("Data Source=C:\\Users\\nicho\\source\\repos\\Cash\\MVVM\\Models\\Data.db");
+        optionsBuilder.UseSqlite("Data Source=C:\\Users\\Expert\\source\\repos\\Cach\\MVVM\\Models\\Data.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -263,26 +261,6 @@ public partial class CashBoxDataContext : DbContext
                 .HasConstraintName("FK_Stock_Product");
         });
 
-        modelBuilder.Entity<Tfadatum>(entity =>
-        {
-            entity.HasKey(e => e.UserId);
-
-            entity.ToTable("TFAData");
-
-            entity.Property(e => e.UserId)
-                .ValueGeneratedNever()
-                .HasColumnName("user_id");
-            entity.Property(e => e.Code)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("code");
-
-            entity.HasOne(d => d.User).WithOne(p => p.Tfadatum)
-                .HasForeignKey<Tfadatum>(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TFAData_Users");
-        });
-
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
@@ -295,7 +273,6 @@ public partial class CashBoxDataContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("password");
             entity.Property(e => e.Pin).HasColumnName("pin");
-            entity.Property(e => e.Tfa).HasColumnName("TFA");
         });
 
         modelBuilder.Entity<UserInfo>(entity =>
