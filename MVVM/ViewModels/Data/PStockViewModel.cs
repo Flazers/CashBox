@@ -15,9 +15,9 @@ namespace Cashbox.MVVM.ViewModels.Data
             _stock = stock;
         }
 
-        public async Task<PStockViewModel?> GetProductStock(int product_id) => await Stock.GetProductAmount(product_id);
-        public async Task<PStockViewModel?> CreateProductStock(int product_id, int Amount) => await Stock.CreateProductStock(product_id,Amount);
-        public async Task<PStockViewModel?> UpdateProductStock(int product_id, int Amount) => await Stock.UpdateProductAmount(product_id, Amount);
+        public static async Task<PStockViewModel?> GetProductStock(int product_id) => await Stock.GetProductAmount(product_id);
+        public static async Task<PStockViewModel?> CreateProductStock(int product_id, int Amount) => await Stock.CreateProductStock(product_id,Amount);
+        public static async Task<PStockViewModel?> UpdateProductStock(int product_id, int Amount) => await Stock.UpdateProductAmount(product_id, Amount);
 
         public int ProductId => _stock.ProductId;
 

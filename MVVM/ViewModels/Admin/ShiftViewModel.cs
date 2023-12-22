@@ -1,4 +1,5 @@
 ﻿using Cashbox.Core;
+using Cashbox.MVVM.ViewModels.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
 {
     public class ShiftViewModel : ViewModelBase
     {
+        #region Props
+        private UserViewModel? _user;
+        public UserViewModel? User { get => _user = Models.User.CurrentUser; }
+        #endregion
     }
 }

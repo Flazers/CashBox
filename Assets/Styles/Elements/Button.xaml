@@ -208,9 +208,11 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource HoverB}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource PressedB}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource DisabledB}"/>
@@ -221,6 +223,32 @@
         </Setter>
     </Style>
 
+    <Style BasedOn="{StaticResource ButtonInPanelBase}" x:Key="ButtonInPanelWhite" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{StaticResource BasicW}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextB}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border" CornerRadius="5" Padding="10" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                        <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource HoverW}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource PressedW}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource DisabledW}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style BasedOn="{StaticResource ButtonInPanelBase}" x:Key="ButtonInPanelGreen" TargetType="{x:Type Button}">
         <Setter Property="Background" Value="{StaticResource BasicGreen}"/>
         <Setter Property="Template">
@@ -232,9 +260,11 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource HoverGreen}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource PressedGreen}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource DisabledGreen}"/>
@@ -255,9 +285,11 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource HoverRed}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource PressedRed}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource DisabledRed}"/>
@@ -278,9 +310,11 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource HoverGray}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource PressedGray}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Background" TargetName="border" Value="{StaticResource DisabledGray}"/>
@@ -291,6 +325,36 @@
         </Setter>
     </Style>
 
-
+    <Style x:Key="RemoveIconButton" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="{StaticResource BasicRed}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border" CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                        <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource HoverRed}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource PressedRed}"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{StaticResource DisabledRed}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

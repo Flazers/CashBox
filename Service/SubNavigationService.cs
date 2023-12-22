@@ -28,7 +28,7 @@ namespace Cashbox.Service
             ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
             CurrentView = viewModel;
             CurrentView?.Clear();
-            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => {CurrentView?.OnLoad(); }));
+            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => { CurrentView?.OnLoad(); }));
         }
     }
 }

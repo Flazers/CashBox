@@ -11,7 +11,7 @@ namespace Cashbox.MVVM.Models
     public partial class Product
     {
         private Product() { }
-        private static async Task<ProductViewModel?> NewProduct(string ArticulCode, string Title, string Description, byte[] Image, string Brand, int CategoryId, double PurchaseСost, double SellCost)
+        private static async Task<ProductViewModel?> NewProduct(string? ArticulCode, string Title, string Description, byte[]? Image, string Brand, int CategoryId, double PurchaseСost, double SellCost,int Amount)
         {
             try
             {
@@ -29,6 +29,7 @@ namespace Cashbox.MVVM.Models
                 };
                 CashBoxDataContext.Context.Products.Add(product);
                 await CashBoxDataContext.Context.SaveChangesAsync();
+                await PStockViewModel.CreateProductStock(product.Id, Amount);
                 return new ProductViewModel(product);
             }
             catch (Exception) { return null; }
@@ -68,7 +69,7 @@ namespace Cashbox.MVVM.Models
         }
 
         public static async Task<List<ProductViewModel>> GetProducts() => await CashBoxDataContext.Context.Products.Select(s => new ProductViewModel(s)).ToListAsync();
-        public static async Task<ProductViewModel?> CreateProducts(string ArticulCode, string Title, string Description, byte[] Image, string Brand, int CategoryId, double PurchaseСost, double SellCost) => await NewProduct(ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost);
+        public static async Task<ProductViewModel?> CreateProducts(string? ArticulCode, string Title, string Description, byte[]? Image, string Brand, int CategoryId, double PurchaseСost, double SellCost, int Amount) => await NewProduct(ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost, Amount);
         public static async Task<ProductViewModel?> UpdateProducts(int id, string ArticulCode, string Title, string Description, byte[] Image, string Brand, int CategoryId, double PurchaseСost, double SellCost) => await UpdateProduct(id, ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost);
         public static async Task<ProductViewModel?> AvailableProducts(int id, bool Available) => await AvailableProduct(id, Available);
     }
