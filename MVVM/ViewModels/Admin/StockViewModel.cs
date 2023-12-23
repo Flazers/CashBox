@@ -4,6 +4,7 @@ using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using Cashbox.MVVM.Views.Pages.Admin;
 using Cashbox.Service;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -44,6 +45,20 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get => _panelEditProductVisibility;
             set => Set(ref _panelEditProductVisibility, value);
+        }
+
+        private Visibility _panelContentProductCategoryVisibility = Visibility.Collapsed;
+        public Visibility PanelContentProductCategoryVisibility
+        {
+            get => _panelContentProductCategoryVisibility;
+            set => Set(ref _panelContentProductCategoryVisibility, value);
+        }
+
+        private Visibility _panelContentProductVisibility = Visibility.Collapsed;
+        public Visibility PanelContentProductVisibility
+        {
+            get => _panelContentProductVisibility;
+            set => Set(ref _panelContentProductVisibility, value);
         }
 
         #endregion
@@ -99,8 +114,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _brandProduct, value);
         }
 
-        private ProductCategoryViewModel _idCategoryProduct;
-        public ProductCategoryViewModel IdCategoryProduct
+        private ProductCategoryViewModel? _idCategoryProduct;
+        public ProductCategoryViewModel? IdCategoryProduct
         {
             get => _idCategoryProduct;
             set => Set(ref _idCategoryProduct, value);
@@ -146,13 +161,25 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private ObservableCollection<ProductViewModel> _collectionProducts = new(ProductViewModel.GetProducts().Result);
         public ObservableCollection<ProductViewModel> CollectionProducts
         {
-            get => _collectionProducts;
+            get 
+            {
+                PanelContentProductVisibility = Visibility.Collapsed;
+                if (_collectionProducts.Any())
+                    PanelContentProductVisibility = Visibility.Visible;
+                return _collectionProducts;
+            }
             set => Set(ref _collectionProducts, value);
         }
         private ObservableCollection<ProductCategoryViewModel> _collectionProductCategories = new(ProductCategoryViewModel.GetProductCategory().Result);
         public ObservableCollection<ProductCategoryViewModel> CollectionProductCategories
         {
-            get => _collectionProductCategories;
+            get
+            {
+                PanelContentProductCategoryVisibility = Visibility.Collapsed;
+                if (_collectionProductCategories.Any())
+                    PanelContentProductCategoryVisibility = Visibility.Visible;
+                return _collectionProductCategories;
+            }
             set => Set(ref _collectionProductCategories, value);
         }
 
@@ -175,14 +202,14 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     SellCostProduct = _selectedProduct.SellCost;
                     IdCategoryProduct = CollectionProductCategories.FirstOrDefault(x => x.Id == _selectedProduct.CategoryId)!;
                     AmountProduct = _selectedProduct.Stock!.Amount;
-                    IsAvailableProduct = _selectedProduct.isAvailable;
+                    IsAvailableProduct = _selectedProduct.IsAvailable;
                 }
                 OnPropertyChanged();
             }
         }
 
-        private ProductCategoryViewModel _selectedProductCategory;
-        public ProductCategoryViewModel SelectedProductCategory
+        private ProductCategoryViewModel? _selectedProductCategory;
+        public ProductCategoryViewModel? SelectedProductCategory
         {
             get => _selectedProductCategory;
             set
@@ -190,7 +217,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 _selectedProductCategory = value;
                 CollectionProducts = new(ProductViewModel.GetProducts().Result);
                 if (_selectedProductCategory != null)
-                    CollectionProducts = new(_collectionProducts.Where(x => x.CategoryId == SelectedProductCategory.Id).ToList());
+                    CollectionProducts = new(_collectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
                 OnPropertyChanged();
             }
         }
@@ -212,6 +239,24 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (data != null) CollectionProductCategories.Add(data);
         }
 
+        public RelayCommand RemoveCategoryCommand { get; set; }
+        private bool CanRemoveCategoryCommandExecute(object p) => true;
+        private async void OnRemoveCategoryCommandExecuted(object p)
+        {
+            string? nullCategory = ProductCategoryViewModel.GetProductCategory().Result.FirstOrDefault(x => x.Id == 1)?.Category;
+            if ((int)p <= 1)
+            {
+                MessageBox.Show("Нельзя удалить категорию по умолчанию");
+                return;
+            }
+            var data = await ProductCategoryViewModel.RemoveProductCategory((int)p);
+            if (data != null)
+            {
+                CollectionProductCategories = new(ProductCategoryViewModel.GetProductCategory().Result);
+                SelectedProductCategory = null;
+                MessageBox.Show("Категория удалена", "Успех");
+            }
+        }
 
         public RelayCommand OpenPanelProductCreateCommand { get; set; }
         private bool CanOpenPanelProductCreateCommandExecute(object p) => true;
@@ -251,25 +296,50 @@ namespace Cashbox.MVVM.ViewModels.Admin
             PanelEditProductVisibility = Visibility.Collapsed;
         }
 
+        #region ProductCommand
         public RelayCommand AddProductCommand { get; set; }
-        private bool CanAddProductCommandExecute(object p) => true;
+        private bool CanAddProductCommandExecute(object p)
+        {
+            if (string.IsNullOrEmpty(TitleProduct))
+                return false;
+            if (string.IsNullOrEmpty(DescriptionProduct))
+                return false;
+            if (string.IsNullOrEmpty(BrandProduct))
+                return false;
+            if (string.IsNullOrEmpty(IdCategoryProduct?.Category))
+                return false;
+            return true;
+        }
         private async void OnAddProductCommandExecuted(object p)
         {
-            var data = await ProductViewModel.CreateProduct(ArticulCodeProduct, TitleProduct, DescriptionProduct, ImageProduct, BrandProduct, IdCategoryProduct.Id, PurchaseСostProduct, SellCostProduct, AmountProduct);
+            var data = await ProductViewModel.CreateProduct(ArticulCodeProduct, TitleProduct, DescriptionProduct, ImageProduct, BrandProduct, IdCategoryProduct?.Id, PurchaseСostProduct, SellCostProduct, AmountProduct);
             if (data != null)
             {
                 CollectionProducts.Add(data);
+                if (CollectionProducts.Count == 1)
+                    PanelContentProductCategoryVisibility = Visibility.Visible;
                 SelectedProduct = data;
-                MessageBox.Show("Товар добавлен", "Успех");
                 OnClosePanelProductCommandExecuted(0);
+                MessageBox.Show("Товар добавлен", "Успех");
             }
         }
 
         public RelayCommand EditProductCommand { get; set; }
-        private bool CanEditProductCommandExecute(object p) => true;
+        private bool CanEditProductCommandExecute(object p)
+        {
+            if (string.IsNullOrEmpty(TitleProduct))
+                return false;
+            if (string.IsNullOrEmpty(DescriptionProduct))
+                return false;
+            if (string.IsNullOrEmpty(BrandProduct))
+                return false;
+            if (string.IsNullOrEmpty(IdCategoryProduct?.Category))
+                return false;
+            return true;
+        }
         private async void OnEditProductCommandExecuted(object p)
         {
-            var data = await ProductViewModel.UpdateProduct(IdProduct, ArticulCodeProduct, TitleProduct, DescriptionProduct, ImageProduct, BrandProduct, IdCategoryProduct.Id, PurchaseСostProduct, SellCostProduct, AmountProduct);
+            var data = await ProductViewModel.UpdateProduct(IdProduct, ArticulCodeProduct, TitleProduct, DescriptionProduct, ImageProduct, BrandProduct, IdCategoryProduct?.Id, PurchaseСostProduct, SellCostProduct, AmountProduct);
             if (data != null)
             {
                 CollectionProducts = new(ProductViewModel.GetProducts().Result);
@@ -292,6 +362,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 OnClosePanelProductCommandExecuted(0);
             }
         }
+        #endregion
 
         #endregion
 
@@ -299,6 +370,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public StockViewModel()
         {
             AddCategoryCommand = new RelayCommand(OnAddCategoryCommandExecuted, CanAddCategoryCommandExecute);
+            RemoveCategoryCommand = new RelayCommand(OnRemoveCategoryCommandExecuted, CanRemoveCategoryCommandExecute);
             AddProductCommand = new RelayCommand(OnAddProductCommandExecuted, CanAddProductCommandExecute);
             EditProductCommand = new RelayCommand(OnEditProductCommandExecuted, CanEditProductCommandExecute);
             RemoveProductCommand = new RelayCommand(OnRemoveProductCommandExecuted, CanRemoveProductCommandExecute);

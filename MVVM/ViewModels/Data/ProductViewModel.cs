@@ -18,8 +18,8 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public static async Task<List<ProductViewModel>> GetProducts() => await Product.GetProducts();
         public static async Task<List<ProductViewModel>> GetAllProducts() => await Product.GetAllProducts();
-        public static async Task<ProductViewModel?> CreateProduct(string? ArticulCode, string Title, string Description, byte[]? Image, string Brand, int CategoryId, double PurchaseСost, double SellCost, int Amount) => await Product.CreateProducts(ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost, Amount);
-        public static async Task<ProductViewModel?> UpdateProduct(int id, string? ArticulCode, string Title, string Description, byte[]? Image, string Brand, int CategoryId, double PurchaseСost, double SellCost, int Amount) => await Product.UpdateProducts(id, ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost, Amount);
+        public static async Task<ProductViewModel?> CreateProduct(string? ArticulCode, string Title, string Description, byte[]? Image, string Brand, int? CategoryId, double PurchaseСost, double SellCost, int Amount) => await Product.CreateProducts(ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost, Amount);
+        public static async Task<ProductViewModel?> UpdateProduct(int id, string? ArticulCode, string Title, string Description, byte[]? Image, string Brand, int? CategoryId, double PurchaseСost, double SellCost, int Amount) => await Product.UpdateProducts(id, ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost, Amount);
         public static async Task<ProductViewModel?> RemoveProduct(int id) => await Product.AvailableProducts(id, false);
         public static async Task<ProductViewModel?> UnRemoveProduct(int id) => await Product.AvailableProducts(id, true);
 
@@ -75,7 +75,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public int CategoryId
+        public int? CategoryId
         {
             get => _product.CategoryId;
             set
@@ -104,12 +104,12 @@ namespace Cashbox.MVVM.ViewModels.Data
                 OnPropertyChanged();
             }
         }
-        public bool isAvailable
+        public bool IsAvailable
         {
-            get => _product.isAvailable;
+            get => _product.IsAvailable;
             set
             {
-                _product.isAvailable = value;
+                _product.IsAvailable = value;
                 OnPropertyChanged();
             }
         }

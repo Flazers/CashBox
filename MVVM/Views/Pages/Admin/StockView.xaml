@@ -17,12 +17,12 @@
         <StackPanel Margin="0 40 0 0" Orientation="Horizontal">
             <StackPanel Margin="0 0 40 0" Width="480">
                 <Border Style="{StaticResource PanelBorder}" Height="580" Margin="0 0 0 40">
-                    <StackPanel>
-                        <Grid Margin="0 -10 0 30" Height="80">
+                    <DockPanel LastChildFill="True">
+                        <Grid DockPanel.Dock="Top" Margin="0 -10 0 30" Height="80">
                             <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Категории"/>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
-                        <ScrollViewer Height="450" Margin="10 0 10 10">
+                        <ScrollViewer DockPanel.Dock="Top" Visibility="{Binding PanelContentProductCategoryVisibility}" Height="450" Margin="10 0 10 10">
                             <ListBox ItemContainerStyle="{StaticResource LBItemContainerStyle}" SelectedItem="{Binding SelectedProductCategory}" Width="400" HorizontalAlignment="Left" 
                                      Background="Transparent" d:ItemsSource="{d:SampleData ItemCount=10}" ItemsSource="{Binding CollectionProductCategories}">
                                 <ItemsControl.ItemTemplate>
@@ -39,7 +39,7 @@
                                                         </TextBlock.Text>
                                                     </TextBlock>
                                                 </StackPanel>
-                                                <Button DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource RemoveIconButton}">
+                                                <Button DockPanel.Dock="Right" Command="{Binding RemoveCategoryCommand}" CommandParameter="{Binding Id}" HorizontalAlignment="Right" Style="{StaticResource RemoveIconButton}">
                                                     <Icon:PackIconMaterial Kind="TrashCan"/>
                                                 </Button>
                                             </DockPanel>
@@ -48,7 +48,8 @@
                                 </ItemsControl.ItemTemplate>
                             </ListBox>
                         </ScrollViewer>
-                    </StackPanel>
+                        <TextBlock Text="Категорий нет" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </DockPanel>
                 </Border>
                 <Border Style="{StaticResource PanelBorder}" Height="260">
                     <StackPanel>
@@ -74,10 +75,10 @@
                             </DockPanel>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
-                        <TextBlock DockPanel.Dock="Top" Text="{Binding CollectionProducts.Count, StringFormat='Всего товаров: \{0}'}" HorizontalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}" Margin="0 0 0 20"/>
+                        <TextBlock DockPanel.Dock="Top" Height="30" Visibility="{Binding PanelContentProductVisibility}" Text="{Binding CollectionProducts.Count, StringFormat='Всего товаров: \{0}'}" HorizontalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}" VerticalAlignment="Top" Margin="0 0 0 20"/>
                         <DockPanel Margin="10 0 10 10" LastChildFill="True">
                             <Button Style="{StaticResource ButtonInPanelGreen}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Content="Все категории"/>
-                            <ScrollViewer Margin="0 0 0 20">
+                            <ScrollViewer DockPanel.Dock="Top" Margin="0 0 0 20" Height="620" Visibility="{Binding PanelContentProductVisibility}">
                                 <ListBox ItemContainerStyle="{StaticResource LBItemContainerStyle}" Width="540" 
                                          ItemsSource="{Binding CollectionProducts}"
                                          SelectedItem="{Binding SelectedProduct}"
@@ -110,6 +111,7 @@
                                     </ItemsControl.ItemTemplate>
                                 </ListBox>
                             </ScrollViewer>
+                            <TextBlock Text="Товаров нет" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </DockPanel>
                     </DockPanel>
                 </Border>
