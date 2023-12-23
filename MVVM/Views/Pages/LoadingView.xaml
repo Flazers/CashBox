@@ -21,6 +21,7 @@
                     </Grid>
                     <TextBlock Foreground="{StaticResource TextW}" Text="{Binding ProgressLoadingAppText}" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="400" Style="{StaticResource RegularText}" HorizontalAlignment="Center"/>
                 </StackPanel>
+                <Button Style="{StaticResource ButtonInPanelWhite}" Visibility="{Binding ElementError}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding CloseApplicationCommand}"  Content="Закрыть приложение"/>
             </Grid>
         </Border>
     </Grid>

@@ -65,10 +65,7 @@ namespace Cashbox.MVVM.Models
                 userVM.SetUserInfo(userinfoVM);
                 return userVM;
             }
-            catch (Exception)
-            {
-                return null;
-            }
+            catch (Exception) { return null; }
         }
     }
 }

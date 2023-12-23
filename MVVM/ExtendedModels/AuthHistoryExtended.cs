@@ -17,35 +17,28 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<AuthHistoryViewModel?> NewAuthUser()
         {
-            DateTime dateTime = new DateTime();
+            DateTime dateTime = DateTime.Now;
             HttpClient client = new HttpClient();
             try
             {
                 HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
-                // не отвечает сервис
+
                 if (!response.IsSuccessStatusCode)
-                {
-                    dateTime = DateTime.Now;
                     return CreateNewAuthDataTime(dateTime) ? new AuthHistoryViewModel(CashBoxDataContext.Context.AuthHistories.FirstOrDefault(x => x.Datetime == dateTime)!) : null;
-                }
-                // доступен сервис
+
                 var resultJSON = JsonNode.Parse(await response.Content.ReadAsStringAsync());
                 string? dataSTR = resultJSON?["currentLocalTime"]?.ToString();
                 if (dataSTR != null)
-                {
                     dateTime = DateTime.Parse(dataSTR);
-                    return CreateNewAuthDataTime(dateTime) ? new AuthHistoryViewModel(CashBoxDataContext.Context.AuthHistories.FirstOrDefault(x => x.Datetime == dateTime)!) : null;
-                }
-                // dataSTR тупой return
-                return null;
             }
             catch (HttpRequestException)
             {
                 // нет интернета
-                dateTime = DateTime.Now;
                 return CreateNewAuthDataTime(dateTime) ? new AuthHistoryViewModel(CashBoxDataContext.Context.AuthHistories.FirstOrDefault(x => x.Datetime == dateTime)!) : null;
             }
+            return CreateNewAuthDataTime(dateTime) ? new AuthHistoryViewModel(CashBoxDataContext.Context.AuthHistories.FirstOrDefault(x => x.Datetime == dateTime)!) : null;
         }
+
         public static bool CreateNewAuthDataTime(DateTime dataTime)
         {
             UserViewModel user = UserViewModel.GetCurrentUser()!;

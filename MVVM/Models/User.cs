@@ -23,7 +23,5 @@ public partial class User
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
-    public virtual Tfadatum? Tfadatum { get; set; }
-
     public virtual UserInfo? UserInfo { get; set; }
 }

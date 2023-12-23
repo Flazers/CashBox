@@ -10,6 +10,7 @@
       mc:Ignorable="d"
       d:DesignHeight="1080" d:DesignWidth="1920">
     <Grid>
+        <Button Style="{StaticResource ButtonInPanelBase}" HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding CloseApplicationCommand}" Margin="20" Content="Закрыть приложение"/>
         <Border Style="{StaticResource MainBorder}" MaxWidth="1200" MaxHeight="800">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -46,19 +47,21 @@
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding EnterPinCommand}" CommandParameter="7" Margin="0 0 20 10" Width="120" Height="120" Content="7" FontSize="32"/>
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding EnterPinCommand}" CommandParameter="8" Margin="0 0 20 10" Width="120" Height="120" Content="8" FontSize="32"/>
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding EnterPinCommand}" CommandParameter="9" Margin="0 0 0 10" Width="120" Height="120" Content="9" FontSize="32"/>
-                            <Button Style="{DynamicResource AuthBT}" Command="{Binding ErasePinCommand}" Margin="0 0 20 0" Width="120" Height="120" Content="Стереть" FontSize="20"/>
+                            <Button Style="{DynamicResource AuthBT}" Command="{Binding ErasePinCommand}" Margin="0 0 20 0" Width="120" Height="120">
+                                <Icon:PackIconMaterial Kind="Backspace" Width="32" Height="32"/>
+                            </Button>
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding EnterPinCommand}" CommandParameter="0" Margin="0 0 20 0" Width="120" Height="120" Content="0" FontSize="32"/>
-                            <Button Style="{DynamicResource AuthBT}" Command="{Binding AuthByPinCommand}" Margin="0 0 0 0" Width="120" Height="120" Content="Войти" FontSize="20"/>
+                            <Button Style="{DynamicResource AuthBT}" Command="{Binding AuthByPinCommand}" Margin="0 0 0 0" Width="120" Height="120" Content="ОК" FontSize="32"/>
                         </WrapPanel>
                     </StackPanel>
 
                     <StackPanel VerticalAlignment="Center" Visibility="{Binding AuthMethodLPVisibility}">
                         <TextBlock Text="Аутентификация" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 20"/>
                         
-                        <TextBox Style="{DynamicResource AuthTB}" Text="{Binding Login}" Tag="логин"/>
-                        <TextBox Style="{DynamicResource AuthTB}" Margin="0 10 0 20" Text="{Binding Password}" Tag="пароль"/>
+                        <TextBox x:Name="login" KeyDown="login_KeyDown" Style="{DynamicResource AuthTB}" Text="{Binding Login}" Tag="логин"/>
+                        <TextBox x:Name="password" KeyDown="password_KeyDown" Style="{DynamicResource AuthTB}" Margin="0 10 0 20" Text="{Binding Password}" Tag="пароль"/>
                         
-                        <Button Style="{DynamicResource AuthBT}" Command="{Binding AuthByLogPassCommand}" Width="180" Height="60" FontSize="24" HorizontalAlignment="Left" Content="Войти"/>
+                        <Button x:Name="authBtn" Style="{DynamicResource AuthBT}" Command="{Binding AuthByLogPassCommand}" Width="180" Height="60" FontSize="24" HorizontalAlignment="Left" Content="Войти"/>
                     </StackPanel>
 
                 </Grid>

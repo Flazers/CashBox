@@ -1,4 +1,5 @@
 ﻿using Cashbox.Core;
+using Cashbox.Core.Commands;
 using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using Cashbox.Service;
@@ -17,7 +18,7 @@ namespace Cashbox.MVVM.ViewModels
 {
     public class LoadingViewModel : ViewModelBase
     {
-        #region Prop
+        #region Props
 
         private string _title = string.Empty;
         [Required(AllowEmptyStrings = false)]
@@ -108,7 +109,7 @@ namespace Cashbox.MVVM.ViewModels
             await Task.Delay(mainDelay);
 
             SetStatus("Проверка таблицы \"Users\"", "loading", 4);
-            if (CashBoxDataContext.Context.Users.Count() == 0)
+            if (!CashBoxDataContext.Context.Users.Any())
             {
                 SetStatus("Создаю пользователя по умолчанию", "loading", 4);
                 await UserViewModel.CreateUser("admin", "admin", 111111, false, "Name", "Surname", "Patronymic", "location", "phone", (await RoleViewModel.GetRoles())[0], true);
@@ -117,15 +118,24 @@ namespace Cashbox.MVVM.ViewModels
             }
             await Task.Delay(mainDelay);
 
-            SetStatus("Проверка таблицы \"UserInfo\"", "loading", 5);
-            if (CashBoxDataContext.Context.UserInfos.Count() == 0)
+            SetStatus("Проверка таблицы \"ProductCategory\"", "loading", 5);
+            if (!CashBoxDataContext.Context.ProductCategories.Any())
+            {
+                SetStatus("Создаю категорию по умолчанию", "loading", 5);
+                await ProductCategoryViewModel.CreateProductCategory("Нет категории");
+                await Task.Delay(secondDelay);
+            }
+            await Task.Delay(mainDelay);
+
+            SetStatus("Проверка таблицы \"UserInfo\"", "loading", 6);
+            if (!CashBoxDataContext.Context.UserInfos.Any())
             {
                 SetStatus("Некорректно заполнена таблица \"UserInfo\" ", "error");
                 return false;
             }
             await Task.Delay(mainDelay);
 
-            SetStatus("Загрузка базы данных в локальный кэш", "loading", 6);
+            SetStatus("Загрузка базы данных в локальный кэш", "loading", 7);
             CashBoxDataContext.Context.Roles.Load();
             CashBoxDataContext.Context.UserInfos.Load();
             CashBoxDataContext.Context.Users.Load();
@@ -138,12 +148,11 @@ namespace Cashbox.MVVM.ViewModels
             CashBoxDataContext.Context.PaymentMethods.Load();
             CashBoxDataContext.Context.Refunds.Load();
             CashBoxDataContext.Context.Stocks.Load();
-            CashBoxDataContext.Context.Tfadata.Load();
             await Task.Delay(mainDelay);
 
             try
             {
-                SetStatus("Проверка интернет соединения", "loading", 7);
+                SetStatus("Проверка интернет соединения", "loading", 8);
                 HttpClient client = new HttpClient();
                 HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
             }
@@ -154,7 +163,7 @@ namespace Cashbox.MVVM.ViewModels
             }
 
             await Task.Delay(mainDelay);
-            SetStatus("Запуск", "loading", 8);
+            SetStatus("Запуск", "loading", 9);
             await Task.Delay(mainDelay);
 
             return true;
@@ -179,16 +188,35 @@ namespace Cashbox.MVVM.ViewModels
         }
         #endregion
 
+        #region Commands
+        public RelayCommand CloseApplicationCommand { get; set; }
+        private bool CanCloseApplicationCommandExecute(object p) => true;
+        private void OnCloseApplicationCommandExecuted(object p)
+        {
+            Application.Current.Shutdown();
+        }
+
+        #endregion
+
 
         public LoadingViewModel(INavigationService navService)
         {
+            CloseApplicationCommand = new RelayCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
             Title = "Загрузка приложения";
             Task.Run(() =>
             {
-                if (!CheckApp(8).Result)
+                try
+                {
+                    if (!CheckApp(9).Result)
+                        return;
+                    NavigationService = navService;
+                    NavigationService.NavigateTo<AuthViewModel>();
+                }
+                catch (AggregateException)
+                {
+                    SetStatus("База данных не найдена", "error");
                     return;
-                NavigationService = navService;
-                NavigationService.NavigateTo<AuthViewModel>();
+                }
             });
         }
     }

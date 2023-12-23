@@ -16,11 +16,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
     {
 
         #region Props
-
-        private readonly UserViewModel? _user;
-        public UserViewModel? User { 
-            get => _user;
-        }
+        private UserViewModel? _user;
+        public UserViewModel? User { get => _user = Models.User.CurrentUser; }
 
         private List<AuthHistoryViewModel>? _authHistory;
         public List<AuthHistoryViewModel>? AuthHistory
@@ -42,7 +39,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public HomeViewModel()
         {
-            _user = Models.User.CurrentUser;
+
         }
     }
 }

@@ -25,10 +25,8 @@ namespace Cashbox.MVVM.Models
                 CashBoxDataContext.Context.Roles.AddRange(roles);
                 await CashBoxDataContext.Context.SaveChangesAsync();
             }
-            catch (Exception)
-            {
-                return new List<RoleViewModel>();
-            }
+            catch (Exception) { return new List<RoleViewModel>(); }
+
             return roles.Select(s => new RoleViewModel(s)).ToList();
         }
 
