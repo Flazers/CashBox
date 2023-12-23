@@ -195,7 +195,9 @@
                                                 Height="{Binding ActualHeight, ElementName=dropDownBorder}"
                                                 Width="{Binding ActualWidth, ElementName=dropDownBorder}"/>
                                     </Canvas>
-                                    <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    <ItemsPresenter x:Name="ItemsPresenter" 
+                                                    KeyboardNavigation.DirectionalNavigation="Contained" 
+                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                                 </Grid>
                             </ScrollViewer>
                         </Border>
@@ -322,11 +324,12 @@
         <Setter Property="Foreground" Value="{StaticResource TextB}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
         <Setter Property="Height" Value="70"/>
         <Setter Property="FontFamily" Value="Montserrat"/>
         <Setter Property="FontSize" Value="20"/>
-        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Padding" Value="10 5"/>
         <Setter Property="ItemContainerStyle" Value="{DynamicResource InputCBItemContainerStyle}"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontStretch" Value="Medium"/>

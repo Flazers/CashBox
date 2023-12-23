@@ -35,11 +35,11 @@ namespace Cashbox.MVVM.Models
             catch (Exception) { return null; }
         }
 
-        private static async Task<ProductViewModel?> UpdateProduct(int id, string ArticulCode, string Title, string Description, byte[] Image, string Brand, int CategoryId, double PurchaseСost, double SellCost)
+        private static async Task<ProductViewModel?> UpdateProduct(int id,string? ArticulCode, string Title, string Description, byte[]? Image, string Brand, int CategoryId, double PurchaseСost, double SellCost, int Amount)
         {
             try
             {
-                Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == id);
+                Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == id); //CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == itemProduct.Id);
                 if (product == null) return null;
                 product.ArticulCode = ArticulCode;
                 product.Title = Title;
@@ -49,6 +49,7 @@ namespace Cashbox.MVVM.Models
                 product.CategoryId = CategoryId;
                 product.PurchaseСost = PurchaseСost;
                 product.SellCost = SellCost;
+                product.Stock.Amount = Amount;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new ProductViewModel(product);
             }
@@ -68,9 +69,10 @@ namespace Cashbox.MVVM.Models
             catch (Exception) { return null; }
         }
 
-        public static async Task<List<ProductViewModel>> GetProducts() => await CashBoxDataContext.Context.Products.Select(s => new ProductViewModel(s)).ToListAsync();
+        public static async Task<List<ProductViewModel>> GetProducts() => await CashBoxDataContext.Context.Products.Where(x => x.isAvailable == true).Select(s => new ProductViewModel(s)).ToListAsync();
+        public static async Task<List<ProductViewModel>> GetAllProducts() => await CashBoxDataContext.Context.Products.Select(s => new ProductViewModel(s)).ToListAsync();
         public static async Task<ProductViewModel?> CreateProducts(string? ArticulCode, string Title, string Description, byte[]? Image, string Brand, int CategoryId, double PurchaseСost, double SellCost, int Amount) => await NewProduct(ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost, Amount);
-        public static async Task<ProductViewModel?> UpdateProducts(int id, string ArticulCode, string Title, string Description, byte[] Image, string Brand, int CategoryId, double PurchaseСost, double SellCost) => await UpdateProduct(id, ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost);
+        public static async Task<ProductViewModel?> UpdateProducts(int id, string? ArticulCode, string Title, string Description, byte[]? Image, string Brand, int CategoryId, double PurchaseСost, double SellCost, int Amount) => await UpdateProduct(id, ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost, Amount);
         public static async Task<ProductViewModel?> AvailableProducts(int id, bool Available) => await AvailableProduct(id, Available);
     }
 }
