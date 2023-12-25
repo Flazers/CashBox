@@ -33,7 +33,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _panelCreateProductVisibility, value);
         }
 
-        private Visibility _panelCurrentProductVisibility = Visibility.Visible;
+        private Visibility _panelCurrentProductVisibility = Visibility.Collapsed;
         public Visibility PanelCurrentProductVisibility
         {
             get => _panelCurrentProductVisibility;
@@ -154,7 +154,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private ObservableCollection<ProductViewModel> _collectionProducts = new(ProductViewModel.GetProducts().Result);
         public ObservableCollection<ProductViewModel> CollectionProducts
         {
-            get 
+            get
             {
                 PanelContentProductVisibility = Visibility.Collapsed;
                 if (_collectionProducts.Any())
@@ -176,11 +176,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
             get => _selectedProduct;
             set
             {
-                _selectedProduct = value;
-                if (_selectedProduct != null && PanelEditProductVisibility != Visibility.Visible && PanelCreateProductVisibility != Visibility.Visible)
-                {
+                if (PanelEditProductVisibility == Visibility.Collapsed && PanelCreateProductVisibility == Visibility.Collapsed)
+                    _selectedProduct = value;
+                PanelCurrentProductVisibility = Visibility.Visible;
+                if (_selectedProduct != null)
                     IdCategoryProduct = CollectionProductCategories.FirstOrDefault(x => x.Id == _selectedProduct?.CategoryId)!;
-                }
+                else
+                    PanelCurrentProductVisibility = Visibility.Collapsed;
                 OnPropertyChanged();
             }
         }
@@ -226,13 +228,21 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 MessageBox.Show("Нельзя удалить категорию по умолчанию");
                 return;
             }
+            MessageBoxResult res = 
+                MessageBox.Show($"В категории \"{ProductCategoryViewModel.GetProductCategory().Result
+                .FirstOrDefault(x => x.Id == (int)p)?.Category}\" присутствуют продукты, при удалении они будут перемещены в категорию \"Нет категории\", вы согласны?", "Предупреждение", 
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (res == MessageBoxResult.No)
+                return;
             var data = await ProductCategoryViewModel.RemoveProductCategory((int)p);
             if (data != null)
             {
-                CollectionProductCategories = new(ProductCategoryViewModel.GetProductCategory().Result);
                 SelectedProductCategory = null;
+                CollectionProductCategories = new(ProductCategoryViewModel.GetProductCategory().Result);
                 MessageBox.Show("Категория удалена", "Успех");
             }
+
         }
         public RelayCommand GetAllProductCommand { get; set; }
         private bool CanGetAllProductCommandExecute(object p) => true;
@@ -312,7 +322,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
         private async void OnEditProductCommandExecuted(object p)
         {
-            var data = await ProductViewModel.UpdateProduct(SelectedProduct.Id, SelectedProduct.ArticulCode, SelectedProduct.Title, SelectedProduct.Description, SelectedProduct.Image, SelectedProduct.Brand, SelectedProduct.CategoryId, SelectedProduct.PurchaseСost, SelectedProduct.SellCost, SelectedProduct.Stock.Amount);
+            var data = await ProductViewModel.UpdateProduct(SelectedProduct.Id, SelectedProduct.ArticulCode, SelectedProduct.Title, SelectedProduct.Description, SelectedProduct.Image, SelectedProduct.Brand, IdCategoryProduct.Id, SelectedProduct.PurchaseСost, SelectedProduct.SellCost, SelectedProduct.Stock.Amount);
             if (data != null)
             {
                 SelectedProduct = data;
