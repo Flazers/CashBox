@@ -47,13 +47,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _panelEditProductVisibility, value);
         }
 
-        private Visibility _panelContentProductCategoryVisibility = Visibility.Collapsed;
-        public Visibility PanelContentProductCategoryVisibility
-        {
-            get => _panelContentProductCategoryVisibility;
-            set => Set(ref _panelContentProductCategoryVisibility, value);
-        }
-
         private Visibility _panelContentProductVisibility = Visibility.Collapsed;
         public Visibility PanelContentProductVisibility
         {
@@ -173,13 +166,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private ObservableCollection<ProductCategoryViewModel> _collectionProductCategories = new(ProductCategoryViewModel.GetProductCategory().Result);
         public ObservableCollection<ProductCategoryViewModel> CollectionProductCategories
         {
-            get
-            {
-                PanelContentProductCategoryVisibility = Visibility.Collapsed;
-                if (_collectionProductCategories.Any())
-                    PanelContentProductCategoryVisibility = Visibility.Visible;
-                return _collectionProductCategories;
-            }
+            get => _collectionProductCategories;
             set => Set(ref _collectionProductCategories, value);
         }
 
@@ -192,17 +179,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 _selectedProduct = value;
                 if (_selectedProduct != null && PanelEditProductVisibility != Visibility.Visible && PanelCreateProductVisibility != Visibility.Visible)
                 {
-                    IdProduct = _selectedProduct.Id;
-                    ArticulCodeProduct = _selectedProduct.ArticulCode;
-                    BrandProduct = _selectedProduct.Brand;
-                    TitleProduct = _selectedProduct.Title;
-                    DescriptionProduct = _selectedProduct.Description;
-                    ImageProduct = _selectedProduct.Image;
-                    PurchaseСostProduct = _selectedProduct.PurchaseСost;
-                    SellCostProduct = _selectedProduct.SellCost;
-                    IdCategoryProduct = CollectionProductCategories.FirstOrDefault(x => x.Id == _selectedProduct.CategoryId)!;
-                    AmountProduct = _selectedProduct.Stock!.Amount;
-                    IsAvailableProduct = _selectedProduct.IsAvailable;
+                    IdCategoryProduct = CollectionProductCategories.FirstOrDefault(x => x.Id == _selectedProduct?.CategoryId)!;
                 }
                 OnPropertyChanged();
             }
@@ -257,6 +234,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 MessageBox.Show("Категория удалена", "Успех");
             }
         }
+        public RelayCommand GetAllProductCommand { get; set; }
+        private bool CanGetAllProductCommandExecute(object p) => true;
+        private void OnGetAllProductCommandExecuted(object p)
+        {
+            SelectedProductCategory = null;
+        }
 
         public RelayCommand OpenPanelProductCreateCommand { get; set; }
         private bool CanOpenPanelProductCreateCommandExecute(object p) => true;
@@ -310,14 +293,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 return false;
             return true;
         }
+
         private async void OnAddProductCommandExecuted(object p)
         {
             var data = await ProductViewModel.CreateProduct(ArticulCodeProduct, TitleProduct, DescriptionProduct, ImageProduct, BrandProduct, IdCategoryProduct?.Id, PurchaseСostProduct, SellCostProduct, AmountProduct);
             if (data != null)
             {
-                CollectionProducts.Add(data);
-                if (CollectionProducts.Count == 1)
-                    PanelContentProductCategoryVisibility = Visibility.Visible;
                 SelectedProduct = data;
                 OnClosePanelProductCommandExecuted(0);
                 MessageBox.Show("Товар добавлен", "Успех");
@@ -327,22 +308,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public RelayCommand EditProductCommand { get; set; }
         private bool CanEditProductCommandExecute(object p)
         {
-            if (string.IsNullOrEmpty(TitleProduct))
-                return false;
-            if (string.IsNullOrEmpty(DescriptionProduct))
-                return false;
-            if (string.IsNullOrEmpty(BrandProduct))
-                return false;
-            if (string.IsNullOrEmpty(IdCategoryProduct?.Category))
-                return false;
             return true;
         }
         private async void OnEditProductCommandExecuted(object p)
         {
-            var data = await ProductViewModel.UpdateProduct(IdProduct, ArticulCodeProduct, TitleProduct, DescriptionProduct, ImageProduct, BrandProduct, IdCategoryProduct?.Id, PurchaseСostProduct, SellCostProduct, AmountProduct);
+            var data = await ProductViewModel.UpdateProduct(SelectedProduct.Id, SelectedProduct.ArticulCode, SelectedProduct.Title, SelectedProduct.Description, SelectedProduct.Image, SelectedProduct.Brand, SelectedProduct.CategoryId, SelectedProduct.PurchaseСost, SelectedProduct.SellCost, SelectedProduct.Stock.Amount);
             if (data != null)
             {
-                CollectionProducts = new(ProductViewModel.GetProducts().Result);
                 SelectedProduct = data;
                 MessageBox.Show("Товар обновлен", "Успех");
                 OnClosePanelProductCommandExecuted(0);
@@ -356,7 +328,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             var data = await ProductViewModel.RemoveProduct(IdProduct);
             if (data != null)
             {
-                CollectionProducts = new(ProductViewModel.GetProducts().Result);
                 SelectedProduct = null;
                 MessageBox.Show("Товар удален", "Успех");
                 OnClosePanelProductCommandExecuted(0);
@@ -377,6 +348,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             OpenPanelProductCreateCommand = new RelayCommand(OnOpenPanelProductCreateCommandExecuted, CanOpenPanelProductCreateCommandExecute);
             OpenPanelProductEditCommand = new RelayCommand(OnOpenPanelProductEditCommandExecuted, CanOpenPanelProductEditCommandExecute);
             ClosePanelProductCommand = new RelayCommand(OnClosePanelProductCommandExecuted, CanClosePanelProductCommandExecute);
+            GetAllProductCommand = new RelayCommand(OnGetAllProductCommandExecuted, CanGetAllProductCommandExecute);
         }
     }
 }

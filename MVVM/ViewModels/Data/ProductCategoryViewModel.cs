@@ -1,4 +1,5 @@
-﻿using Cashbox.MVVM.Models;
+﻿using Cashbox.Core;
+using Cashbox.MVVM.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Windows.Controls;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class ProductCategoryViewModel
+    public class ProductCategoryViewModel : ViewModelBase
     {
         private readonly ProductCategory _productCategory;
         public ProductCategoryViewModel(ProductCategory productCategory)
@@ -24,7 +25,5 @@ namespace Cashbox.MVVM.ViewModels.Data
         public int Id => _productCategory.Id;
 
         public string Category => _productCategory.Category;
-
-        public int ProductsInCategory => _productCategory.Products.Count();
     }
 }

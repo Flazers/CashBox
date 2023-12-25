@@ -30,16 +30,9 @@
                                         <Border CornerRadius="5" Width="400" Background="{StaticResource PanelW}" Padding="10" Margin="0 0 0 10">
                                             <DockPanel>
                                                 <StackPanel DockPanel.Dock="Left" Width="360" Orientation="Horizontal">
-                                                    <TextBlock Width="360" Style="{StaticResource SmallText}" TextWrapping="Wrap">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding StringFormat='{}{0} ед. товаров в "{1}"'>
-                                                                <Binding Path="ProductsInCategory"/>
-                                                                <Binding Path="Category"/>
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
+                                                    <TextBlock Width="360" Style="{StaticResource SmallText}" TextWrapping="Wrap" Text="{Binding Category}"/>
                                                 </StackPanel>
-                                                <Button DockPanel.Dock="Right" Command="{Binding RemoveCategoryCommand}" CommandParameter="{Binding Id}" HorizontalAlignment="Right" Style="{StaticResource RemoveIconButton}">
+                                                <Button DockPanel.Dock="Right" Command="{Binding DataContext.RemoveCategoryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" CommandParameter="{Binding Id}" HorizontalAlignment="Right" Style="{StaticResource RemoveIconButton}">
                                                     <Icon:PackIconMaterial Kind="TrashCan"/>
                                                 </Button>
                                             </DockPanel>
@@ -77,7 +70,7 @@
                         </Grid>
                         <TextBlock DockPanel.Dock="Top" Height="30" Visibility="{Binding PanelContentProductVisibility}" Text="{Binding CollectionProducts.Count, StringFormat='Всего товаров: \{0}'}" HorizontalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}" VerticalAlignment="Top" Margin="0 0 0 20"/>
                         <DockPanel Margin="10 0 10 10" LastChildFill="True">
-                            <Button Style="{StaticResource ButtonInPanelGreen}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Content="Все категории"/>
+                            <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding GetAllProductCommand}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Content="Все категории"/>
                             <ScrollViewer DockPanel.Dock="Top" Margin="0 0 0 20" Height="620" Visibility="{Binding PanelContentProductVisibility}">
                                 <ListBox ItemContainerStyle="{StaticResource LBItemContainerStyle}" Width="540" 
                                          ItemsSource="{Binding CollectionProducts}"
@@ -181,14 +174,14 @@
                                         <TextBlock Text="Цена на продажу:" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Grid.Row="8" Grid.Column="0" Foreground="{StaticResource TextW}"/>
                                         <TextBlock Text="В наличии:" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Grid.Row="9" Grid.Column="0" Foreground="{StaticResource TextW}"/>
 
-                                        <TextBlock Text="{Binding ArticulCodeProduct}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="0" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding BrandProduct}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="1" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding TitleProduct}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="2" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding DescriptionProduct}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="3" Grid.Column="1" Foreground="{StaticResource TextW}"/>
+                                        <TextBlock Text="{Binding SelectedProduct.ArticulCode}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="0" Grid.Column="1" Foreground="{StaticResource TextW}"/>
+                                        <TextBlock Text="{Binding SelectedProduct.Brand}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="1" Grid.Column="1" Foreground="{StaticResource TextW}"/>
+                                        <TextBlock Text="{Binding SelectedProduct.Title}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="2" Grid.Column="1" Foreground="{StaticResource TextW}"/>
+                                        <TextBlock Text="{Binding SelectedProduct.Description}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="3" Grid.Column="1" Foreground="{StaticResource TextW}"/>
                                         <TextBlock Text="{Binding IdCategoryProduct.Category}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="4" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding PurchaseСostProduct, StringFormat='{}{0} ₽'}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="7" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding SellCostProduct, StringFormat='{}{0} ₽'}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="8" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding AmountProduct, StringFormat='{}{0} шт.'}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="9" Grid.Column="1" Foreground="{StaticResource TextW}"/>
+                                        <TextBlock Text="{Binding SelectedProduct.PurchaseСost, StringFormat='{}{0} ₽'}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="7" Grid.Column="1" Foreground="{StaticResource TextW}"/>
+                                        <TextBlock Text="{Binding SelectedProduct.SellCost, StringFormat='{}{0} ₽'}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="8" Grid.Column="1" Foreground="{StaticResource TextW}"/>
+                                        <TextBlock Text="{Binding SelectedProduct.Stock.Amount, StringFormat='{}{0} шт.'}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="9" Grid.Column="1" Foreground="{StaticResource TextW}"/>
                                     </Grid>
                                 </StackPanel>
                                 <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
@@ -209,15 +202,16 @@
                         </Grid>
                         <ScrollViewer Height="650" Margin="10 0">
                             <StackPanel Margin="0 0 20 0">
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding ArticulCodeProduct}" Tag="Артикул" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding BrandProduct}" Tag="Марка*" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding TitleProduct}" Tag="Наименование*" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding DescriptionProduct}" Tag="Описание*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.ArticulCode}" Tag="Артикул" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Brand}" Tag="Марка*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Title}" Tag="Наименование*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Description}" Tag="Описание*" Margin="0 0 0 20"/>
                                 <Button Style="{StaticResource ButtonInPanelWhite}" Content="{Binding ImageStringProduct}" Margin="0 0 0 20"/>
-                                <ComboBox Tag="Категория*" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionProductCategories}" DisplayMemberPath="Category" SelectedValuePath="Category" SelectedItem="{Binding IdCategoryProduct, Mode=TwoWay}" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding PurchaseСostProduct}" Tag="Цена закупки*" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SellCostProduct}" Tag="Цена продажи*" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding AmountProduct}" Tag="Колличество товара*"/>
+                                <ComboBox Tag="Категория*" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionProductCategories}" DisplayMemberPath="Category" 
+                                          SelectedValuePath="Category" SelectedItem="{Binding IdCategoryProduct}" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.PurchaseСost}" Tag="Цена закупки*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.SellCost}" Tag="Цена продажи*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Stock.Amount}" Tag="Колличество товара*"/>
                             </StackPanel>
                         </ScrollViewer>
                         <StackPanel Orientation="Horizontal" Margin="10 40 10 0">
