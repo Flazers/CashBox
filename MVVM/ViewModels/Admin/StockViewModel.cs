@@ -5,15 +5,21 @@ using Cashbox.MVVM.ViewModels.Data;
 using Cashbox.MVVM.Views.Pages.Admin;
 using Cashbox.Service;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace Cashbox.MVVM.ViewModels.Admin
 {
@@ -25,6 +31,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public UserViewModel? User { get => _user = Models.User.CurrentUser; }
 
         #region VisibilityPanel
+
+        private Visibility _panelMainProductVisibility = Visibility.Visible;
+        public Visibility PanelMainProductVisibility
+        {
+            get => _panelMainProductVisibility;
+            set => Set(ref _panelMainProductVisibility, value);
+        }
 
         private Visibility _panelCreateProductVisibility = Visibility.Collapsed;
         public Visibility PanelCreateProductVisibility
@@ -54,9 +67,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _panelContentProductVisibility, value);
         }
 
-        #endregion
 
-        #region ProductData
+        #endregion
 
         private string _newCategoryTitle = string.Empty;
         public string NewCategoryTitle
@@ -65,88 +77,84 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _newCategoryTitle, value);
         }
 
-        private Product _product;
-        public Product Product
+        #region ProductData
+
+        private string? _articulCode;
+        public string? ArticulCode
         {
-            get => _product;
-            set => Set(ref _product, value);
+            get => _articulCode;
+            set => Set(ref _articulCode, value);
         }
 
-        private int _idProduct;
-        public int IdProduct
+        private string _title;
+        public string Title
         {
-            get => _idProduct;
-            set => Set(ref _idProduct, value);
+            get => _title;
+            set => Set(ref _title, value);
         }
 
-        private string? _articulCodeProduct = string.Empty;
-        public string? ArticulCodeProduct
+        private string _description;
+        public string Description
         {
-            get => _articulCodeProduct;
-            set => Set(ref _articulCodeProduct, value);
+            get => _description;
+            set => Set(ref _description, value);
         }
 
-        private string _titleProduct = string.Empty;
-        public string TitleProduct
+        private byte[] _image;
+        public byte[] Image
         {
-            get => _titleProduct;
-            set => Set(ref _titleProduct, value);
+            get => _image;
+            set => Set(ref _image, value);
         }
 
-        private string _descriptionProduct = string.Empty;
-        public string DescriptionProduct
-        {
-            get => _descriptionProduct;
-            set => Set(ref _descriptionProduct, value);
-        }
-
-        private byte[]? _imageProduct;
-        public byte[]? ImageProduct
+        private byte[] _imageProduct;
+        public byte[] ImageProduct
         {
             get => _imageProduct;
             set => Set(ref _imageProduct, value);
         }
 
-        private string _brandProduct = string.Empty;
-        public string BrandProduct
+        private string _brand;
+        public string Brand
         {
-            get => _brandProduct;
-            set => Set(ref _brandProduct, value);
+            get => _brand;
+            set => Set(ref _brand, value);
         }
 
-        private ProductCategoryViewModel? _idCategoryProduct;
-        public ProductCategoryViewModel? IdCategoryProduct
+        private ProductCategoryViewModel _category;
+        public ProductCategoryViewModel Category
         {
-            get => _idCategoryProduct;
-            set => Set(ref _idCategoryProduct, value);
+            get => _category;
+            set => Set(ref _category, value);
         }
 
-        private double _purchaseСostProduct;
-        public double PurchaseСostProduct
+        private double _purchaseСost;
+        public double PurchaseСost
         {
-            get => _purchaseСostProduct;
-            set => Set(ref _purchaseСostProduct, value);
+            get => _purchaseСost;
+            set => Set(ref _purchaseСost, value);
         }
 
-        private double _sellCostProduct;
-        public double SellCostProduct
+        private double _sellCost;
+        public double SellCost
         {
-            get => _sellCostProduct;
-            set => Set(ref _sellCostProduct, value);
+            get => _sellCost;
+            set => Set(ref _sellCost, value);
         }
 
-        private bool _isAvailableProduct;
-        public bool IsAvailableProduct
+        private int _amount;
+        public int Amount
         {
-            get => _isAvailableProduct;
-            set => Set(ref _isAvailableProduct, value);
+            get => _amount;
+            set => Set(ref _amount, value);
         }
 
-        private int _amountProduct = 1;
-        public int AmountProduct
+
+        private bool _isAvailable;
+        public bool IsAvailable
         {
-            get => _amountProduct;
-            set => Set(ref _amountProduct, value);
+            get => _isAvailable;
+            set => Set(ref _isAvailable, value);
         }
 
         #endregion
@@ -187,7 +195,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     _selectedProduct = value;
                 PanelCurrentProductVisibility = Visibility.Visible;
                 if (_selectedProduct != null)
-                    IdCategoryProduct = CollectionProductCategories.FirstOrDefault(x => x.Id == _selectedProduct?.CategoryId)!;
+                    PanelCurrentProductVisibility = Visibility.Visible;
                 else
                     PanelCurrentProductVisibility = Visibility.Collapsed;
                 OnPropertyChanged();
@@ -229,15 +237,14 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanRemoveCategoryCommandExecute(object p) => true;
         private async void OnRemoveCategoryCommandExecuted(object p)
         {
-            string? nullCategory = ProductCategoryViewModel.GetProductCategory().Result.FirstOrDefault(x => x.Id == 1)?.Category;
+            ProductCategoryViewModel? findCategory = ProductCategoryViewModel.GetProductCategory().Result.FirstOrDefault(x => x.Id == (int)p);
             if ((int)p <= 1)
             {
                 MessageBox.Show("Нельзя удалить категорию по умолчанию");
                 return;
             }
-            MessageBoxResult res = 
-                MessageBox.Show($"В категории \"{ProductCategoryViewModel.GetProductCategory().Result
-                .FirstOrDefault(x => x.Id == (int)p)?.Category}\" присутствуют продукты, при удалении они будут перемещены в категорию \"Нет категории\", вы согласны?", "Предупреждение", 
+            MessageBoxResult res =
+                MessageBox.Show($"В категории \"{findCategory?.Category}\" присутствуют продукты, при удалении они будут перемещены в категорию \"Нет категории\", вы согласны?", "Предупреждение",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (res == MessageBoxResult.No)
@@ -258,23 +265,30 @@ namespace Cashbox.MVVM.ViewModels.Admin
             SelectedProductCategory = null;
         }
 
+        public RelayCommand AddImageCommand { get; set; }
+        private bool CanAddImageCommandExecute(object p)
+        {
+            return true;
+        }
+        private void OnAddImageCommandExecuted(object p)
+        {
+            OpenFileDialog openFileDialog = new() { Filter = "Изображения (*.png, *.img, *.jpeg)|*.png,*.img,*.jpeg | Все файлы (*.*)|*.*", FilterIndex = 2, RestoreDirectory = true };
+            Nullable<bool> result = openFileDialog.ShowDialog();
+            if (result == true)
+            {
+                ImageProduct = File.ReadAllBytes(openFileDialog.FileName);
+                ImageStringProduct = openFileDialog.FileName;
+            }
+            else
+                ImageProduct = [];
+        }
+
         public RelayCommand OpenPanelProductCreateCommand { get; set; }
         private bool CanOpenPanelProductCreateCommandExecute(object p) => true;
         private void OnOpenPanelProductCreateCommandExecuted(object p)
         {
-            ArticulCodeProduct = string.Empty;
-            BrandProduct = string.Empty;
-            TitleProduct = string.Empty;
-            DescriptionProduct = string.Empty;
-            ImageProduct = null;
-            PurchaseСostProduct = 0;
-            SellCostProduct = 0;
-            IdCategoryProduct = null;
-            AmountProduct = 0;
-            IsAvailableProduct = true;
-
             PanelCreateProductVisibility = Visibility.Visible;
-            PanelCurrentProductVisibility = Visibility.Collapsed;
+            PanelMainProductVisibility = Visibility.Collapsed;
             PanelEditProductVisibility = Visibility.Collapsed;
         }
 
@@ -283,7 +297,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private void OnOpenPanelProductEditCommandExecuted(object p)
         {
             PanelCreateProductVisibility = Visibility.Collapsed;
-            PanelCurrentProductVisibility = Visibility.Collapsed;
+            PanelMainProductVisibility = Visibility.Collapsed;
             PanelEditProductVisibility = Visibility.Visible;
         }
 
@@ -292,7 +306,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private void OnClosePanelProductCommandExecuted(object p)
         {
             PanelCreateProductVisibility = Visibility.Collapsed;
-            PanelCurrentProductVisibility = Visibility.Visible;
+            PanelMainProductVisibility = Visibility.Visible;
             PanelEditProductVisibility = Visibility.Collapsed;
         }
 
@@ -300,20 +314,14 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public RelayCommand AddProductCommand { get; set; }
         private bool CanAddProductCommandExecute(object p)
         {
-            if (string.IsNullOrEmpty(TitleProduct))
-                return false;
-            if (string.IsNullOrEmpty(DescriptionProduct))
-                return false;
-            if (string.IsNullOrEmpty(BrandProduct))
-                return false;
-            if (string.IsNullOrEmpty(IdCategoryProduct?.Category))
-                return false;
             return true;
         }
 
         private async void OnAddProductCommandExecuted(object p)
         {
-            var data = await ProductViewModel.CreateProduct(ArticulCodeProduct, TitleProduct, DescriptionProduct, ImageProduct, BrandProduct, IdCategoryProduct?.Id, PurchaseСostProduct, SellCostProduct, AmountProduct);
+            if (ImageProduct != null)
+                Image = ImageProduct;
+            var data = await ProductViewModel.CreateProduct(ArticulCode, Title, Description, Image, Brand, Category.Id, PurchaseСost, SellCost, Amount);
             if (data != null)
             {
                 SelectedProduct = data;
@@ -329,7 +337,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
         private async void OnEditProductCommandExecuted(object p)
         {
-            var data = await ProductViewModel.UpdateProduct(SelectedProduct.Id, SelectedProduct.ArticulCode, SelectedProduct.Title, SelectedProduct.Description, SelectedProduct.Image, SelectedProduct.Brand, IdCategoryProduct.Id, SelectedProduct.PurchaseСost, SelectedProduct.SellCost, SelectedProduct.Stock.Amount);
+            var data = await ProductViewModel.UpdateProduct(SelectedProduct.Id, SelectedProduct.ArticulCode, SelectedProduct.Title, SelectedProduct.Description, SelectedProduct.Image, SelectedProduct.Brand, SelectedProduct.Category.Id, SelectedProduct.PurchaseСost, SelectedProduct.SellCost, SelectedProduct.Stock.Amount);
             if (data != null)
             {
                 SelectedProduct = data;
@@ -342,7 +350,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanRemoveProductCommandExecute(object p) => true;
         private async void OnRemoveProductCommandExecuted(object p)
         {
-            var data = await ProductViewModel.RemoveProduct(IdProduct);
+            var data = await ProductViewModel.RemoveProduct(SelectedProduct.Id);
             if (data != null)
             {
                 SelectedProduct = null;
@@ -366,6 +374,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             OpenPanelProductEditCommand = new RelayCommand(OnOpenPanelProductEditCommandExecuted, CanOpenPanelProductEditCommandExecute);
             ClosePanelProductCommand = new RelayCommand(OnClosePanelProductCommandExecuted, CanClosePanelProductCommandExecute);
             GetAllProductCommand = new RelayCommand(OnGetAllProductCommandExecuted, CanGetAllProductCommandExecute);
+            AddImageCommand = new RelayCommand(OnAddImageCommandExecuted, CanAddImageCommandExecute);
         }
     }
 }

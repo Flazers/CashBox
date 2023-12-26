@@ -18,6 +18,7 @@
   <ItemGroup>
     <None Remove="Assets\Icons\64x64.png" />
     <None Remove="Assets\Image\Cat.png" />
+    <None Remove="Assets\Image\Zagl.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +41,9 @@
   <ItemGroup>
     <Resource Include="Assets\Icons\64x64.png" />
     <Resource Include="Assets\Image\Cat.png" />
+    <Resource Include="Assets\Image\Zagl.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

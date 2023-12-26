@@ -1,5 +1,10 @@
-﻿using System;
+﻿using Microsoft.Identity.Client;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Cashbox.MVVM.Models;
 
@@ -13,11 +18,12 @@ public partial class Product
 
     public string Description { get; set; } = null!;
 
+
     public byte[]? Image { get; set; }
 
     public string Brand { get; set; } = null!;
 
-    public int? CategoryId { get; set; }
+    public int CategoryId { get; set; }
 
     public double PurchaseСost { get; set; }
 

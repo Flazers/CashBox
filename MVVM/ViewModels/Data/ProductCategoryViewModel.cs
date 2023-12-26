@@ -25,5 +25,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public int Id => _productCategory.Id;
 
         public string Category => _productCategory.Category;
+
+        public virtual ICollection<Product> Products => _productCategory.Products;
     }
 }
