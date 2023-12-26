@@ -231,10 +231,10 @@
                         </Grid>
                         <ScrollViewer Height="650" Margin="10 0">
                             <StackPanel Margin="0 0 20 0">
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding ArticulCodeProduct}" Tag="Артикул" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding BrandProduct}" Tag="Марка*" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding TitleProduct}" Tag="Наименование*" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding DescriptionProduct}" Tag="Описание*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Product.ArticulCode}" Tag="Артикул" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Product.Brand}" Tag="Марка*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Product.Title}" Tag="Наименование*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Product.Description}" Tag="Описание*" Margin="0 0 0 20"/>
                                 <Button Style="{StaticResource ButtonInPanelWhite}" Content="{Binding ImageStringProduct}" Margin="0 0 0 20"/>
                                 <ComboBox Tag="Категория*" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionProductCategories}" DisplayMemberPath="Category" SelectedValuePath="Category" SelectedItem="{Binding IdCategoryProduct, Mode=TwoWay}" Margin="0 0 0 20"/>
                                 <TextBox Style="{StaticResource InputTB}" Text="{Binding PurchaseСostProduct}" Tag="Цена закупки*" Margin="0 0 0 20"/>

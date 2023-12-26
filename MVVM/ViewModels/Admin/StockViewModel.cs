@@ -65,6 +65,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _newCategoryTitle, value);
         }
 
+        private Product _product;
+        public Product Product
+        {
+            get => _product;
+            set => Set(ref _product, value);
+        }
+
         private int _idProduct;
         public int IdProduct
         {
