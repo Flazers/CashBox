@@ -234,22 +234,39 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
 
         public RelayCommand RemoveCategoryCommand { get; set; }
-        private bool CanRemoveCategoryCommandExecute(object p) => true;
+        private bool CanRemoveCategoryCommandExecute(object p) 
+        { 
+            if (SelectedProductCategory == null) 
+                return false;
+            return true;
+        }
         private async void OnRemoveCategoryCommandExecuted(object p)
         {
-            ProductCategoryViewModel? findCategory = ProductCategoryViewModel.GetProductCategory().Result.FirstOrDefault(x => x.Id == (int)p);
-            if ((int)p <= 1)
+            if (SelectedProductCategory.Id <= 1)
             {
                 MessageBox.Show("Нельзя удалить категорию по умолчанию");
                 return;
             }
-            MessageBoxResult res =
-                MessageBox.Show($"В категории \"{findCategory?.Category}\" присутствуют продукты, при удалении они будут перемещены в категорию \"Нет категории\", вы согласны?", "Предупреждение",
-                MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            if (res == MessageBoxResult.No)
-                return;
-            var data = await ProductCategoryViewModel.RemoveProductCategory((int)p);
+            ProductCategoryViewModel data = null;
+            if (SelectedProductCategory.Products.Any())
+            {
+                MessageBoxResult result = MessageBox.Show("В выбранной категории присутствуют товары \nНажмите \"Да\"если хотите перенести все товары в категорию по умолчанию \nНажмите \"Нет\" если хотите удалить все товары из категории \nНажмите \"Отмена\" для отмены удаления ", "Предупреджение", MessageBoxButton.YesNoCancel);
+                switch (result)
+                {
+                    case MessageBoxResult.Yes:
+                        data = await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id, 1);
+                        break;
+                    case MessageBoxResult.No:
+                        data = await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id, 2);
+                        break;
+                    case MessageBoxResult.Cancel:
+                        return;
+                }
+            } 
+            else
+            {
+                data = await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id, 3);
+            }
             if (data != null)
             {
                 SelectedProductCategory = null;
@@ -287,6 +304,18 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanOpenPanelProductCreateCommandExecute(object p) => true;
         private void OnOpenPanelProductCreateCommandExecuted(object p)
         {
+            ArticulCode = string.Empty;
+            Title = string.Empty;
+            Brand = string.Empty;
+            Description = string.Empty;
+            Image = [];
+            ImageProduct = [];
+            Category = null;
+            PurchaseСost = 0;
+            SellCost = 0;
+            Amount = 0;
+            ImageStringProduct = "Выбрать фото товара";
+
             PanelCreateProductVisibility = Visibility.Visible;
             PanelMainProductVisibility = Visibility.Collapsed;
             PanelEditProductVisibility = Visibility.Collapsed;
@@ -316,7 +345,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             return true;
         }
-
         private async void OnAddProductCommandExecuted(object p)
         {
             if (ImageProduct != null)
@@ -324,9 +352,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
             var data = await ProductViewModel.CreateProduct(ArticulCode, Title, Description, Image, Brand, Category.Id, PurchaseСost, SellCost, Amount);
             if (data != null)
             {
+                Update();
                 SelectedProduct = data;
-                OnClosePanelProductCommandExecuted(0);
                 MessageBox.Show("Товар добавлен", "Успех");
+                OnClosePanelProductCommandExecuted(0);
             }
         }
 
@@ -337,9 +366,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
         private async void OnEditProductCommandExecuted(object p)
         {
+            if (ImageProduct != null)
+                Image = ImageProduct;
             var data = await ProductViewModel.UpdateProduct(SelectedProduct.Id, SelectedProduct.ArticulCode, SelectedProduct.Title, SelectedProduct.Description, SelectedProduct.Image, SelectedProduct.Brand, SelectedProduct.Category.Id, SelectedProduct.PurchaseСost, SelectedProduct.SellCost, SelectedProduct.Stock.Amount);
             if (data != null)
             {
+                Update();
                 SelectedProduct = data;
                 MessageBox.Show("Товар обновлен", "Успех");
                 OnClosePanelProductCommandExecuted(0);
@@ -353,10 +385,16 @@ namespace Cashbox.MVVM.ViewModels.Admin
             var data = await ProductViewModel.RemoveProduct(SelectedProduct.Id);
             if (data != null)
             {
+                Update();
                 SelectedProduct = null;
                 MessageBox.Show("Товар удален", "Успех");
                 OnClosePanelProductCommandExecuted(0);
             }
+        }
+
+        public void Update()
+        {
+            CollectionProducts = new(ProductViewModel.GetProducts().Result);
         }
         #endregion
 

@@ -18,7 +18,6 @@ public partial class Product
 
     public string Description { get; set; } = null!;
 
-
     public byte[]? Image { get; set; }
 
     public string Brand { get; set; } = null!;
