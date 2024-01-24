@@ -283,13 +283,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
 
         public RelayCommand AddImageCommand { get; set; }
-        private bool CanAddImageCommandExecute(object p)
-        {
-            return true;
-        }
+        private bool CanAddImageCommandExecute(object p) => true;
         private void OnAddImageCommandExecuted(object p)
         {
-            OpenFileDialog openFileDialog = new() { Filter = "Изображения (*.png, *.img, *.jpeg)|*.png,*.img,*.jpeg | Все файлы (*.*)|*.*", FilterIndex = 2, RestoreDirectory = true };
+            OpenFileDialog openFileDialog = new() { Filter = "Все файлы (*.*)|*.*", RestoreDirectory = true };
             Nullable<bool> result = openFileDialog.ShowDialog();
             if (result == true)
             {

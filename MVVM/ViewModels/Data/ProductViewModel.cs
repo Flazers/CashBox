@@ -2,14 +2,15 @@
 using Cashbox.MVVM.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
-using System.Drawing;
-using System.Drawing.Imaging;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Cashbox.MVVM.ViewModels.Data
@@ -31,7 +32,7 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public int Id => _product.Id;
 
-        public string? ArticulCode 
+        public string? ArticulCode
         {
             get => _product.ArticulCode;
             set
@@ -77,7 +78,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             {
                 BitmapImage image = new();
                 byte[] data = Image;
-                data ??= File.ReadAllBytes(@"./Assets/Image/Zagl.png");
+                if (data == null) data = File.ReadAllBytes(@"Assets\Image\Zagl.png");
                 using (var mem = new MemoryStream(data))
                 {
                     mem.Position = 0;

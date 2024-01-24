@@ -24,7 +24,7 @@
                             <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Категории"/>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
-                        <ScrollViewer DockPanel.Dock="Top" Height="380" Margin="10 0 10 10">
+                        <ScrollViewer DockPanel.Dock="Top" Height="370" Margin="10 0 10 10">
                             <ListBox ItemContainerStyle="{StaticResource LBItemContainerStyle}" HorizontalContentAlignment="Stretch" SelectedItem="{Binding SelectedProductCategory}" Width="400" HorizontalAlignment="Left" 
                                      Background="Transparent" d:ItemsSource="{d:SampleData ItemCount=10}" ItemsSource="{Binding CollectionProductCategories}">
                                 <ItemsControl.ItemTemplate>
@@ -36,7 +36,7 @@
                                 </ItemsControl.ItemTemplate>
                             </ListBox>
                         </ScrollViewer>
-                        <Button HorizontalAlignment="Right" Command="{Binding RemoveCategoryCommand}" Style="{StaticResource ButtonInPanelRed}" Content="Удалить выбранную категорию" Margin="10 0 10 10"/>
+                        <Button HorizontalAlignment="Stretch" Command="{Binding RemoveCategoryCommand}" Style="{StaticResource ButtonInPanelRed}" Content="Удалить выбранную категорию" Margin="10"/>
                     </DockPanel>
                 </Border>
                 <Border Style="{StaticResource PanelBorder}" Height="260">
