@@ -11,13 +11,11 @@ public partial class CashBoxDataContext : DbContext
     }
 
     private static CashBoxDataContext? _context;
-    
     public static CashBoxDataContext Context
     {
         get 
         { 
-            if (_context == null)
-                _context = new CashBoxDataContext();
+            _context ??= new CashBoxDataContext();
             return _context;
         }
     }

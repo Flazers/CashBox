@@ -15,8 +15,6 @@ public partial class User
 
     public int Pin { get; set; }
 
-    public bool Tfa { get; set; }
-
     public virtual ICollection<AuthHistory> AuthHistories { get; set; } = new List<AuthHistory>();
 
     public virtual ICollection<DailyReport> DailyReports { get; set; } = new List<DailyReport>();

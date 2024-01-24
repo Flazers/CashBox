@@ -47,7 +47,7 @@ namespace Cashbox.MVVM.Models
             CurrentUser = null;
         }
 
-        public static async Task<UserViewModel?> CreateUser(string login, string password, int pincode, bool TFA, string name, string surname, string patronymic, string location, string phone, RoleViewModel role, bool isActive)
+        public static async Task<UserViewModel?> CreateUser(string login, string password, int pincode, string name, string surname, string patronymic, string location, string phone, RoleViewModel role, bool isActive)
         {
             try
             {
@@ -56,7 +56,6 @@ namespace Cashbox.MVVM.Models
                     Login = login,
                     Password = BCrypt.Net.BCrypt.HashPassword(password),
                     Pin = pincode,
-                    Tfa = TFA,
                 };
                 await CashBoxDataContext.Context.Users.AddAsync(user);
                 await CashBoxDataContext.Context.SaveChangesAsync();

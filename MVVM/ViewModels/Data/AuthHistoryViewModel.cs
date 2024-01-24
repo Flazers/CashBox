@@ -7,13 +7,10 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class AuthHistoryViewModel
+    public class AuthHistoryViewModel(AuthHistory AuthHis)
     {
-        private readonly AuthHistory _authHistory;
-        public AuthHistoryViewModel(AuthHistory AuthHis)
-        {
-            _authHistory = AuthHis;
-        }
+        private readonly AuthHistory _authHistory = AuthHis;
+
         public static Task<List<AuthHistoryViewModel>> GetAuthHistories() => AuthHistory.GetHistories();
 
         public int Id => _authHistory.Id;

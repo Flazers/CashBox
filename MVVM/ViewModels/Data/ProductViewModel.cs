@@ -15,13 +15,9 @@ using System.Windows.Media.Imaging;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class ProductViewModel : ViewModelBase
+    public class ProductViewModel(Product product) : ViewModelBase
     {
-        private readonly Product _product;
-        public ProductViewModel(Product product)
-        {
-            _product = product;
-        }
+        private readonly Product _product = product;
 
         public static async Task<List<ProductViewModel>> GetProducts() => await Product.GetProducts();
         public static async Task<List<ProductViewModel>> GetAllProducts() => await Product.GetAllProducts();
@@ -78,7 +74,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             {
                 BitmapImage image = new();
                 byte[] data = Image;
-                if (data == null) data = File.ReadAllBytes(@"Assets\Image\Zagl.png");
+                if (Image.Length < 5) data = File.ReadAllBytes(@"Assets\Image\Zagl.png");
                 using (var mem = new MemoryStream(data))
                 {
                     mem.Position = 0;

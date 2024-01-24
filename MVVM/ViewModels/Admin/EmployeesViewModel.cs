@@ -12,8 +12,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
     {
 
         #region Props
-        private UserViewModel? _user;
-        public UserViewModel? User { get => _user = Models.User.CurrentUser; }
+        public static UserViewModel? User { get => Models.User.CurrentUser; }
         #endregion
     }
 }

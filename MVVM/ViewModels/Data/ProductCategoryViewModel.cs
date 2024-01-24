@@ -9,14 +9,9 @@ using System.Windows.Controls;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class ProductCategoryViewModel : ViewModelBase
+    public class ProductCategoryViewModel(ProductCategory productCategory) : ViewModelBase
     {
-        private readonly ProductCategory _productCategory;
-        public ProductCategoryViewModel(ProductCategory productCategory)
-        {
-            _productCategory = productCategory;
-        }
-
+        private readonly ProductCategory _productCategory = productCategory;
 
         public static async Task<List<ProductCategoryViewModel>> GetProductCategory() => await ProductCategory.GetProductCategories();
         public static async Task<ProductCategoryViewModel?> CreateProductCategory(string category) => await ProductCategory.CreateProductCategories(category);

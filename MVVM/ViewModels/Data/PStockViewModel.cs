@@ -7,13 +7,9 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class PStockViewModel
+    public class PStockViewModel(Stock? stock)
     {
-        private readonly Stock? _stock;
-        public PStockViewModel(Stock? stock) 
-        {
-            _stock = stock;
-        }
+        private readonly Stock? _stock = stock;
 
         public static async Task<PStockViewModel?> GetProductStock(int product_id) => await Stock.GetProductAmount(product_id);
         public static async Task<PStockViewModel?> CreateProductStock(int product_id, int Amount) => await Stock.CreateProductStock(product_id,Amount);

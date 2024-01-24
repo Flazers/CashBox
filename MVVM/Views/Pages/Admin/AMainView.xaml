@@ -17,7 +17,7 @@
 
         <Grid Grid.Column="0" Background="{StaticResource PanelB}">
 
-            <TextBlock VerticalAlignment="Top" Text="SMOKE SCREEN" TextWrapping="Wrap" Margin="0 20" TextAlignment="Center" Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}"/>
+            <TextBlock VerticalAlignment="Top" Text="A5 Detailing" TextWrapping="Wrap" Margin="0 20" TextAlignment="Center" Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}"/>
 
             <StackPanel VerticalAlignment="Center">
                 <RadioButton Command="{Binding NavigateSubViewCommand}" IsChecked="{Binding IsHomeView}" Style="{DynamicResource NavRB}">

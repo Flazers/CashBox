@@ -64,7 +64,7 @@
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
                         <TextBlock DockPanel.Dock="Top" Height="30" Visibility="{Binding PanelContentProductVisibility}" Text="{Binding CollectionProducts.Count, StringFormat='Всего товаров: \{0}'}" HorizontalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}" VerticalAlignment="Top" Margin="0 0 0 20"/>
-                        <DockPanel Margin="10 0 10 10" LastChildFill="True">
+                        <DockPanel Margin="10 0 10 10">
                             <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding GetAllProductCommand}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Content="Все категории"/>
                             <ScrollViewer DockPanel.Dock="Top" Margin="0 0 0 20" Height="620" Visibility="{Binding PanelContentProductVisibility}">
                                 <ListBox ItemContainerStyle="{StaticResource LBItemContainerStyle}" Width="540" 

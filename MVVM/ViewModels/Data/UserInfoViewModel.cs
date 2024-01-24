@@ -18,13 +18,23 @@ namespace Cashbox.MVVM.ViewModels.Data
             SetFullName();
         }
 
-        public void SetFullName() { FullName = $"{_userInfo.Surname} {_userInfo.Name} {_userInfo.Patronymic}"; }
+        public void SetFullName() { 
+            FullName = $"{_userInfo.Surname} {_userInfo.Name} {_userInfo.Patronymic}";
+            ShortName = $"{_userInfo.Surname} {_userInfo.Name[0]}. {_userInfo.Patronymic[0]}.";
+        }
 
         private string _fullName = string.Empty;
         public string FullName
         {
             get => _fullName;
             private set => Set(ref _fullName, value);
+        }
+
+        private string _shortName = string.Empty;
+        public string ShortName
+        {
+            get => _shortName;
+            private set => Set(ref _shortName, value);
         }
 
         public int UserId => _userInfo.UserId;
