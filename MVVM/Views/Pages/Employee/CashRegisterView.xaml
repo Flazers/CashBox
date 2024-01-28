@@ -1,15 +1,88 @@
 ﻿<UserControl x:Class="Cashbox.MVVM.Views.Pages.Employee.CashRegisterView"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages.Employee"
-      xmlns:vm="clr-namespace:Cashbox.MVVM.ViewModels.Employee"
-      d:DataContext="{d:DesignInstance Type=vm:CashRegisterViewModel}"
-      mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="1700">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages.Employee"
+             xmlns:vm="clr-namespace:Cashbox.MVVM.ViewModels.Employee"
+             d:DataContext="{d:DesignInstance Type=vm:CashRegisterViewModel}"
+             xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d" 
+             d:DesignHeight="1000" d:DesignWidth="1700">
+    <StackPanel>
+        <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
+            <DockPanel VerticalAlignment="Center">
+                <TextBlock Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Сотрудник: \{0}'}"/>
+                <TextBlock Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Right" Text="{Binding User.DailyReports.Count, StringFormat='Смена открыта: \{0}'}"/>
+            </DockPanel>
+        </Border>
 
-    <Grid>
-        
-    </Grid>
+        <DockPanel Margin="0 40 0 0">
+            <Border HorizontalAlignment="Left" Style="{StaticResource PanelBorder}" Height="880" Width="870">
+                <StackPanel>
+                    <Grid Margin="0 -10 0 30" Height="80">
+                        <TextBlock Style="{DynamicResource TitleText}" Margin="5 0 0 0" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Товары"/>
+                        <TextBox Style="{StaticResource Search}" Margin="0 0 5 0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="340"/>
+                        <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                    </Grid>
+
+                    <ScrollViewer Height="750" Margin="10 0 10 10">
+                        <ItemsControl d:ItemsSource="{d:SampleData ItemCount=20}" ItemsSource="{Binding CollectionProducts}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Margin="-10"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="20" Width="250" Height="250" Background="{StaticResource BasicW}" CornerRadius="20" Margin="10">
+                                        <Grid>
+                                            <Border CornerRadius="5" Width="80" Height="80" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                                <Border.Background>
+                                                    <ImageBrush ImageSource="{Binding ImageGet}"/>
+                                                </Border.Background>
+                                            </Border>
+
+                                            <TextBlock Text="{Binding SellCost, StringFormat='{}{0} ₽'}" Style="{StaticResource TitleText}" HorizontalAlignment="Right"/>
+
+                                            <StackPanel Margin="0 80 0 40">
+                                                <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" ScrollViewer.CanContentScroll="True" Margin="0 10 0 0"/>
+                                                <TextBlock Style="{StaticResource RegularText}" Text="{Binding Title}" ScrollViewer.CanContentScroll="True"/>
+                                                <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}" ScrollViewer.CanContentScroll="True"/>
+                                            </StackPanel>
+
+                                            <Button Style="{StaticResource ButtonInPanelGreen}" Height="40" VerticalAlignment="Bottom">
+                                                <Icon:PackIconMaterial Kind="Plus" Foreground="{StaticResource TextW}"/>
+                                            </Button>
+
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+
+            <Border HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+                <Grid>
+                    <Grid Margin="0 -10 0 30" Height="80" VerticalAlignment="Top">
+                        <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Меню"/>
+                        <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                    </Grid>
+
+                    <Grid VerticalAlignment="Center" Visibility="{Binding ProcessDoShiftVisibility}" Margin="10 0 10 10">
+                        <StackPanel>
+                            <Button Style="{StaticResource ButtonInPanelGreen}" Margin="0 0 0 20" Content="Продажа"/>
+                            <Button Style="{StaticResource ButtonInPanelGray}" Margin="0 0 0 20" Content="Возврат"/>
+                            <Button Style="{StaticResource ButtonInPanelRed}" Content="Брак"/>
+                        </StackPanel>
+                    </Grid>
+                    
+                </Grid>
+            </Border>
+
+        </DockPanel>
+
+    </StackPanel>
 </UserControl>

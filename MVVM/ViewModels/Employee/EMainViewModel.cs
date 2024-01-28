@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels.Employee
 {
@@ -48,6 +49,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private bool CanLogOutCommandExecute(object p) => true;
         private void OnLogOutCommandExecuted(object p)
         {
+            MessageBoxResult res = MessageBox.Show("Вы уверены, что хотите выйти?", "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (res == MessageBoxResult.No) return;
             UserViewModel.LogOut();
             NavigationService?.NavigateTo<AuthViewModel>();
         }

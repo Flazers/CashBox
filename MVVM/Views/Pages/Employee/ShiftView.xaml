@@ -11,7 +11,7 @@
              d:DesignHeight="1000" d:DesignWidth="1700">
     <StackPanel>
         <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
-            <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Администратор: \{0}'}"/>
+            <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Сотрудник: \{0}'}"/>
         </Border>
 
         <DockPanel Margin="0 40 0 0">
@@ -22,8 +22,7 @@
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
 
-                    <!--<DockPanel Visibility="{Binding StartShiftVisibility}" Margin="10 0 10 10">-->
-                    <DockPanel Visibility="Collapsed" Margin="10 0 10 10">
+                    <DockPanel Visibility="{Binding StartShiftVisibility}" Margin="10 0 10 10">
                         <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding StartShiftCommand}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Content="Открыть смену"/>
                         <StackPanel Height="690">
                             <Grid>

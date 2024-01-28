@@ -20,14 +20,14 @@
             <TextBlock VerticalAlignment="Top" Text="A5 Detailing" TextWrapping="Wrap" Margin="0 20" TextAlignment="Center" Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}"/>
 
             <StackPanel VerticalAlignment="Center">
-                <RadioButton Style="{DynamicResource NavRB}">
+                <RadioButton Style="{DynamicResource NavRB}" Command="{Binding NavigateSubViewCommand}" IsChecked="{Binding IsShiftView}">
                     <StackPanel>
                         <Icon:PackIconMaterial Kind="SwapHorizontal" HorizontalAlignment="Center" Width="50" Height="50"/>
                         <TextBlock Text="Смена" Margin="0 5 0 0" FontSize="16" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </RadioButton>
 
-                <RadioButton Margin="0 20 0 0" Style="{DynamicResource NavRB}">
+                <RadioButton Margin="0 20 0 0" Style="{DynamicResource NavRB}" Command="{Binding NavigateSubViewCommand}" IsChecked="{Binding IsCashRegisterView}">
                     <StackPanel>
                         <Icon:PackIconMaterial Kind="CashRegister" HorizontalAlignment="Center" Width="50" Height="50"/>
                         <TextBlock Text="Касса" Margin="0 5 0 0" FontSize="16" HorizontalAlignment="Center"/>
@@ -35,7 +35,7 @@
                 </RadioButton>
             </StackPanel>
 
-            <Button Style="{DynamicResource NavBT}" Margin="0 0 0 20" VerticalAlignment="Bottom">
+            <Button Style="{DynamicResource NavBT}" Margin="0 0 0 20" VerticalAlignment="Bottom" Command="{Binding LogOutCommand}">
                 <StackPanel>
                     <Icon:PackIconMaterial Kind="LogoutVariant" HorizontalAlignment="Center" Width="40" Height="50"/>
                     <TextBlock Text="Выйти" Margin="0 5 0 0" FontSize="16" HorizontalAlignment="Center"/>
@@ -44,7 +44,7 @@
         </Grid>
 
         <Border Padding="40" Background="{StaticResource PanelW}" Grid.Column="1">
-            <ContentControl/>
+            <ContentControl Content="{Binding SubNavigationService.CurrentView}"/>
         </Border>
 
     </Grid>
