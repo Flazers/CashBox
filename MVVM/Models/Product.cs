@@ -1,10 +1,5 @@
-﻿using Microsoft.Identity.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace Cashbox.MVVM.Models;
 
@@ -27,9 +22,10 @@ public partial class Product
     public double PurchaseСost { get; set; }
 
     public double SellCost { get; set; }
+
     public bool IsAvailable { get; set; }
 
-    public virtual ProductCategory? Category { get; set; } = null!;
+    public virtual ProductCategory Category { get; set; } = null!;
 
     public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
 

@@ -71,8 +71,7 @@ namespace Cashbox.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     login = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     password = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
-                    pin = table.Column<int>(type: "int", nullable: false),
-                    TFA = table.Column<bool>(type: "bit", nullable: false)
+                    pin = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -92,7 +91,8 @@ namespace Cashbox.Migrations
                     brand = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     category_id = table.Column<int>(type: "int", nullable: false),
                     purchase_сost = table.Column<double>(type: "float", nullable: false),
-                    sell_cost = table.Column<double>(type: "float", nullable: false)
+                    sell_cost = table.Column<double>(type: "float", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -167,23 +167,6 @@ namespace Cashbox.Migrations
                         principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_Orders_Users",
-                        column: x => x.user_id,
-                        principalTable: "Users",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TFAData",
-                columns: table => new
-                {
-                    user_id = table.Column<int>(type: "int", nullable: false),
-                    code = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TFAData", x => x.user_id);
-                    table.ForeignKey(
-                        name: "FK_TFAData_Users",
                         column: x => x.user_id,
                         principalTable: "Users",
                         principalColumn: "id");
@@ -368,9 +351,6 @@ namespace Cashbox.Migrations
 
             migrationBuilder.DropTable(
                 name: "Stock");
-
-            migrationBuilder.DropTable(
-                name: "TFAData");
 
             migrationBuilder.DropTable(
                 name: "UserInfo");

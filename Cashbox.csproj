@@ -8,6 +8,14 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;8602;8600</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;8602;8600</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Data\**" />
     <EmbeddedResource Remove="Data\**" />
@@ -18,6 +26,13 @@
   <ItemGroup>
     <None Remove="Assets\Icons\64x64.png" />
     <None Remove="Assets\Image\Cat.png" />
+    <None Remove="Assets\Image\Zagl.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Image\Zagl.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -52,9 +67,11 @@
     <None Update="Assets\Fonts\Montserrat-Regular.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Assets\Image\Zagl.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+    <Folder Include="MVVM\Models\" />
   </ItemGroup>
 
 </Project>

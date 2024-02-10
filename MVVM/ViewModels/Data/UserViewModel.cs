@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
+
     public class UserViewModel(User user) : ViewModelBase
     {
         private readonly User _user = user;
@@ -18,8 +19,8 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static void LogOut() => User.LogOut();
         public static async Task<UserViewModel?> GetUserByLogPass(string login, string password) => await User.GetUserByLogPass(login, password);
         public static async Task<UserViewModel?> GetUserByPin(int pincode) => await User.GetUserByPin(pincode);
-        public static async Task<UserViewModel?> CreateUser(string login, string password, int pincode, string name, string surname, string patronymic, string location, string phone, RoleViewModel role, bool isActive) => await User.CreateUser(login, password, pincode, name, surname, patronymic, location, phone, role, isActive);
-        
+        public static async Task<UserViewModel?> CreateUser(string login, string password, int pincode, string name, string surname, string patronymic, string location, string phone, RoleViewModel role) => await User.CreateUser(login, password, pincode, name, surname, patronymic, location, phone, role);
+        public static async Task<List<UserViewModel>> GetListUsers() => await User.GetListUsers();
 
         public void SetUserInfo(UserInfoViewModel? userInfoViewModel)
         {

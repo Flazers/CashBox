@@ -102,6 +102,16 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public int RoleId
+        {
+            get => _userInfo.RoleId;
+            set
+            {
+                _userInfo.RoleId = value; 
+                OnPropertyChanged();
+            }
+        }
+
         public RoleViewModel Role { get; }
     }
 }

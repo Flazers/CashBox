@@ -9,7 +9,9 @@
              d:DataContext="{d:DesignInstance Type=vm:StockViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="1000" d:DesignWidth="1700">
-
+    <UserControl.DataContext>
+        <vm:StockViewModel/>
+    </UserControl.DataContext>
     <StackPanel>
         <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
             <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Администратор: \{0}'}"/>
@@ -73,7 +75,7 @@
                                          HorizontalContentAlignment="Stretch"
                                          Padding="0" Margin="0 0 20 0" 
                                          d:ItemsSource="{d:SampleData ItemCount=20}" Background="{StaticResource BasicB}">
-                                    <ItemsControl.ItemTemplate>
+                                    <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Border Height="100"
                                                     Background="{StaticResource PanelW}" Padding="10" 
@@ -99,7 +101,7 @@
                                                 </DockPanel>
                                             </Border>
                                         </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
+                                    </ListBox.ItemTemplate>
                                 </ListBox>
                             </ScrollViewer>
                             <TextBlock Text="Товаров нет" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -214,16 +216,21 @@
                                     <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Brand}" Tag="Марка*" Margin="0 0 0 20"/>
                                     <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Title}" Tag="Наименование*" Margin="0 0 0 20"/>
                                     <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Description}" Tag="Описание*" Margin="0 0 0 20"/>
-                                    <Button Style="{StaticResource ButtonInPanelWhite}" Content="{Binding ImageStringProduct}" Margin="0 0 0 20"/>
+                                    <Border CornerRadius="5" Width="190" Height="190" Margin="0 0 0 40">
+                                        <Border.Background>
+                                            <ImageBrush ImageSource="{Binding SelectedProduct.ImageGet}"/>
+                                        </Border.Background>
+                                    </Border>
+                                    <Button Style="{StaticResource ButtonInPanelWhite}" Command="{Binding EditImageCommand}" Content="{Binding ImageStringProduct}" Margin="0 0 0 20"/>
                                     <ComboBox Tag="Категория*" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionProductCategories}" DisplayMemberPath="Category" 
-                          SelectedValuePath="Category" SelectedItem="{Binding SelectedProduct.Category.Id}" Margin="0 0 0 20"/>
+                                              SelectedItem="{Binding SelectedProduct.CategoryVM}" SelectedValuePath="Category" Margin="0 0 0 20"/>
                                     <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.PurchaseСost}" Tag="Цена закупки*" Margin="0 0 0 20"/>
                                     <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.SellCost}" Tag="Цена продажи*" Margin="0 0 0 20"/>
                                     <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Stock.Amount}" Tag="Колличество товара*"/>
                                 </StackPanel>
                             </ScrollViewer>
                             <StackPanel Orientation="Horizontal" Margin="10 40 10 0">
-                                <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding ClosePanelProductCommand}" Width="230" Margin="0 0 20 0" Content="Отмена"/>
+                                <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding ClosePanelProductCommand}" Width="230" Margin="0 0 20 0" Content="Закрыть"/>
                                 <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding EditProductCommand}" Width="230" Content="Сохранить"/>
                             </StackPanel>
                         </StackPanel>

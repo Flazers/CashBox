@@ -15,7 +15,7 @@ namespace Cashbox.MVVM.Models
         {
             try
             {
-                Stock stock = new Stock()
+                Stock stock = new()
                 {
                     ProductId = product_id,
                     Amount = Amount

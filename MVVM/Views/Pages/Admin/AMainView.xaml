@@ -30,7 +30,7 @@
                 <RadioButton Command="{Binding NavigateSubViewCommand}" IsChecked="{Binding IsEmployeeView}" Margin="0 20 0 0" Style="{DynamicResource NavRB}">
                     <StackPanel>
                         <Icon:PackIconMaterial Kind="AccountMultiple" HorizontalAlignment="Center" Width="50" Height="50"/>
-                        <TextBlock Text="Сотрудники" Margin="0 5 0 0" FontSize="16" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Пользователи" Margin="0 5 0 0" FontSize="16" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </RadioButton>
 

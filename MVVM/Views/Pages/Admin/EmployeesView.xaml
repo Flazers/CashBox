@@ -8,7 +8,9 @@
       d:DataContext="{d:DesignInstance Type=vm:EmployeesViewModel}"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1700">
-
+    <UserControl.DataContext>
+        <vm:EmployeesViewModel/>
+    </UserControl.DataContext>
     <StackPanel>
         <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
             <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Администратор: \{0}'}"/>
@@ -19,29 +21,108 @@
                     <StackPanel>
                         <Grid Margin="0 -10 0 30" Height="80">
                             <DockPanel Margin="5 0" VerticalAlignment="Center">
-                                <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Список сотрудников"/>
+                                <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Список пользователей"/>
                                 <TextBox Style="{StaticResource Search}" Width="420" Height="50" HorizontalAlignment="Right"/>
 
                             </DockPanel>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
-                        
+                        <ScrollViewer Height="750" Margin="10 0 10 10">
+                            <ItemsControl d:ItemsSource="{d:SampleData ItemCount=8}" ItemsSource="{Binding CollectionUsers}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Margin="-10"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="20" Width="340" Background="{StaticResource BasicW}" CornerRadius="20" Margin="10">
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 6" Text="{Binding UserInfo.Surname}"/>
+                                                <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 6" Text="{Binding UserInfo.Name}"/>
+                                                <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 6" Text="{Binding UserInfo.Patronymic}"/>
+                                                <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 10" Text="{Binding UserInfo.Phone}"/>
+                                                <Button Style="{StaticResource ButtonInPanelBase}" Command="{Binding DataContext.SeeUserInfoCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" CommandParameter="{Binding Id}" Content="Посмотреть профиль"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
                     </StackPanel>
                 </Border>
             </StackPanel>
 
-            <StackPanel Margin="0 0 40 0" Width="520">
+            <StackPanel Visibility="{Binding VisibilityUserInfoPanel}" Margin="0 0 40 0" Width="520">
                 <Border Style="{StaticResource PanelBorder}" Height="780" Margin="0 0 0 40">
                     <StackPanel>
                         <Grid Margin="0 -10 0 30" Height="80">
-                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Информация о сотруднике"/>
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Информация о пользователе"/>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                        <Grid Margin="10 0 10 10">
+                            <StackPanel Visibility="{Binding UserSelectedPanel}">
+                                <TextBlock Style="{StaticResource BigText}" HorizontalAlignment="Center" Margin="0 0 0 30" Text="{Binding SelectedUser.UserInfo.Role.Role1}" Foreground="{StaticResource TextW}"/>
+                                <Grid Height="40">
+                                    <TextBlock Style="{StaticResource RegularText}" Text="Фамилия:" Foreground="{StaticResource TextW}"/>
+                                    <TextBlock Style="{StaticResource RegularText}" Text="{Binding SelectedUser.UserInfo.Surname}" HorizontalAlignment="Right" Foreground="{StaticResource TextW}"/>
+                                </Grid>
+                                <Grid Height="40">
+                                    <TextBlock Style="{StaticResource RegularText}" Text="Имя:" Foreground="{StaticResource TextW}"/>
+                                    <TextBlock Style="{StaticResource RegularText}" Text="{Binding SelectedUser.UserInfo.Name}" HorizontalAlignment="Right" Foreground="{StaticResource TextW}"/>
+                                </Grid>
+                                <Grid Height="40">
+                                    <TextBlock Style="{StaticResource RegularText}" Text="Отчество:" Foreground="{StaticResource TextW}"/>
+                                    <TextBlock Style="{StaticResource RegularText}" Text="{Binding SelectedUser.UserInfo.Patronymic}" HorizontalAlignment="Right" Foreground="{StaticResource TextW}"/>
+                                </Grid>
+                                <Grid Height="40" Margin="0 0 0 20">
+                                    <TextBlock Style="{StaticResource RegularText}" Text="Телефон:" Foreground="{StaticResource TextW}"/>
+                                    <TextBlock Style="{StaticResource RegularText}" Text="{Binding SelectedUser.UserInfo.Phone}" HorizontalAlignment="Right" Foreground="{StaticResource TextW}"/>
+                                </Grid>
+                                <StackPanel>
+                                    <TextBlock Height="30" Style="{StaticResource RegularText}" Text="Место жительства:" Foreground="{StaticResource TextW}"/>
+                                    <TextBlock Style="{StaticResource RegularText}" Text="{Binding SelectedUser.UserInfo.Location}" TextWrapping="Wrap" Foreground="{StaticResource TextW}"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel VerticalAlignment="Center" Visibility="{Binding NotUserSelectedPanel}">
+                                <TextBlock Text="Пользователь не выбран" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </StackPanel>
                         </Grid>
                     </StackPanel>
                 </Border>
-                <Button Style="{DynamicResource ButtonOutPanel}" Content="Добавить сотрудника"/>
+                <Button Style="{DynamicResource ButtonOutPanel}" Command="{Binding AddUserPanelVisibilityCommand}" Content="Добавить пользователя"/>
             </StackPanel>
-            
+
+            <StackPanel Visibility="{Binding VisibilityCreateUserPanel}" Margin="0 0 40 0" Width="520">
+                <Border Style="{StaticResource PanelBorder}" Height="880">
+                    <StackPanel>
+                        <Grid Margin="0 -10 0 30" Height="80">
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Добавление пользователя"/>
+                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                        <ScrollViewer Height="650" Margin="10 0 10 0">
+                            <StackPanel Margin="0 0 20 0">
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>
+                                <ComboBox Tag="Роль" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionUserRoles}" DisplayMemberPath="Role1" 
+SelectedValuePath="Id" SelectedItem="{Binding Role}" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Login}" Tag="Логин" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Password}" Tag="Пароль" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Pincode}" Tag="Пинкод" Margin="0 0 0 20"/>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <StackPanel Orientation="Horizontal" Margin="10 40 10 10">
+                            <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding SeeUserInfoPanelVisibilityCommand}" Width="230" Margin="0 0 20 0" Content="Отмена"/>
+                            <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding CreateUserCommand}" Width="230" Content="Добавить"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
         </StackPanel>
 
     </StackPanel>

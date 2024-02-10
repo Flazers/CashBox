@@ -58,9 +58,9 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public byte[]? Image
+        public byte[] Image
         {
-            get => _product.Image;
+            get => _product.Image!;
             set
             {
                 _product.Image = value;
@@ -74,7 +74,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             {
                 BitmapImage image = new();
                 byte[] data = Image;
-                if (Image.Length < 5) data = File.ReadAllBytes(@"Assets\Image\Zagl.png");
+                if (Image!.Length < 5) data = File.ReadAllBytes(@"Assets\Image\Zagl.png");
                 using (var mem = new MemoryStream(data))
                 {
                     mem.Position = 0;
@@ -139,7 +139,17 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public virtual ProductCategory? Category
+        public ProductCategoryViewModel CategoryVM 
+        {
+            get => new(_product.Category);
+            set
+            {
+                _product.CategoryId = value.Id;
+                OnPropertyChanged();
+            }
+        }
+
+        public virtual ProductCategory Category
         {
             get => _product.Category;
             set

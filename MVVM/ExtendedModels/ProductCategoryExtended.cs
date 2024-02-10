@@ -17,7 +17,7 @@ namespace Cashbox.MVVM.Models
         {
             try
             {
-                ProductCategory productCategory = new ProductCategory() { Category = category};
+                ProductCategory productCategory = new() { Category = category};
                 CashBoxDataContext.Context.ProductCategories.Add(productCategory);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(productCategory);

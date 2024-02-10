@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cashbox.Migrations
 {
     [DbContext(typeof(CashBoxDataContext))]
-    [Migration("20231214120715_initSQLite")]
+    [Migration("20240208161118_initSQLite")]
     partial class initSQLite
     {
         /// <inheritdoc />
@@ -264,6 +264,9 @@ namespace Cashbox.Migrations
                         .HasColumnType("image")
                         .HasColumnName("image");
 
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
                     b.Property<double>("PurchaseСost")
                         .HasColumnType("float")
                         .HasColumnName("purchase_сost");
@@ -378,24 +381,6 @@ namespace Cashbox.Migrations
                     b.ToTable("Stock", (string)null);
                 });
 
-            modelBuilder.Entity("Cashbox.MVVM.Models.Tfadatum", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("code");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("TFAData", (string)null);
-                });
-
             modelBuilder.Entity("Cashbox.MVVM.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -422,10 +407,6 @@ namespace Cashbox.Migrations
                     b.Property<int>("Pin")
                         .HasColumnType("int")
                         .HasColumnName("pin");
-
-                    b.Property<bool>("Tfa")
-                        .HasColumnType("bit")
-                        .HasColumnName("TFA");
 
                     b.HasKey("Id");
 
@@ -592,17 +573,6 @@ namespace Cashbox.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Cashbox.MVVM.Models.Tfadatum", b =>
-                {
-                    b.HasOne("Cashbox.MVVM.Models.User", "User")
-                        .WithOne("Tfadatum")
-                        .HasForeignKey("Cashbox.MVVM.Models.Tfadatum", "UserId")
-                        .IsRequired()
-                        .HasConstraintName("FK_TFAData_Users");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Cashbox.MVVM.Models.UserInfo", b =>
                 {
                     b.HasOne("Cashbox.MVVM.Models.Role", "Role")
@@ -663,8 +633,6 @@ namespace Cashbox.Migrations
                     b.Navigation("DailyReports");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("Tfadatum");
 
                     b.Navigation("UserInfo");
                 });

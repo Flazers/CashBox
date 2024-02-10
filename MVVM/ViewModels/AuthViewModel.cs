@@ -82,13 +82,6 @@ namespace Cashbox.MVVM.ViewModels
             }
         }
 
-        private bool _tfa = false;
-        public bool TFA
-        {
-            get => _tfa;
-            set => Set(ref _tfa, value);
-        }
-
         #endregion
 
         #endregion
@@ -211,7 +204,6 @@ namespace Cashbox.MVVM.ViewModels
             StringPin = string.Empty;
             Login = string.Empty;
             Password = string.Empty;
-            TFA = false;
         }
 
         public AuthViewModel(INavigationService? navService)

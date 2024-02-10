@@ -119,8 +119,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _brand, value);
         }
 
-        private ProductCategoryViewModel _category;
-        public ProductCategoryViewModel Category
+        private ProductCategoryViewModel? _category;
+        public ProductCategoryViewModel? Category
         {
             get => _category;
             set => Set(ref _category, value);
@@ -146,7 +146,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             get => _amount;
             set => Set(ref _amount, value);
         }
-
 
         private bool _isAvailable;
         public bool IsAvailable
@@ -176,6 +175,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
             set => Set(ref _collectionProducts, value);
         }
+
         private ObservableCollection<ProductCategoryViewModel> _collectionProductCategories = new(ProductCategoryViewModel.GetProductCategory().Result);
         public ObservableCollection<ProductCategoryViewModel> CollectionProductCategories
         {
@@ -207,9 +207,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set
             {
                 _selectedProductCategory = value;
-                CollectionProducts = new(ProductViewModel.GetProducts().Result);
-                if (_selectedProductCategory != null)
-                    CollectionProducts = new(_collectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
+                Update();
                 OnPropertyChanged();
             }
         }
@@ -246,7 +244,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 return;
             }
             ProductCategoryViewModel data = null;
-            if (SelectedProductCategory.Products.Any())
+            if (SelectedProductCategory.Products.Count != 0)
             {
                 MessageBoxResult result = MessageBox.Show("В выбранной категории присутствуют товары \nНажмите \"Да\"если хотите перенести все товары в категорию по умолчанию \nНажмите \"Нет\" если хотите удалить все товары из категории \nНажмите \"Отмена\" для отмены удаления ", "Предупреджение", MessageBoxButton.YesNoCancel);
                 switch (result)
@@ -295,6 +293,19 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 ImageProduct = [];
         }
 
+        public RelayCommand EditImageCommand { get; set; }
+        private bool CanEditImageCommandExecute(object p) => true;
+        private void OnEditImageCommandExecuted(object p)
+        {
+            OpenFileDialog openFileDialog = new() { Filter = "Все файлы (*.*)|*.*", RestoreDirectory = true };
+            Nullable<bool> result = openFileDialog.ShowDialog();
+            if (result == true)
+            {
+                SelectedProduct.Image = File.ReadAllBytes(openFileDialog.FileName);
+                ImageStringProduct = openFileDialog.FileName;
+            }
+        }
+
         public RelayCommand OpenPanelProductCreateCommand { get; set; }
         private bool CanOpenPanelProductCreateCommandExecute(object p) => true;
         private void OnOpenPanelProductCreateCommandExecuted(object p)
@@ -320,6 +331,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanOpenPanelProductEditCommandExecute(object p) => true;
         private void OnOpenPanelProductEditCommandExecuted(object p)
         {
+            ImageStringProduct = "Выбрать фото товара";
+
             PanelCreateProductVisibility = Visibility.Collapsed;
             PanelMainProductVisibility = Visibility.Collapsed;
             PanelEditProductVisibility = Visibility.Visible;
@@ -348,22 +361,21 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (data != null)
             {
                 Update();
-                SelectedProduct = data;
-                MessageBox.Show("Товар добавлен", "Успех");
                 OnClosePanelProductCommandExecuted(0);
+                SelectedProduct = CollectionProducts.FirstOrDefault(x => x == data);
+                if (SelectedProductCategory != null && SelectedProductCategory.Id != data.Category.Id)
+                    SelectedProductCategory = CollectionProductCategories.FirstOrDefault(x => x.Id == data.Category.Id);
+                MessageBox.Show("Товар добавлен", "Успех");
             }
         }
 
         public RelayCommand EditProductCommand { get; set; }
-        private bool CanEditProductCommandExecute(object p)
-        {
-            return true;
-        }
+        private bool CanEditProductCommandExecute(object p) => true;
         private async void OnEditProductCommandExecuted(object p)
         {
             if (ImageProduct != null)
                 Image = ImageProduct;
-            var data = await ProductViewModel.UpdateProduct(SelectedProduct.Id, SelectedProduct.ArticulCode, SelectedProduct.Title, SelectedProduct.Description, SelectedProduct.Image, SelectedProduct.Brand, SelectedProduct.Category.Id, SelectedProduct.PurchaseСost, SelectedProduct.SellCost, SelectedProduct.Stock.Amount);
+            var data = await ProductViewModel.UpdateProduct(SelectedProduct.Id, SelectedProduct.ArticulCode, SelectedProduct.Title, SelectedProduct.Description, SelectedProduct.Image, SelectedProduct.Brand, SelectedProduct.CategoryId, SelectedProduct.PurchaseСost, SelectedProduct.SellCost, SelectedProduct.Stock.Amount);
             if (data != null)
             {
                 Update();
@@ -390,6 +402,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public void Update()
         {
             CollectionProducts = new(ProductViewModel.GetProducts().Result);
+            if (SelectedProductCategory != null)
+                CollectionProducts = new(_collectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
         }
         #endregion
 
@@ -408,6 +422,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             ClosePanelProductCommand = new RelayCommand(OnClosePanelProductCommandExecuted, CanClosePanelProductCommandExecute);
             GetAllProductCommand = new RelayCommand(OnGetAllProductCommandExecuted, CanGetAllProductCommandExecute);
             AddImageCommand = new RelayCommand(OnAddImageCommandExecuted, CanAddImageCommandExecute);
+            EditImageCommand = new RelayCommand(OnEditImageCommandExecuted, CanEditImageCommandExecute);
         }
     }
 }
