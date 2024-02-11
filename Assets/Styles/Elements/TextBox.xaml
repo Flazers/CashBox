@@ -9,6 +9,7 @@
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontFamily" Value="Montserrat"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="AllowDrop" Value="true"/>
@@ -61,6 +62,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="AllowDrop" Value="true"/>
         <Setter Property="Height" Value="90"/>
+        <Setter Property="FontFamily" Value="Montserrat"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="Template">
@@ -98,6 +100,7 @@
         <Setter Property="AllowDrop" Value="true"/>
         <Setter Property="Height" Value="70"/>
         <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontFamily" Value="Montserrat"/>
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -132,6 +135,7 @@
         <Setter Property="Foreground" Value="{DynamicResource TextB}"/>
         <Setter Property="MinHeight" Value="30"/>
         <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontFamily" Value="Montserrat"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>

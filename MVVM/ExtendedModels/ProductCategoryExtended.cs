@@ -17,7 +17,7 @@ namespace Cashbox.MVVM.Models
         {
             try
             {
-                ProductCategory productCategory = new ProductCategory() { Category = category};
+                ProductCategory productCategory = new() { Category = category};
                 CashBoxDataContext.Context.ProductCategories.Add(productCategory);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(productCategory);
@@ -25,15 +25,18 @@ namespace Cashbox.MVVM.Models
             catch (Exception) { return null; }
         }
 
-        private static async Task<ProductCategoryViewModel?> RemoveProductCategory(int id_category)
+        private static async Task<ProductCategoryViewModel?> RemoveProductCategory(int id_category, int t)
         {
             try
             {
                 ProductCategory? productCategory = await CashBoxDataContext.Context.ProductCategories.FirstOrDefaultAsync(x => x.Id == id_category);
                 if (productCategory == null) return null;
-                if (productCategory.Products.Count != 0)
-                    foreach (var product in productCategory.Products) 
+                if (t == 1)
+                    foreach (var product in productCategory.Products)
                         product.CategoryId = 1;
+                else if (t == 2)
+                    foreach (var product in productCategory.Products)
+                        await ProductViewModel.RemoveProduct(product.Id);
                 CashBoxDataContext.Context.ProductCategories.Remove(productCategory);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(productCategory);
@@ -43,6 +46,6 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<List<ProductCategoryViewModel>> GetProductCategories() => await CashBoxDataContext.Context.ProductCategories.Select(s => new ProductCategoryViewModel(s)).ToListAsync();
         public static async Task<ProductCategoryViewModel?> CreateProductCategories(string category) => await NewProductCategory(category);
-        public static async Task<ProductCategoryViewModel?> RemoveProductCategories(int id_category) => await RemoveProductCategory(id_category);
+        public static async Task<ProductCategoryViewModel?> RemoveProductCategories(int id_category, int prodRect) => await RemoveProductCategory(id_category, prodRect);
     }
 }

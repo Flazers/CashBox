@@ -112,7 +112,7 @@ namespace Cashbox.MVVM.ViewModels
             if (!CashBoxDataContext.Context.Users.Any())
             {
                 SetStatus("Создаю пользователя по умолчанию", "loading", 4);
-                await UserViewModel.CreateUser("admin", "admin", 111111, false, "Name", "Surname", "Patronymic", "location", "phone", (await RoleViewModel.GetRoles())[0], true);
+                await UserViewModel.CreateUser("admin", "admin", 111111, "Name", "Surname", "Patronymic", "location", "phone", (await RoleViewModel.GetRoles())[0]);
                 await Task.Delay(secondDelay);
                 MessageBox.Show("Логин: admin \nПароль: admin \nПин-Код: 111111 \nЭти данные можно изменить позже в настройках приложения.", "Данные администратора");
             }
@@ -142,7 +142,6 @@ namespace Cashbox.MVVM.ViewModels
             CashBoxDataContext.Context.AuthHistories.Load();
             CashBoxDataContext.Context.AutoDreports.Load();
             CashBoxDataContext.Context.DailyReports.Load();
-            CashBoxDataContext.Context.AppSettings.Load();
             CashBoxDataContext.Context.Orders.Load();
             CashBoxDataContext.Context.OrderProducts.Load();
             CashBoxDataContext.Context.PaymentMethods.Load();
@@ -153,8 +152,8 @@ namespace Cashbox.MVVM.ViewModels
             try
             {
                 SetStatus("Проверка интернет соединения", "loading", 8);
-                HttpClient client = new HttpClient();
-                HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
+                HttpClient client = new();
+                //HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
             }
             catch (HttpRequestException)
             {

@@ -9,28 +9,18 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class UserViewModel : ViewModelBase
+
+    public class UserViewModel(User user) : ViewModelBase
     {
-        private readonly User _user;
-        public UserViewModel(User user)
-        {
-            _user = user;
-            UserInfo = new UserInfoViewModel(user.UserInfo!);
-        }
+        private readonly User _user = user;
+        public UserInfoViewModel UserInfo { get; private set; } = new UserInfoViewModel(user.UserInfo!);
 
         public static UserViewModel? GetCurrentUser() => User.CurrentUser;
-
         public static void LogOut() => User.LogOut();
-        
-
         public static async Task<UserViewModel?> GetUserByLogPass(string login, string password) => await User.GetUserByLogPass(login, password);
-        
-
         public static async Task<UserViewModel?> GetUserByPin(int pincode) => await User.GetUserByPin(pincode);
-        
-
-        public static async Task<UserViewModel?> CreateUser(string login, string password, int pincode, bool TFA, string name, string surname, string patronymic, string location, string phone, RoleViewModel role, bool isActive) => await User.CreateUser(login, password, pincode, TFA, name, surname, patronymic, location, phone, role, isActive);
-        
+        public static async Task<UserViewModel?> CreateUser(string login, string password, int pincode, string name, string surname, string patronymic, string location, string phone, RoleViewModel role) => await User.CreateUser(login, password, pincode, name, surname, patronymic, location, phone, role);
+        public static async Task<List<UserViewModel>> GetListUsers() => await User.GetListUsers();
 
         public void SetUserInfo(UserInfoViewModel? userInfoViewModel)
         {
@@ -38,12 +28,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             UserInfo = userInfoViewModel;
         }
 
-
-        public UserInfoViewModel UserInfo { get; private set; }
-
         public int Id => _user.Id;
-
-        public bool Tfa => _user.Tfa;
 
         public virtual ICollection<AuthHistory> AuthHistories => _user.AuthHistories;
 

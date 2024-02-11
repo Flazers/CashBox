@@ -17,7 +17,7 @@
 
         <Grid Grid.Column="0" Background="{StaticResource PanelB}">
 
-            <TextBlock VerticalAlignment="Top" Text="SMOKE SCREEN" TextWrapping="Wrap" Margin="0 20" TextAlignment="Center" Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}"/>
+            <TextBlock VerticalAlignment="Top" Text="A5 Detailing" TextWrapping="Wrap" Margin="0 20" TextAlignment="Center" Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}"/>
 
             <StackPanel VerticalAlignment="Center">
                 <RadioButton Command="{Binding NavigateSubViewCommand}" IsChecked="{Binding IsHomeView}" Style="{DynamicResource NavRB}">
@@ -30,7 +30,7 @@
                 <RadioButton Command="{Binding NavigateSubViewCommand}" IsChecked="{Binding IsEmployeeView}" Margin="0 20 0 0" Style="{DynamicResource NavRB}">
                     <StackPanel>
                         <Icon:PackIconMaterial Kind="AccountMultiple" HorizontalAlignment="Center" Width="50" Height="50"/>
-                        <TextBlock Text="Сотрудники" Margin="0 5 0 0" FontSize="16" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Пользователи" Margin="0 5 0 0" FontSize="16" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </RadioButton>
 

@@ -20,9 +20,7 @@ namespace Cashbox.Core.Commands
         }
 #pragma warning restore CS8625
 
-#pragma warning disable CS8765
         public override bool CanExecute(object parameter) => _CanExecute?.Invoke(parameter) ?? true;
         public override void Execute(object parameter) => _Execute(parameter);
-#pragma warning restore CS8765
     }
 }

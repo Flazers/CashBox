@@ -7,13 +7,10 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class RoleViewModel
+    public class RoleViewModel(Role role)
     {
-        private readonly Role _role;
-        public RoleViewModel(Role role)
-        {
-            _role = role;
-        }
+        private readonly Role _role = role;
+
         public static async Task<List<RoleViewModel>> GetRoles() => await Role.GetRoles();
 
         public int Id => _role.Id;

@@ -11,7 +11,7 @@ namespace Cashbox.MVVM.Models
     {
         private UserInfo() { }
 
-        public static async Task<UserInfoViewModel?> CreateNewUserInfo(int userId, string name, string surname, string patronymic, string location, string phone, int roleId, bool isActive)
+        public static async Task<UserInfoViewModel?> CreateNewUserInfo(int userId, string name, string surname, string patronymic, string location, string phone, int roleId)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace Cashbox.MVVM.Models
                     Location = location,
                     Phone = phone,
                     RoleId = roleId,
-                    IsActive = isActive
+                    IsActive = true
                 };
                 await CashBoxDataContext.Context.AddAsync(userInfo);
                 await CashBoxDataContext.Context.SaveChangesAsync();

@@ -11,11 +11,11 @@ public partial class CashBoxDataContext : DbContext
     }
 
     private static CashBoxDataContext? _context;
-    
+
     public static CashBoxDataContext Context
     {
-        get 
-        { 
+        get
+        {
             if (_context == null)
                 _context = new CashBoxDataContext();
             return _context;
@@ -33,7 +33,7 @@ public partial class CashBoxDataContext : DbContext
 
     public virtual DbSet<DailyReport> DailyReports { get; set; }
 
-    public virtual DbSet<AppSettings> AppSettings { get; set; }
+    public virtual DbSet<MoneyBox> MoneyBoxes { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
 
@@ -58,7 +58,7 @@ public partial class CashBoxDataContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         //optionsBuilder.UseSqlite("Data Source=C:\\Users\\nicho\\source\\repos\\Cash\\MVVM\\Models\\Data.db");
-        optionsBuilder.UseSqlite("Data Source=C:\\Users\\Expert\\source\\repos\\Cach\\MVVM\\Models\\Data.db");
+        optionsBuilder.UseSqlite("Data Source=C:\\Users\\Expert\\source\\repos\\Cashboxs\\MVVM\\Models\\Data.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -116,13 +116,12 @@ public partial class CashBoxDataContext : DbContext
                 .HasConstraintName("FK_DailyReport_Users");
         });
 
-        modelBuilder.Entity<AppSettings>(entity =>
+        modelBuilder.Entity<MoneyBox>(entity =>
         {
-            entity.ToTable("AppSettings");
+            entity.ToTable("MoneyBox");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.MoneyBox).HasColumnName("money_box");
-            entity.Property(e => e.MainEmail).HasColumnName("main_email");
+            entity.Property(e => e.Money).HasColumnName("money");
         });
 
         modelBuilder.Entity<Order>(entity =>

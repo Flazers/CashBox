@@ -7,13 +7,10 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class PaymentMethodViewModel
+    public class PaymentMethodViewModel(PaymentMethod PayMet)
     {
-        private readonly PaymentMethod _paymentMethod;
-        public PaymentMethodViewModel(PaymentMethod PayMet)
-        {
-            _paymentMethod = PayMet;
-        }
+        private readonly PaymentMethod _paymentMethod = PayMet;
+
         public static async Task<List<PaymentMethodViewModel>> GetMethods() => await PaymentMethod.GetMethods();
 
         public int Id => _paymentMethod.Id;
