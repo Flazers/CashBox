@@ -50,6 +50,11 @@
     <Color x:Key="PressedGreenColor">#0B3B24</Color>
     <Color x:Key="DisabledGreenColor">#22B571</Color>
 
+    <Color x:Key="BasicCyanColor">#0DCAF0</Color>
+    <Color x:Key="HoverCyanColor">#86f4ff</Color>
+    <Color x:Key="PressedCyanColor">#0998a7</Color>
+    <Color x:Key="DisabledCyanColor">#c3f9ff</Color>
+
     <Color x:Key="BasicGrayColor">#6C757D</Color>
     <Color x:Key="HoverGrayColor">#B6C6D4</Color>
     <Color x:Key="PressedGrayColor">#4D5359</Color>
@@ -64,6 +69,11 @@
     <SolidColorBrush x:Key="HoverGreen" Color="{DynamicResource HoverGreenColor}"/>
     <SolidColorBrush x:Key="PressedGreen" Color="{DynamicResource PressedGreenColor}"/>
     <SolidColorBrush x:Key="DisabledGreen" Color="{DynamicResource DisabledGreenColor}"/>
+
+    <SolidColorBrush x:Key="BasicCyan" Color="{DynamicResource BasicCyanColor}"/>
+    <SolidColorBrush x:Key="HoverCyan" Color="{DynamicResource HoverCyanColor}"/>
+    <SolidColorBrush x:Key="PressedCyan" Color="{DynamicResource PressedCyanColor}"/>
+    <SolidColorBrush x:Key="DisabledCyan" Color="{DynamicResource DisabledCyanColor}"/>
 
     <SolidColorBrush x:Key="BasicGray" Color="{DynamicResource BasicGrayColor}"/>
     <SolidColorBrush x:Key="HoverGray" Color="{DynamicResource HoverGrayColor}"/>

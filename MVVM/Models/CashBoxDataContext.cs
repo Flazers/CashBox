@@ -11,16 +11,7 @@ public partial class CashBoxDataContext : DbContext
     }
 
     private static CashBoxDataContext? _context;
-
-    public static CashBoxDataContext Context
-    {
-        get
-        {
-            if (_context == null)
-                _context = new CashBoxDataContext();
-            return _context;
-        }
-    }
+    public static CashBoxDataContext Context => _context ??= new CashBoxDataContext();
 
     public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options)
         : base(options)

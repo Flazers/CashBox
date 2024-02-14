@@ -12,6 +12,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
     {
         #region Props
         public static UserViewModel? User { get => Models.User.CurrentUser; }
+
+        private OrderViewModel? _selectedOrder;
+        public OrderViewModel? SelectedOrder 
+        {
+            get => _selectedOrder;
+            set => Set(ref _selectedOrder, value);
+        }
         #endregion
     }
 }
