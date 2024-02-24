@@ -12,12 +12,18 @@ namespace Cashbox.MVVM.ViewModels.Data
     {
         private readonly Order _order = order;
 
-        public static async Task<List<OrderViewModel>> GetDayOrdersToMethod(DateTime dateTime, int method) => await Order.GetDayOrdersToMethod(dateTime, method);
-        public static async Task<List<OrderViewModel>> GetAllDayOrders(DateTime dateTime) => await Order.GetAllDayOrders(dateTime);
-
+        public static Order? OrderComposition => Order.OrderComposition;
+        public static async Task<OrderViewModel> SellOrder(int paymet, double sellcost, double discount) => await Order.SellOrder(paymet, sellcost, discount);
+        public static async Task<OrderViewModel> CreateOrder() => await Order.CreateOrder();
+        public static async Task<OrderViewModel> RemoveCurrentOrder() => await Order.RemoveCurrentOrder();
+        public static async Task<List<OrderViewModel>> GetDayOrdersToMethod(DateOnly dateOnly, int method) => await Order.GetDayOrdersToMethod(dateOnly, method);
+        public static async Task<List<OrderViewModel>> GetAllDayOrders(DateOnly dateOnly) => await Order.GetAllDayOrders(dateOnly);
+        public static double GetSumInDay(DateOnly? dateOnly) => Order.GetSumInDay(dateOnly);
+        public static double GetSumMethodInDay(DateOnly? dateOnly) => Order.GetSumMethodInDay(dateOnly);
+        
         public int Id => _order.Id;
 
-        public DateTime SellDatetime 
+        public DateTime? SellDatetime 
         {
             get => _order.SellDatetime;
             set
@@ -27,7 +33,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public int PaymentMethodId
+        public int? PaymentMethodId
         {
             get => _order.PaymentMethodId;
             set
@@ -47,7 +53,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double SellCost
+        public double? SellCost
         {
             get => _order.SellCost;
             set
@@ -57,7 +63,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double Discount
+        public double? Discount
         {
             get => _order.Discount;
             set
@@ -67,7 +73,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+        public virtual ICollection<OrderProduct> OrderProducts { get; set; } = [];
 
         public virtual PaymentMethod PaymentMethod { get; set; } = null!;
 

@@ -7,15 +7,15 @@ public partial class DailyReport
 {
     public int Id { get; set; }
 
-    public DateOnly Data { get; set; }
+    public DateOnly? Data { get; set; }
 
-    public TimeOnly OpenTime { get; set; }
+    public TimeOnly? OpenTime { get; set; }
 
-    public TimeOnly CloseTime { get; set; }
+    public TimeOnly? CloseTime { get; set; }
 
     public int UserId { get; set; }
 
-    public double Proceeds { get; set; }
+    public double? Proceeds { get; set; }
 
     public virtual AutoDreport? AutoDreport { get; set; }
 

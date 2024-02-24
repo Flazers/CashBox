@@ -125,13 +125,14 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         #endregion
 
+
         #endregion
 
         public override void OnLoad()
         {
-            CardTransit = OrderViewModel.GetDayOrdersToMethod(StartShiftTime, 1).Result.Sum(x => x.SellCost);
-            NalTransit = OrderViewModel.GetDayOrdersToMethod(StartShiftTime, 2).Result.Sum(x => x.SellCost);
-            SendTransit = OrderViewModel.GetDayOrdersToMethod(StartShiftTime, 3).Result.Sum(x => x.SellCost);
+            CardTransit = OrderViewModel.GetDayOrdersToMethod(DateOnly.FromDateTime(StartShiftTime), 1).Result.Sum(x => (double)x.SellCost!);
+            NalTransit = OrderViewModel.GetDayOrdersToMethod(DateOnly.FromDateTime(StartShiftTime), 2).Result.Sum(x => (double)x.SellCost!);
+            SendTransit = OrderViewModel.GetDayOrdersToMethod(DateOnly.FromDateTime(StartShiftTime), 3).Result.Sum(x => (double)x.SellCost!);
         }
 
         public ShiftViewModel()

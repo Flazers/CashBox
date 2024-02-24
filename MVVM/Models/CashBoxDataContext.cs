@@ -19,6 +19,7 @@ public partial class CashBoxDataContext : DbContext
     }
 
     public virtual DbSet<AuthHistory> AuthHistories { get; set; }
+    public virtual DbSet<AppSettings> AppSettings { get; set; }
 
     public virtual DbSet<AutoDreport> AutoDreports { get; set; }
 
@@ -48,13 +49,22 @@ public partial class CashBoxDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //optionsBuilder.UseSqlite("Data Source=C:\\Users\\nicho\\source\\repos\\Cash\\MVVM\\Models\\Data.db");
-        //optionsBuilder.UseSqlite("Data Source=C:\\Users\\Expert\\source\\repos\\Cashboxs\\MVVM\\Models\\Data.db");
-        optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\Source\\Repos\\CashBox\\MVVM\\Models\\Data.db");
+        optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\source\\repos\\CashBox\\MVVM\\Models\\Data.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AppSettings>(entity =>
+        {
+            entity.ToTable("AppSettings");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.MoneyBox).HasColumnName("moneybox");
+            entity.Property(e => e.Salary).HasColumnName("salary");
+            entity.Property(e => e.AwardProcent).HasColumnName("awardprocent");
+            entity.Property(e => e.MainEmail).HasColumnName("mainemail");
+        });
+
         modelBuilder.Entity<AuthHistory>(entity =>
         {
             entity.ToTable("AuthHistory");

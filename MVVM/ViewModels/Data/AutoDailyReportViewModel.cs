@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class AutoDailyReportViewModel(AutoDreport AutoDreport) : ViewModelBase
+    public class AutoDailyReportViewModel(AutoDreport AutoDreports) : ViewModelBase
     {
-        private readonly AutoDreport _autoDreport = AutoDreport;
+        private readonly AutoDreport _autoDreport = AutoDreports;
 
+        public static async Task<AutoDailyReportViewModel> GenEndShiftAuto(DailyReport dailyReport) => await AutoDreport.GenReport(dailyReport);
         public int DailyReportId => _autoDreport.DailyReportId;
 
-        public double Salary
+        public int? Salary
         {
             get => _autoDreport.Salary;
             set

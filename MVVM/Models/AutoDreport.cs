@@ -7,7 +7,7 @@ public partial class AutoDreport
 {
     public int DailyReportId { get; set; }
 
-    public double Salary { get; set; }
+    public int? Salary { get; set; }
 
     public double AutoProceeds { get; set; }
 

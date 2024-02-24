@@ -61,9 +61,7 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        public async static Task<List<AuthHistoryViewModel>> GetHistories()
-        {
-            return await CashBoxDataContext.Context.AuthHistories.Select(s => new AuthHistoryViewModel(s)).ToListAsync();
-        }
+        public async static Task<List<AuthHistoryViewModel>> GetHistories() => await CashBoxDataContext.Context.AuthHistories.Select(s => new AuthHistoryViewModel(s)).ToListAsync();
+        
     }
 }
