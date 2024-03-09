@@ -18,16 +18,20 @@ namespace Cashbox.MVVM.Models
             set => _orderProducts = value;
         }
 
-        public static void AddProduct(int orderid, ProductViewModel product, int amount)
+        public static void AddProduct(List<OrderProductViewModel> orderProducts)
         {
-            OrderProducts.Add(new OrderProduct()
+            foreach (var item in orderProducts) 
             {
-                OrderId = orderid,
-                ProductId = product.Id,
-                PurchaseСost = product.PurchaseСost,
-                SellCost = product.SellCost,
-                Amount = amount,
-            });
+                OrderProducts.Add(new OrderProduct()
+                {
+                    OrderId = item.OrderId,
+                    ProductId = item.ProductId,
+                    PurchaseСost = item.PurchaseСost,
+                    SellCost = item.SellCost,
+                    Amount = item.Amount,
+                });
+            }
+
         }
 
         public static void EditOrderProduct(int orderid, ProductViewModel product, int amount)
@@ -35,11 +39,11 @@ namespace Cashbox.MVVM.Models
             OrderProducts.FirstOrDefault(x => x.OrderId == orderid && x.Product.Id == product.Id).Amount = amount;
         }
 
-        public static async Task<List<OrderProduct>> SellOrder()
+        public static bool AddListOrderInDataBase(List<OrderProductViewModel> orderProducts)
         {
-            await CashBoxDataContext.Context.AddRangeAsync(OrderProducts);
-            await CashBoxDataContext.Context.SaveChangesAsync();
-            return OrderProducts;
+            AddProduct(orderProducts);
+            CashBoxDataContext.Context.OrderProducts.AddRangeAsync(OrderProducts);
+            return true;
         }
     }
 }

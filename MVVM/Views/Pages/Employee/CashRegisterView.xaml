@@ -16,7 +16,7 @@
         <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
             <DockPanel VerticalAlignment="Center">
                 <TextBlock Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Сотрудник: \{0}'}"/>
-                <TextBlock Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Right" Text="{Binding User.DailyReports.Count, StringFormat='Смена открыта: \{0}'}"/>
+                <TextBlock Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Right" Text="{Binding ShiftOpenTime, StringFormat='Смена открыта: \{0}'}"/>
             </DockPanel>
         </Border>
 
@@ -25,12 +25,12 @@
                 <StackPanel>
                     <Grid Margin="0 -10 0 30" Height="80">
                         <TextBlock Style="{DynamicResource TitleText}" Margin="5 0 0 0" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Товары"/>
-                        <TextBox Style="{StaticResource Search}" Margin="0 0 5 0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="340"/>
+                        <TextBox Style="{StaticResource Search}" Text="{Binding SearchCollectionProduct}" Margin="0 0 5 0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="340"/>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
 
                     <ScrollViewer Height="750" Margin="10 0 10 10">
-                        <ItemsControl d:ItemsSource="{d:SampleData ItemCount=20}" ItemsSource="{Binding CollectionProducts}">
+                        <ItemsControl Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=10}" ItemsSource="{Binding CollectionProducts}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel Margin="-10"/>
@@ -42,7 +42,7 @@
                                         <Grid>
                                             <Border CornerRadius="5" Width="80" Height="80" HorizontalAlignment="Left" VerticalAlignment="Top">
                                                 <Border.Background>
-                                                    <ImageBrush ImageSource="{Binding ImageGet}"/>
+                                                    <ImageBrush ImageSource="{Binding Image}"/>
                                                 </Border.Background>
                                             </Border>
 
@@ -57,7 +57,9 @@
                                                 <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}" ScrollViewer.CanContentScroll="True"/>
                                             </StackPanel>
 
-                                            <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding DataContext.AddProductInBasketCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" CommandParameter="{Binding Id}" Height="40" VerticalAlignment="Bottom">
+                                            <Button Height="40" VerticalAlignment="Bottom" Style="{StaticResource ButtonInPanelGreen}" 
+                                                    Command="{Binding DataContext.AddProductInBasketCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" 
+                                                    CommandParameter="{Binding Id}">
                                                 <Icon:PackIconMaterial Kind="Plus" Foreground="{StaticResource TextW}"/>
                                             </Button>
 
@@ -71,7 +73,7 @@
             </Border>
 
             <!--Меню-->
-            <Border Visibility="{Binding MenuPanelVisibility}" DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <!--<Border Visibility="{Binding MenuPanelVisibility}" DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <Grid>
                     <Grid Margin="0 -10 0 30" Height="80" VerticalAlignment="Top">
                         <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Меню"/>
@@ -80,18 +82,18 @@
 
                     <Grid VerticalAlignment="Center" Margin="10 0 10 10">
                         <StackPanel>
-                            <Button Style="{StaticResource ButtonInPanelGreen}" Margin="0 0 0 20" Content="Продажа" Command="{Binding OpenSellOrderPanelCommand}"/>
+                            <Button Style="{StaticResource ButtonInPanelGreen}" Margin="0 0 0 20" Content="Продажа" Command="{Binding OpenBasketOrderPanelCommand}"/>
                             <Button Style="{StaticResource ButtonInPanelGray}" Margin="0 0 0 20" Content="Возврат" Command="{Binding OpenReturnOrderPanelCommand}"/>
                             <Button Style="{StaticResource ButtonInPanelRed}" Content="Брак" Command="{Binding OpenCrackOrderPanelCommand}"/>
                         </StackPanel>
                     </Grid>
 
                 </Grid>
-            </Border>
+            </Border>-->
             <!--Меню-->
             
             <!--Продажа-->
-            <Border HorizontalAlignment="Right" Visibility="{Binding SellPanelVisibility}" DockPanel.Dock="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <!--<Border HorizontalAlignment="Right" Visibility="{Binding OrderPanelVisibility}" DockPanel.Dock="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -148,14 +150,14 @@
                                 <TextBlock Text="{Binding TotalCost, StringFormat='\Итого: {0} ₽'}" HorizontalAlignment="Center" 
                                            VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
                             </Border>
-                            <Button Style="{StaticResource ButtonInPanelGreen}" Content="Перейти к оплате"/>
+                            <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding OpenSellOrderPanelCommand}" Content="Перейти к оплате"/>
                         </StackPanel>
                     </Grid>
 
                 </StackPanel>
-            </Border>
+            </Border>-->
 
-            <Border Visibility="Collapsed" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <Border Visibility="{Binding SellPanelVisibility}" DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -163,7 +165,7 @@
                                Text="{Binding SelectedOrder.Id, StringFormat='{}Оплата №{0}'}"/>
                             <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Center" Text="{Binding SelectedOrder.SellDatetime, StringFormat='{}Открыт {0}'}" Foreground="{StaticResource TextG}"/>
                         </StackPanel>
-                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelWhite}" HorizontalAlignment="Right" Content="Назад" Margin="0 0 5 0"/>
+                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelWhite}" Command="{Binding OpenBasketOrderPanelCommand}" HorizontalAlignment="Right" Content="Назад" Margin="0 0 5 0"/>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
 
@@ -171,10 +173,10 @@
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                             <Border Width="270" Padding="10" Height="100" Margin="0 0 20 0" CornerRadius="10" Background="{StaticResource BasicW}">
                                 <Grid>
-                                    <TextBlock Text="Другая сумма:" Style="{StaticResource RegularText}"/>
+                                    <TextBlock Text="Другая цена (₽):" Style="{StaticResource RegularText}"/>
                                     <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
                                         <Border Height="40" Width="190" Margin="0 0 20 0" Background="{StaticResource BasicB}" CornerRadius="5">
-                                            <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Medium" Text="skgs" Background="Transparent" BorderThickness="0" FontSize="20" Foreground="{StaticResource TextW}"/>
+                                            <TextBox HorizontalAlignment="Center" Width="170" Background="Transparent" VerticalAlignment="Center" FontWeight="Medium" Text="{Binding TotalCost}" BorderThickness="0" FontSize="20" Foreground="{StaticResource TextW}"/>
                                         </Border>
                                         <Button Height="40" Width="40" Style="{StaticResource ButtonInPanelBase}" HorizontalAlignment="Center" >
                                             <Icon:PackIconMaterial Kind="Reload" Width="20" Height="20"/>
@@ -184,10 +186,10 @@
                             </Border>
                             <Border Width="270" Padding="10" Height="100" CornerRadius="10" Background="{StaticResource BasicW}">
                                 <Grid>
-                                    <TextBlock Text="Скидка:" Style="{StaticResource RegularText}"/>
+                                    <TextBlock Text="Скидка (%):" Style="{StaticResource RegularText}"/>
                                     <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
                                         <Border Height="40" Width="190" Margin="0 0 20 0" Background="{StaticResource BasicB}" CornerRadius="5">
-                                            <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Medium" Text="skgs" Background="Transparent" BorderThickness="0" FontSize="20" Foreground="{StaticResource TextW}"/>
+                                            <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Medium" Text="{Binding DiscountOrderCost}" Width="170" Background="Transparent" BorderThickness="0" FontSize="20" Foreground="{StaticResource TextW}"/>
                                         </Border>
                                         <Button Height="40" Width="40" Style="{StaticResource ButtonInPanelBase}" HorizontalAlignment="Center" >
                                             <Icon:PackIconMaterial Kind="Reload" Width="20" Height="20"/>
@@ -200,18 +202,18 @@
                             <Border Height="60" Margin="0 0 0 25" Padding="5" Background="{StaticResource BasicW}" CornerRadius="5">
                                 <Grid>
                                     <Border Width="275" HorizontalAlignment="Left">
-                                        <TextBlock Text="{Binding cost, StringFormat='\Скидка: {0} ₽'}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                        <TextBlock Text="{Binding DiscountOrderCost, StringFormat='\Скидка: {0} ₽'}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
                                     </Border>
                                     <Border Width="2" CornerRadius="1" Background="{StaticResource BasicB}"/>
                                     <Border Width="275" HorizontalAlignment="Right">
-                                        <TextBlock Text="{Binding cost, StringFormat='\Итого: {0} ₽'}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                        <TextBlock Text="{Binding TotalCost, StringFormat='\Итого: {0} ₽'}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
                                     </Border>
                                 </Grid>
                             </Border>
                             <StackPanel Orientation="Horizontal">
-                                <Button Height="100" Width="170" Margin="0 0 25 0" Style="{StaticResource ButtonInPanelCyan}" Content="Картой"/>
-                                <Button Height="100" Width="170" Margin="0 0 25 0" Style="{StaticResource ButtonInPanelGray}" Content="Переводом"/>
-                                <Button Height="100" Width="170" Style="{StaticResource ButtonInPanelGreen}" Content="Наличными"/>
+                                <Button Height="100" Width="170" Margin="0 0 25 0" Style="{StaticResource ButtonInPanelCyan}" Command="{Binding SellOrderCommand}" CommandParameter="1" Content="Картой"/>
+                                <Button Height="100" Width="170" Margin="0 0 25 0" Style="{StaticResource ButtonInPanelGray}" Command="{Binding SellOrderCommand}" CommandParameter="3" Content="Переводом"/>
+                                <Button Height="100" Width="170" Style="{StaticResource ButtonInPanelGreen}" Command="{Binding SellOrderCommand}" CommandParameter="2" Content="Наличными"/>
                             </StackPanel>
                         </StackPanel>
                     </Grid>
@@ -222,12 +224,12 @@
             <!--Продажа-->
             
             <!--Возврат-->
-            <Border HorizontalAlignment="Right" DockPanel.Dock="Right" Visibility="{Binding ReturnPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <!--<Border HorizontalAlignment="Right" DockPanel.Dock="Right" Visibility="{Binding ReturnPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Style="{DynamicResource TitleText}" HorizontalAlignment="Center" Foreground="{StaticResource TextW}" 
-                               Text="{Binding SelectedOrder.Id, StringFormat='{}Возврат №{0}'}"/>
+                               Text="{Binding CurrentRefund.Id, StringFormat='{}Возврат №{0}'}"/>
                         </StackPanel>
                         <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
@@ -236,8 +238,8 @@
                     <Grid Margin="10 0 10 10" Height="750">
                         <StackPanel Height="670" VerticalAlignment="Top">
                             <StackPanel>
-                                <TextBox Style="{StaticResource InputTB}" Margin="0 0 0 20" Tag="Причина возврата"/>
-                                <DatePicker Tag="Дата покупки"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding RefundReason}" Margin="0 0 0 20" Tag="Причина возврата"/>
+                                <DatePicker Tag="Дата покупки" SelectedDate="{Binding RefundBuyDate}"/>
                             </StackPanel>
 
                             <Border BorderThickness="0 2 0 2" Height="60" BorderBrush="{StaticResource BasicW}" Margin="0 40 0 20">
@@ -255,17 +257,17 @@
                                                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                                                         <Border CornerRadius="5" Width="80">
                                                             <Border.Background>
-                                                                <ImageBrush ImageSource="{Binding ImageGet}"/>
+                                                                <ImageBrush ImageSource="{Binding ProductVM.ImageGet}"/>
                                                             </Border.Background>
                                                         </Border>
                                                         <DockPanel Margin="10 0 0 0">
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding ProductVM.Brand}" Foreground="{StaticResource TextB}"/>
+                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding ProductVM.Title}" Foreground="{StaticResource TextB}"/>
+                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding ProductVM.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                         </DockPanel>
                                                     </StackPanel>
                                                     <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" HorizontalAlignment="Right"
-                                                               Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                               Text="{Binding ProductVM.SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
                                                     
                                                 </DockPanel>
                                             </Border>
@@ -281,16 +283,16 @@
                     </Grid>
 
                 </StackPanel>
-            </Border>
+            </Border>-->
             <!--Возврат-->
 
             <!--Брак-->
-            <Border HorizontalAlignment="Right" Visibility="{Binding CrackPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <!--<Border HorizontalAlignment="Right" Visibility="{Binding CrackPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Style="{DynamicResource TitleText}" HorizontalAlignment="Center" Foreground="{StaticResource TextW}" 
-                               Text="{Binding SelectedOrder.Id, StringFormat='{}Брак №{0}'}"/>
+                               Text="{Binding CurrentRefund.Id, StringFormat='{}Брак №{0}'}"/>
                         </StackPanel>
                         <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
@@ -308,17 +310,17 @@
                                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                                                     <Border CornerRadius="5" Width="80">
                                                         <Border.Background>
-                                                            <ImageBrush ImageSource="{Binding ImageGet}"/>
+                                                            <ImageBrush ImageSource="{Binding ProductVM.ImageGet}"/>
                                                         </Border.Background>
                                                     </Border>
                                                     <DockPanel Margin="10 0 0 0">
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding ProductVM.Brand}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding ProductVM.Title}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding ProductVM.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                     </DockPanel>
                                                 </StackPanel>
                                                 <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" HorizontalAlignment="Right"
-                                                           Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                           Text="{Binding ProductVM.SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
 
                                             </DockPanel>
                                         </Border>
@@ -331,7 +333,7 @@
                         </StackPanel>
                     </Grid>
                 </StackPanel>
-            </Border>
+            </Border>-->
             <!--Брак-->
             
         </DockPanel>

@@ -2,13 +2,7 @@
 using Cashbox.Core.Commands;
 using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels.Employee
@@ -16,6 +10,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
     public class CashRegisterViewModel : ViewModelBase
     {
         #region Props
+        public static UserViewModel? User { get => Models.User.CurrentUser; }
 
         #region Visibility
         private Visibility _sellPanelVisibility = Visibility.Collapsed;
@@ -23,6 +18,12 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             get => _sellPanelVisibility;
             set => Set(ref _sellPanelVisibility, value);
+        }
+        private Visibility _orderPanelVisibility = Visibility.Collapsed;
+        public Visibility OrderPanelVisibility
+        {
+            get => _orderPanelVisibility;
+            set => Set(ref _orderPanelVisibility, value);
         }
         private Visibility _returnPanelVisibility = Visibility.Collapsed;
         public Visibility ReturnPanelVisibility
@@ -42,14 +43,38 @@ namespace Cashbox.MVVM.ViewModels.Employee
             get => _menuPanelVisibility;
             set => Set(ref _menuPanelVisibility, value);
         }
-        #endregion
-        public static UserViewModel? User { get => Models.User.CurrentUser; }
 
-        private ObservableCollection<ProductViewModel> _collectionProducts = new(ProductViewModel.GetProducts().Result);
-        public ObservableCollection<ProductViewModel> CollectionProducts
+        #endregion
+
+        private static ObservableCollection<ProductViewModel> CollectionProductsBase => new(ProductViewModel.GetProducts().Result);
+
+        private ObservableCollection<ProductViewModel> _collectionProducts = CollectionProductsBase;
+        public ObservableCollection<ProductViewModel> CollectionProducts => _collectionProducts;
+
+        private string? _searchCollectionProduct;
+        public string? SearchCollectionProduct
         {
-            get =>_collectionProducts;
-            set => Set(ref _collectionProducts, value);
+            get => _searchCollectionProduct;
+            set
+            {
+                //OnLoad();
+                //_searchCollectionProduct = value;
+                //Task.Delay(200);
+                //if (string.IsNullOrWhiteSpace(_searchCollectionProduct) || value == null)
+                //    CollectionProducts = CollectionProductsBase;
+                //else
+                //{
+                //    CollectionProducts =
+                //        new(CollectionProductsBase
+                //            .Where(x =>
+                //                x.Title.Contains(value) ||
+                //                x.Brand.Contains(value) ||
+                //                x.Description.Contains(value)
+                //            )
+                //        );
+                //}
+                OnPropertyChanged();
+            }
         }
 
         private ObservableCollection<OrderProductViewModel> _orderProductsBasket = [];
@@ -61,6 +86,20 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 return _orderProductsBasket;
             }
             set => Set(ref _orderProductsBasket, value);
+        }
+
+        private double _otherOrderCost;
+        public double OtherOrderCost
+        {
+            get => _otherOrderCost;
+            set => Set(ref _otherOrderCost, value);
+        }
+
+        private int _discountOrderCost = 0;
+        public int DiscountOrderCost
+        {
+            get => _discountOrderCost;
+            set => Set(ref _discountOrderCost, value);
         }
 
         private Order? _selectedOrder;
@@ -76,14 +115,47 @@ namespace Cashbox.MVVM.ViewModels.Employee
             get => _totalCost;
             set => Set(ref _totalCost, value);
         }
-        
+
+        private Refund? _currentRefund;
+        public Refund? CurrentRefund
+        {
+            get => _currentRefund;
+            set => Set(ref _currentRefund, value);
+        }
+
+        private string _refundReason = string.Empty;
+        public string RefundReason
+        {
+            get => _refundReason;
+            set => Set(ref _refundReason, value);
+        }
+
+        private DateOnly? _refundBuyDate;
+        public DateOnly? RefundBuyDate
+        {
+            get => _refundBuyDate;
+            set => Set(ref _refundBuyDate, value);
+        }
+
+        private string _shiftOpenTime = string.Empty;
+        public string ShiftOpenTime
+        {
+            get
+            {
+                DailyReport CurrentShift = DailyReportViewModel.CurrentShift;
+                if (CurrentShift == null)
+                    return _shiftOpenTime = "нет";
+                return _shiftOpenTime = $"{CurrentShift.Data} в {CurrentShift.OpenTime}";
+            }
+        }
+
 
         #endregion
 
         #region Command
 
         public RelayCommand IncreaseAmountProductBasketCommand { get; set; }
-        private bool CanIncreaseAmountProductBasketCommandExecute(object p) 
+        private bool CanIncreaseAmountProductBasketCommandExecute(object p)
         {
             if (p == null)
                 return false;
@@ -138,17 +210,13 @@ namespace Cashbox.MVVM.ViewModels.Employee
         public RelayCommand AddProductInBasketCommand { get; set; }
         private bool CanAddProductInBasketCommandExecute(object p)
         {
-            if (CollectionProducts.Count == 0) 
-                return false;
             if (p == null)
                 return false;
             return true;
         }
-        private async void OnAddProductInBasketCommandExecuted(object p)
+        private void OnAddProductInBasketCommandExecuted(object p)
         {
-            if (OrderViewModel.OrderComposition == null)
-                await OrderViewModel.CreateOrder();
-            SelectedOrder = Order.OrderComposition;
+            if (SelectedOrder == null) return;
 
             OrderProductViewModel AddedProduct = OrderProductsBasket.FirstOrDefault(x => x.ProductId == (int)p);
             ProductViewModel SelectedProduct = CollectionProducts.FirstOrDefault(x => x.Id == (int)p);
@@ -171,34 +239,49 @@ namespace Cashbox.MVVM.ViewModels.Employee
                             Amount = 1,
                         }
                     )
-                    { ProductVM = SelectedProduct}
+                    { ProductVM = SelectedProduct }
                 );
             }
         }
 
-        public RelayCommand RemoveCurrentOrderCommand {  get; set; }
+        public RelayCommand RemoveCurrentOrderCommand { get; set; }
         private bool CanRemoveCurrentOrderCommandExecute(object p)
         {
-            if (OrderViewModel.OrderComposition == null) 
-                return false; 
+            if (OrderViewModel.OrderComposition == null)
+                return false;
             return true;
         }
-        private async void OnRemoveCurrentOrderCommandExecuted(object p) 
-        { 
+        private async void OnRemoveCurrentOrderCommandExecuted(object p)
+        {
             await OrderViewModel.RemoveCurrentOrder();
             SelectedOrder = null;
             OrderProductsBasket.Clear();
-            SellPanelVisibility = Visibility.Collapsed;
+            OrderPanelVisibility = Visibility.Collapsed;
             MenuPanelVisibility = Visibility.Visible;
         }
 
         public RelayCommand OpenSellOrderPanelCommand { get; set; }
         private bool CanOpenSellOrderPanelCommandExecute(object p) => true;
-        private async void OnOpenSellOrderPanelCommandExecuted(object p)
+        private void OnOpenSellOrderPanelCommandExecuted(object p)
         {
-            await OrderViewModel.CreateOrder();
-            SelectedOrder = Order.OrderComposition;
             SellPanelVisibility = Visibility.Visible;
+            OrderPanelVisibility = Visibility.Collapsed;
+            ReturnPanelVisibility = Visibility.Collapsed;
+            CrackPanelVisibility = Visibility.Collapsed;
+            MenuPanelVisibility = Visibility.Collapsed;
+        }
+
+        public RelayCommand OpenBasketOrderPanelCommand { get; set; }
+        private bool CanOpenBasketOrderPanelCommandExecute(object p) => true;
+        private async void OnOpenBasketOrderPanelCommandExecuted(object p)
+        {
+            if (OrderViewModel.OrderComposition == null)
+            {
+                await OrderViewModel.CreateOrder();
+                SelectedOrder = Order.OrderComposition;
+            }
+            SellPanelVisibility = Visibility.Collapsed;
+            OrderPanelVisibility = Visibility.Visible;
             ReturnPanelVisibility = Visibility.Collapsed;
             CrackPanelVisibility = Visibility.Collapsed;
             MenuPanelVisibility = Visibility.Collapsed;
@@ -206,9 +289,15 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         public RelayCommand OpenReturnOrderPanelCommand { get; set; }
         private bool CanOpenReturnOrderPanelCommandExecute(object p) => true;
-        private void OnOpenReturnOrderPanelCommandExecuted(object p)
+        private async void OnOpenReturnOrderPanelCommandExecuted(object p)
         {
+            if (CurrentRefund == null)
+            {
+                await RefundViewModel.CreateRefund();
+                CurrentRefund = RefundViewModel.CurrentRefund;
+            }
             SellPanelVisibility = Visibility.Collapsed;
+            OrderPanelVisibility = Visibility.Collapsed;
             ReturnPanelVisibility = Visibility.Visible;
             CrackPanelVisibility = Visibility.Collapsed;
             MenuPanelVisibility = Visibility.Collapsed;
@@ -219,6 +308,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private void OnOpenCrackOrderPanelCommandExecuted(object p)
         {
             SellPanelVisibility = Visibility.Collapsed;
+            OrderPanelVisibility = Visibility.Collapsed;
             ReturnPanelVisibility = Visibility.Collapsed;
             CrackPanelVisibility = Visibility.Visible;
             MenuPanelVisibility = Visibility.Collapsed;
@@ -229,11 +319,49 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private void OnOpenMenuPanelCommandExecuted(object p)
         {
             SellPanelVisibility = Visibility.Collapsed;
+            OrderPanelVisibility = Visibility.Collapsed;
             ReturnPanelVisibility = Visibility.Collapsed;
             CrackPanelVisibility = Visibility.Collapsed;
             MenuPanelVisibility = Visibility.Visible;
         }
 
+        public RelayCommand RemoveCurrentCrackReturnCommand { get; set; }
+        private bool CanRemoveCurrentCrackReturnCommandExecute(object p) => true;
+        private async void OnRemoveCurrentCrackReturnCommandExecuted(object p)
+        {
+            if (CurrentRefund == null) return;
+            await RefundViewModel.RemoveCurrentRefund();
+            CurrentRefund = null;
+        }
+
+        public RelayCommand SellOrderCommand { get; set; }
+        private bool CanSellOrderCommandExecute(object p) => true;
+        private async void OnSellOrderCommandExecuted(object p)
+        {
+            MessageBoxResult result;
+            switch (int.Parse(p.ToString()!))
+            {
+                case 1:
+                    result = MessageBox.Show("Оплата картой", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                        if (await OrderViewModel.SellOrder(1, TotalCost, 0, [.. OrderProductsBasket]))
+                            MessageBox.Show("Успех");
+                    break;
+                case 2:
+                    result = MessageBox.Show("Оплата наличными", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                        if (await OrderViewModel.SellOrder(1, TotalCost, 0, [.. OrderProductsBasket]))
+                            MessageBox.Show("Успех");
+                    break;
+                case 3:
+                    result = MessageBox.Show("Оплата переводом", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (result == MessageBoxResult.Yes)
+                        if (await OrderViewModel.SellOrder(1, TotalCost, 0, [.. OrderProductsBasket]))
+                            MessageBox.Show("Успех");
+                    break;
+            }
+            OnOpenMenuPanelCommandExecuted(null!);
+        }
 
         #endregion
         public CashRegisterViewModel()
@@ -243,8 +371,11 @@ namespace Cashbox.MVVM.ViewModels.Employee
             DecreaseAmountProductBasketCommand = new RelayCommand(OnDecreaseAmountProductBasketCommandExecuted, CanDecreaseAmountProductBasketCommandExecute);
             RemoveProductInBasketCommand = new RelayCommand(OnRemoveProductInBasketCommandExecuted, CanRemoveProductInBasketCommandExecute);
             RemoveCurrentOrderCommand = new RelayCommand(OnRemoveCurrentOrderCommandExecuted, CanRemoveCurrentOrderCommandExecute);
+            RemoveCurrentCrackReturnCommand = new RelayCommand(OnRemoveCurrentCrackReturnCommandExecuted, CanRemoveCurrentCrackReturnCommandExecute);
+            SellOrderCommand = new RelayCommand(OnSellOrderCommandExecuted, CanSellOrderCommandExecute);
 
             OpenSellOrderPanelCommand = new RelayCommand(OnOpenSellOrderPanelCommandExecuted, CanOpenSellOrderPanelCommandExecute);
+            OpenBasketOrderPanelCommand = new RelayCommand(OnOpenBasketOrderPanelCommandExecuted, CanOpenBasketOrderPanelCommandExecute);
             OpenReturnOrderPanelCommand = new RelayCommand(OnOpenReturnOrderPanelCommandExecuted, CanOpenReturnOrderPanelCommandExecute);
             OpenCrackOrderPanelCommand = new RelayCommand(OnOpenCrackOrderPanelCommandExecuted, CanOpenCrackOrderPanelCommandExecute);
             OpenMenuPanelCommand = new RelayCommand(OnOpenMenuPanelCommandExecuted, CanOpenMenuPanelCommandExecute);

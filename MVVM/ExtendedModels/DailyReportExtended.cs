@@ -12,15 +12,17 @@ namespace Cashbox.MVVM.Models
     public partial class DailyReport
     {
         public DailyReport() { }
-        public static DailyReportViewModel? CurrentShift => CashBoxDataContext.Context.DailyReports.Select(s => new DailyReportViewModel(s)).FirstOrDefault(x => x.Data == DateOnly.FromDateTime(DateTime.Now) && x.UserId == UserViewModel.GetCurrentUser().Id); 
+        
+        private static DailyReport? _currentShift = CashBoxDataContext.Context.DailyReports.FirstOrDefault(x => x.Data == DateOnly.FromDateTime(DateTime.Today) && x.UserId == UserViewModel.GetCurrentUser().Id);
+        public static DailyReport? CurrentShift => _currentShift;
 
-        public static async Task<DailyReportViewModel?> StartShift(DateTime dateTime)
+        public static async Task<DailyReportViewModel?> StartShift(DateOnly date, TimeOnly time)
         {
             UserViewModel user = UserViewModel.GetCurrentUser();
             DailyReport dailyReport = new()
             {
-                Data = DateOnly.FromDateTime(dateTime),
-                OpenTime = TimeOnly.FromDateTime(dateTime),
+                Data = date,
+                OpenTime = time,
                 UserId = user.Id,
             };
             CashBoxDataContext.Context.Add(dailyReport);
@@ -33,7 +35,7 @@ namespace Cashbox.MVVM.Models
             DailyReport DR = CashBoxDataContext.Context.DailyReports.FirstOrDefault(x => x.Data == DateOnly.FromDateTime(dateTime) && x.UserId == user.Id);
             DR.CloseTime = TimeOnly.FromDateTime(dateTime);
             DR.Proceeds = Proceeds;
-            AutoDailyReportViewModel adreport = await AutoDailyReportViewModel.GenEndShiftAuto(DR);
+            AutoDailyReportViewModel adreport = AutoDailyReportViewModel.GenEndShiftAuto(DR);
             await CashBoxDataContext.Context.SaveChangesAsync();
             return new DailyReportViewModel(DR);
         }

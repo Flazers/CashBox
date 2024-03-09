@@ -233,6 +233,7 @@ public partial class CashBoxDataContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.BuyDate).HasColumnName("buy_date");
             entity.Property(e => e.IsPurchased).HasColumnName("isPurchased");
+            entity.Property(e => e.IsSuccessRefund).HasColumnName("isSuccessRefund");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.Reason)
                 .HasMaxLength(50)

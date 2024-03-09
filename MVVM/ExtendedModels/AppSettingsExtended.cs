@@ -12,13 +12,16 @@ namespace Cashbox.MVVM.Models
     {
         public AppSettings() { }
 
+        private static AppSettings _settings = CashBoxDataContext.Context.AppSettings.FirstOrDefault(x => x.Id == 1)!;
+        public static AppSettings Settings => _settings;
+
         private static async Task<AppSettingsViewModel> CreateSettings()
         {
             AppSettings appsetting = new()
             {
                 Salary = 1000,
                 MoneyBox = 0,
-                AwardProcent = 10,
+                AwardProcent = 100,
                 MainEmail = string.Empty,
             };
             CashBoxDataContext.Context.AppSettings.Add(appsetting);
@@ -43,6 +46,5 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<AppSettingsViewModel> CreateSetting() => await CreateSettings();
         public static async Task<AppSettingsViewModel> EditSetting(int salary, double moneybox, string email, int award) => await EditSettings(salary, moneybox, email, award);
-        public static async Task<AppSettingsViewModel?> GetSetting() => await CashBoxDataContext.Context.AppSettings.Select(s => new AppSettingsViewModel(s)).FirstOrDefaultAsync(x => x.Id == 1);
     }
 }

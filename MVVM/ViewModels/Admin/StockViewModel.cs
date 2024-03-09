@@ -5,10 +5,12 @@ using Cashbox.MVVM.ViewModels.Data;
 using Cashbox.MVVM.Views.Pages.Admin;
 using Cashbox.Service;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -20,6 +22,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Cashbox.MVVM.ViewModels.Admin
 {
@@ -77,74 +80,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #region ProductData
 
-        private string? _articulCode;
-        public string? ArticulCode
+        private ProductViewModel? _productData;
+        public ProductViewModel? ProductData
         {
-            get => _articulCode;
-            set => Set(ref _articulCode, value);
-        }
-
-        private string _title;
-        public string Title
-        {
-            get => _title;
-            set => Set(ref _title, value);
-        }
-
-        private string _description;
-        public string Description
-        {
-            get => _description;
-            set => Set(ref _description, value);
-        }
-
-        private byte[] _image;
-        public byte[] Image
-        {
-            get => _image;
-            set => Set(ref _image, value);
-        }
-
-        private byte[] _imageProduct;
-        public byte[] ImageProduct
-        {
-            get => _imageProduct;
-            set => Set(ref _imageProduct, value);
-        }
-
-        private string _brand;
-        public string Brand
-        {
-            get => _brand;
-            set => Set(ref _brand, value);
-        }
-
-        private ProductCategoryViewModel? _category;
-        public ProductCategoryViewModel? Category
-        {
-            get => _category;
-            set => Set(ref _category, value);
-        }
-
-        private double _purchaseСost;
-        public double PurchaseСost
-        {
-            get => _purchaseСost;
-            set => Set(ref _purchaseСost, value);
-        }
-
-        private double _sellCost;
-        public double SellCost
-        {
-            get => _sellCost;
-            set => Set(ref _sellCost, value);
-        }
-
-        private int _amount;
-        public int Amount
-        {
-            get => _amount;
-            set => Set(ref _amount, value);
+            get => _productData;
+            set => Set(ref _productData, value);
         }
 
         private bool _isAvailable;
@@ -152,6 +92,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get => _isAvailable;
             set => Set(ref _isAvailable, value);
+        }
+
+        private int _amount;
+        public int Amount
+        {
+            get => _amount;
+            set => Set(ref _amount, value);
         }
 
         #endregion
@@ -282,27 +229,42 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanAddImageCommandExecute(object p) => true;
         private void OnAddImageCommandExecuted(object p)
         {
-            OpenFileDialog openFileDialog = new() { Filter = "Все файлы (*.*)|*.*", RestoreDirectory = true };
-            Nullable<bool> result = openFileDialog.ShowDialog();
+            File.Delete("./Assets/Image/ProductId0Saved.jpeg");
+            OpenFileDialog openFileDialog = new() { Filter = "Изображения (*.BMP;*.JPG;*.PNG;*.JPEG)|*.BMP;*.JPG;*.PNG;*.JPEG|All files (*.*)|*.*", RestoreDirectory = true };
+            bool? result = openFileDialog.ShowDialog();
             if (result == true)
             {
-                ImageProduct = File.ReadAllBytes(openFileDialog.FileName);
-                ImageStringProduct = openFileDialog.FileName;
+                try
+                {
+                    ImageStringProduct = openFileDialog.FileName;
+                    File.Copy(openFileDialog.FileName, $"./Assets/Image/ProductId{ProductData.Id}Saved.jpeg");
+                }
+                catch (Exception ex) 
+                {
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                ProductData.Image = $"./Assets/Image/ProductId{ProductData.Id}Saved.jpeg";
             }
-            else
-                ImageProduct = [];
         }
 
         public RelayCommand EditImageCommand { get; set; }
         private bool CanEditImageCommandExecute(object p) => true;
         private void OnEditImageCommandExecuted(object p)
         {
-            OpenFileDialog openFileDialog = new() { Filter = "Все файлы (*.*)|*.*", RestoreDirectory = true };
-            Nullable<bool> result = openFileDialog.ShowDialog();
+            OpenFileDialog openFileDialog = new() { Filter = "Изображения (*.BMP;*.JPG;*.PNG;*.JPEG)|*.BMP;*.JPG;*.PNG;*.JPEG|All files (*.*)|*.*", RestoreDirectory = true };
+            bool? result = openFileDialog.ShowDialog();
             if (result == true)
             {
-                SelectedProduct.Image = File.ReadAllBytes(openFileDialog.FileName);
-                ImageStringProduct = openFileDialog.FileName;
+                try
+                {
+                    File.Copy(openFileDialog.FileName, $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg");
+                }
+                catch (IOException)
+                {
+                    File.Copy(openFileDialog.FileName, $"./Assets/Image/{SelectedProduct.Id}Temp.jpeg");
+                    File.Replace($"./Assets/Image/ProductId{SelectedProduct.Id}SavedTemp.jpeg", $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg", $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg.bac");
+                }
+                ProductData.Image = $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg";
             }
         }
 
@@ -310,15 +272,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanOpenPanelProductCreateCommandExecute(object p) => true;
         private void OnOpenPanelProductCreateCommandExecuted(object p)
         {
-            ArticulCode = string.Empty;
-            Title = string.Empty;
-            Brand = string.Empty;
-            Description = string.Empty;
-            Image = [];
-            ImageProduct = [];
-            Category = null;
-            PurchaseСost = 0;
-            SellCost = 0;
+            ProductData = new(new());
             Amount = 0;
             ImageStringProduct = "Выбрать фото товара";
 
@@ -355,9 +309,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
         private async void OnAddProductCommandExecuted(object p)
         {
-            if (ImageProduct != null)
-                Image = ImageProduct;
-            var data = await ProductViewModel.CreateProduct(ArticulCode, Title, Description, Image, Brand, Category.Id, PurchaseСost, SellCost, Amount);
+            var data = await ProductViewModel.CreateProduct(ProductData, Amount);
             if (data != null)
             {
                 Update();
@@ -373,8 +325,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanEditProductCommandExecute(object p) => true;
         private async void OnEditProductCommandExecuted(object p)
         {
-            if (ImageProduct != null)
-                Image = ImageProduct;
             var data = await ProductViewModel.UpdateProduct(SelectedProduct.Id, SelectedProduct.ArticulCode, SelectedProduct.Title, SelectedProduct.Description, SelectedProduct.Image, SelectedProduct.Brand, SelectedProduct.CategoryId, SelectedProduct.PurchaseСost, SelectedProduct.SellCost, SelectedProduct.Stock.Amount);
             if (data != null)
             {

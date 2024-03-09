@@ -105,7 +105,7 @@
                     </Grid>
 
                     <DockPanel Visibility="{Binding ProcessDoShiftVisibility}" Margin="10 0 10 10">
-                        <Button Style="{StaticResource ButtonInPanelRed}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Content="Закрыть смену"/>
+                        <Button Style="{StaticResource ButtonInPanelRed}" Command="{Binding EndShiftCommand}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Content="Закрыть смену"/>
                         <StackPanel Height="690">
                             <Grid>
                                 <StackPanel Orientation="Horizontal">

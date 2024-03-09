@@ -13,19 +13,19 @@ namespace Cashbox.MVVM.Models
         private Role() { }
         private static async Task<List<RoleViewModel>> CreateBaseRoles()
         {
-            List<Role> roles = new List<Role>();
+            List<Role> roles = [];
             try
             {
-                Role SuperUser = new Role() { Id = 1, Role1 = "Админ+" };
-                Role adminRole = new Role() { Id = 2, Role1 = "Админ" };
-                Role EmployeeRole = new Role() { Id = 3, Role1 = "Сотрудник" };
+                Role SuperUser = new() { Id = 1, Role1 = "Админ+" };
+                Role adminRole = new() { Id = 2, Role1 = "Админ" };
+                Role EmployeeRole = new() { Id = 3, Role1 = "Сотрудник" };
                 roles.Add(SuperUser);
                 roles.Add(adminRole);
                 roles.Add(EmployeeRole);
                 CashBoxDataContext.Context.Roles.AddRange(roles);
                 await CashBoxDataContext.Context.SaveChangesAsync();
             }
-            catch (Exception) { return new List<RoleViewModel>(); }
+            catch (Exception) { return []; }
 
             return roles.Select(s => new RoleViewModel(s)).ToList();
         }
@@ -34,7 +34,7 @@ namespace Cashbox.MVVM.Models
         {
             List<RoleViewModel> roles;
 
-            if (CashBoxDataContext.Context.Roles.Count() == 0)
+            if (!CashBoxDataContext.Context.Roles.Any())
                 roles = await CreateBaseRoles();
             else
                 roles = await CashBoxDataContext.Context.Roles.Select(s => new RoleViewModel(s)).ToListAsync();

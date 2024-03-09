@@ -13,7 +13,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         private readonly OrderProduct _orderProduct = orderProduct;
 
         public static List<OrderProduct> OrderProducts => OrderProduct.OrderProducts;
-        public static void AddProduct(int orderid, ProductViewModel product, int amount) => OrderProduct.AddProduct(orderid, product, amount);
+        public static void AddListOrderInDataBase(List<OrderProductViewModel> orderProducts) => OrderProduct.AddListOrderInDataBase(orderProducts);
 
         public int Id => _orderProduct.Id;
 

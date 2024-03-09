@@ -13,7 +13,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         private readonly Order _order = order;
 
         public static Order? OrderComposition => Order.OrderComposition;
-        public static async Task<OrderViewModel> SellOrder(int paymet, double sellcost, double discount) => await Order.SellOrder(paymet, sellcost, discount);
+        public static async Task<bool> SellOrder(int paymet, double sellcost, double discount, List<OrderProductViewModel> orderProducts) => await Order.SellOrder(paymet, sellcost, discount, orderProducts);
         public static async Task<OrderViewModel> CreateOrder() => await Order.CreateOrder();
         public static async Task<OrderViewModel> RemoveCurrentOrder() => await Order.RemoveCurrentOrder();
         public static async Task<List<OrderViewModel>> GetDayOrdersToMethod(DateOnly dateOnly, int method) => await Order.GetDayOrdersToMethod(dateOnly, method);

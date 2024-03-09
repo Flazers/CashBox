@@ -11,10 +11,9 @@ namespace Cashbox.MVVM.Models
     {
         public AutoDreport() { }
 
-        public static async Task<AutoDailyReportViewModel> GenReport(DailyReport dailyReport)
+        public static AutoDailyReportViewModel GenReport(DailyReport dailyReport)
         {
-            var setting = await AppSettingsViewModel.GetSetting();
-            UserViewModel user = UserViewModel.GetCurrentUser();
+            var setting = AppSettingsViewModel.Settings;
             AutoDreport autoDreport = new()
             {
                 DailyReportId = dailyReport.Id,
@@ -22,7 +21,7 @@ namespace Cashbox.MVVM.Models
                 Award = OrderViewModel.GetSumInDay(dailyReport.Data),
                 Forfeit = OrderViewModel.GetSumMethodInDay(dailyReport.Data) - (double)dailyReport.Proceeds!,
             };
-            return new AutoDailyReportViewModel(autoDreport);
+            return new(autoDreport);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Shell;
 
 namespace Cashbox.MVVM.Models
@@ -54,13 +55,22 @@ namespace Cashbox.MVVM.Models
             return new(OrderComposition);
         }
 
-        public static async Task<OrderViewModel> SellOrder(int paymet, double sellcost, double discount)
+        public static async Task<bool> SellOrder(int paymet, double sellcost, double discount, List<OrderProductViewModel> orderProducts)
         {
-            OrderComposition.PaymentMethodId = paymet;
-            OrderComposition.Discount = discount;
-            OrderComposition.SellCost = sellcost;
-            await CashBoxDataContext.Context.SaveChangesAsync();
-            return new(OrderComposition);
+            try
+            {
+                OrderComposition.PaymentMethodId = paymet;
+                OrderComposition.Discount = discount;
+                OrderComposition.SellCost = sellcost;
+                OrderProduct.AddListOrderInDataBase(orderProducts);
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
         }
 
         public static async Task<OrderViewModel> RemoveCurrentOrder()

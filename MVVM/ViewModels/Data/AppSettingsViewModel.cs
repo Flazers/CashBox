@@ -14,7 +14,7 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public static async Task<AppSettingsViewModel> EditSetting(int salary = 0, double moneybox = 0, string email = "", int award = 0) => await AppSettings.EditSetting(salary, moneybox, email, award);
         public static async Task<AppSettingsViewModel> CreateSetting() => await AppSettings.CreateSetting();
-        public static async Task<AppSettingsViewModel?> GetSetting() => await AppSettings.GetSetting();
+        public static AppSettings Settings => AppSettings.Settings;
 
         public int Id => _appSettings.Id;
 

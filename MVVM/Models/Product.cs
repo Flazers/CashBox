@@ -13,7 +13,7 @@ public partial class Product
 
     public string Description { get; set; } = null!;
 
-    public byte[]? Image { get; set; }
+    public string? Image { get; set; }
 
     public string Brand { get; set; } = null!;
 
@@ -27,9 +27,9 @@ public partial class Product
 
     public virtual ProductCategory Category { get; set; } = null!;
 
-    public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+    public virtual ICollection<OrderProduct> OrderProducts { get; set; } = [];
 
-    public virtual ICollection<Refund> Refunds { get; set; } = new List<Refund>();
+    public virtual ICollection<Refund> Refunds { get; set; } = [];
 
     public virtual Stock? Stock { get; set; }
 }

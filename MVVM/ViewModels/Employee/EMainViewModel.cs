@@ -31,11 +31,11 @@ namespace Cashbox.MVVM.ViewModels.Employee
             get => _isCashRegisterView;
             set
             {
-                //if (value == true && User.DailyReports.FirstOrDefault(x => x.Data == DateOnly.FromDateTime(DateTime.Today)) == null)
-                //{
-                //    MessageBox.Show("Смена не открыта", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                //    return;
-                //}
+                if (value == true && User.DailyReports.FirstOrDefault(x => x.Data == DateOnly.FromDateTime(DateTime.Today) && x.CloseTime == null) == null)
+                {
+                    MessageBox.Show("Смена не открыта", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
                 _isCashRegisterView = value;
             }
         }
