@@ -70,7 +70,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Assets\Image\ProductImageData\" />
     <Folder Include="Migrations\" />
     <Folder Include="MVVM\Models\" />
   </ItemGroup>

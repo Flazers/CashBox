@@ -3,13 +3,19 @@ using Cashbox.MVVM.Models;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.NetworkInformation;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class ProductViewModel(Product product) : ViewModelBase
+    public class ProductViewModel : ViewModelBase
     {
-        private readonly Product _product = product;
+        private readonly Product _product;
+        public ProductViewModel(Product product)
+        {
+            _product = product;
+            Task.Run(LoadImage);
+        }
 
         public static async Task<List<ProductViewModel>> GetProducts() => await Product.GetProducts();
         public static async Task<List<ProductViewModel>> GetAllProducts() => await Product.GetAllProducts();
@@ -58,6 +64,26 @@ namespace Cashbox.MVVM.ViewModels.Data
                 _product.Image = value;
                 OnPropertyChanged();
             }
+        }
+
+        private BitmapImage? _imageStr;
+        public BitmapImage? ImageStr
+        {
+            get => _imageStr;
+            set
+            {
+                _imageStr = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void LoadImage()
+        {
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _product.Image!);
+            if (!File.Exists(path))
+                return;
+            var uri = new Uri(path);
+            ImageStr = new BitmapImage(uri);
         }
 
         public string Brand

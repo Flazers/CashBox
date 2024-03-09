@@ -32,17 +32,18 @@ namespace Cashbox.MVVM.Models
                 };
                 CashBoxDataContext.Context.Products.Add(product);
                 await CashBoxDataContext.Context.SaveChangesAsync();
-                if (string.IsNullOrEmpty(product.Image))
-                    product.Image = "./Assets/Image/Zagl.png";
-                if (product.Image == "./Assets/Image/ProductId0Saved.jpeg")
-                    FileSystem.Rename("./Assets/Image/ProductId0Saved.jpeg", $"./Assets/Image/ProductId{product.Id}Saved.jpeg");
+                if (product.Image == "./Assets/Image/ProductIdTempSaved.jpeg")
+                {
+                    FileSystem.Rename(product.Image, $"./Assets/Image/ProductId{product.Id}Saved.jpeg");
+                    product.Image = $"./Assets/Image/ProductId{product.Id}Saved.jpeg";
+                }
                 await PStockViewModel.CreateProductStock(product.Id, Amount);
                 return new(product);
             }
             catch (Exception) { return null; }
         }
 
-        private static async Task<ProductViewModel?> UpdateProduct(int _id, string? _articulCode, string _title, string _description, string _image, string _brand, int _categoryId, double _purchaseСost, double _sellCost, int _amount)
+        private static async Task<ProductViewModel?> UpdateProduct(int _id, string? _articulCode, string _title, string _description, string? _image, string _brand, int _categoryId, double _purchaseСost, double _sellCost, int _amount)
         {
             try
             {
@@ -79,7 +80,7 @@ namespace Cashbox.MVVM.Models
         public static async Task<List<ProductViewModel>> GetProducts() => await CashBoxDataContext.Context.Products.Where(x => x.IsAvailable == true).Select(s => new ProductViewModel(s)).ToListAsync();
         public static async Task<List<ProductViewModel>> GetAllProducts() => await CashBoxDataContext.Context.Products.Select(s => new ProductViewModel(s)).ToListAsync();
         public static async Task<ProductViewModel?> CreateProducts(ProductViewModel? productVM, int Amount) => await NewProduct(productVM, Amount);
-        public static async Task<ProductViewModel?> UpdateProducts(int _id, string? _ArticulCode, string _Title, string _Description, string _Image, string _Brand, int _CategoryId, double _PurchaseСost, double _SellCost, int _Amount) => await UpdateProduct(_id, _ArticulCode, _Title, _Description, _Image, _Brand, _CategoryId, _PurchaseСost, _SellCost, _Amount);
+        public static async Task<ProductViewModel?> UpdateProducts(int _id, string? _ArticulCode, string _Title, string _Description, string? _Image, string _Brand, int _CategoryId, double _PurchaseСost, double _SellCost, int _Amount) => await UpdateProduct(_id, _ArticulCode, _Title, _Description, _Image, _Brand, _CategoryId, _PurchaseСost, _SellCost, _Amount);
         public static async Task<ProductViewModel?> AvailableProducts(int id, bool Available) => await AvailableProduct(id, Available);
     }
 }

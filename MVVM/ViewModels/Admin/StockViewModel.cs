@@ -1,28 +1,11 @@
 ﻿using Cashbox.Core;
 using Cashbox.Core.Commands;
-using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
-using Cashbox.MVVM.Views.Pages.Admin;
-using Cashbox.Service;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Cashbox.MVVM.ViewModels.Admin
 {
@@ -177,9 +160,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
 
         public RelayCommand RemoveCategoryCommand { get; set; }
-        private bool CanRemoveCategoryCommandExecute(object p) 
-        { 
-            if (SelectedProductCategory == null) 
+        private bool CanRemoveCategoryCommandExecute(object p)
+        {
+            if (SelectedProductCategory == null)
                 return false;
             return true;
         }
@@ -205,7 +188,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     case MessageBoxResult.Cancel:
                         return;
                 }
-            } 
+            }
             else
             {
                 data = await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id, 3);
@@ -229,7 +212,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanAddImageCommandExecute(object p) => true;
         private void OnAddImageCommandExecuted(object p)
         {
-            File.Delete("./Assets/Image/ProductId0Saved.jpeg");
+            File.Delete("./Assets/Image/ProductIdTempSaved.jpeg");
             OpenFileDialog openFileDialog = new() { Filter = "Изображения (*.BMP;*.JPG;*.PNG;*.JPEG)|*.BMP;*.JPG;*.PNG;*.JPEG|All files (*.*)|*.*", RestoreDirectory = true };
             bool? result = openFileDialog.ShowDialog();
             if (result == true)
@@ -237,13 +220,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 try
                 {
                     ImageStringProduct = openFileDialog.FileName;
-                    File.Copy(openFileDialog.FileName, $"./Assets/Image/ProductId{ProductData.Id}Saved.jpeg");
+                    File.Copy(openFileDialog.FileName, $"./Assets/Image/ProductIdTempSaved.jpeg");
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                ProductData.Image = $"./Assets/Image/ProductId{ProductData.Id}Saved.jpeg";
+                ProductData.Image = $"./Assets/Image/ProductIdTempSaved.jpeg";
             }
         }
 
@@ -261,10 +244,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 }
                 catch (IOException)
                 {
-                    File.Copy(openFileDialog.FileName, $"./Assets/Image/{SelectedProduct.Id}Temp.jpeg");
+                    File.Copy(openFileDialog.FileName, $"./Assets/Image/ProductId{SelectedProduct.Id}SavedTemp.jpeg");
                     File.Replace($"./Assets/Image/ProductId{SelectedProduct.Id}SavedTemp.jpeg", $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg", $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg.bac");
                 }
-                ProductData.Image = $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg";
+                SelectedProduct.Image = $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg";
             }
         }
 
@@ -309,9 +292,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
         private async void OnAddProductCommandExecuted(object p)
         {
+            if (string.IsNullOrEmpty(ProductData.Image))
+                ProductData.Image = "./Assets/Image/Zagl.png";
             var data = await ProductViewModel.CreateProduct(ProductData, Amount);
             if (data != null)
             {
+
                 Update();
                 OnClosePanelProductCommandExecuted(0);
                 SelectedProduct = CollectionProducts.FirstOrDefault(x => x == data);
