@@ -1,17 +1,12 @@
 ﻿using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.Models
 {
     public partial class Refund
     {
         private Refund() { }
-        
+
         public static Refund? CurrentRefund { get; set; }
 
         public static async Task<RefundViewModel> CreateRefund()
@@ -27,15 +22,22 @@ namespace Cashbox.MVVM.Models
             return new(refund);
         }
 
-        public static async Task<RefundViewModel> RemoveCurrentRefund()
+        public static async Task<bool> RemoveCurrentRefund()
         {
-            CashBoxDataContext.Context.Refunds.Remove(CurrentRefund!);
-            await CashBoxDataContext.Context.SaveChangesAsync();
-            CurrentRefund = null;
-            return new(CurrentRefund);
+            try
+            {
+                CashBoxDataContext.Context.Refunds.Remove(CurrentRefund!);
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                CurrentRefund = null;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
-        public static async Task<RefundViewModel> CreateRefundReason(string reason, DateOnly buydate, int productid)
+        public static async Task<bool> CreateRefundReason(string reason, DateOnly buydate, int productid)
         {
             CurrentRefund.BuyDate = buydate;
             CurrentRefund.Reason = reason;
@@ -43,18 +45,20 @@ namespace Cashbox.MVVM.Models
             CurrentRefund.IsPurchased = true;
             CurrentRefund.IsSuccessRefund = false;
             await CashBoxDataContext.Context.SaveChangesAsync();
-            return new(CurrentRefund);
+            CurrentRefund = null;
+            return true;
         }
 
-        public static async Task<RefundViewModel> CreateRefundDefect(DateOnly buydate, int productid)
+        public static async Task<bool> CreateRefundDefect(DateOnly buydate, int productid)
         {
             CurrentRefund.BuyDate = buydate;
             CurrentRefund.Reason = "Брак";
             CurrentRefund.ProductId = productid;
-            CurrentRefund.IsPurchased = true;
+            CurrentRefund.IsPurchased = false;
             CurrentRefund.IsSuccessRefund = false;
             await CashBoxDataContext.Context.SaveChangesAsync();
-            return new(CurrentRefund);
+            CurrentRefund = null;
+            return true;
         }
 
         public static async Task<List<RefundViewModel>> GetRefundedAllProduct() => await CashBoxDataContext.Context.Refunds

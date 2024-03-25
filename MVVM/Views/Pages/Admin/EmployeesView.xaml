@@ -85,8 +85,8 @@
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Visibility="{Binding UserSelectedPanel}" VerticalAlignment="Bottom" Orientation="Horizontal">
-                                <Button Style="{StaticResource ButtonInPanelGray}" Command="{Binding OpenPanelProductEditCommand}" Width="260" Margin="0 0 20 0" Content="Редактировать"/>
-                                <Button Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveProductCommand}" Width="200" Content="Уволить"/>
+                                <Button Style="{StaticResource ButtonInPanelGray}" Command="{Binding OpenPanelEmployeeEditCommand}" Width="260" Margin="0 0 20 0" Content="Редактировать"/>
+                                <Button Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveEmployeeCommand}" Width="200" Content="Уволить"/>
                             </StackPanel>
                             <StackPanel VerticalAlignment="Center" Visibility="{Binding NotUserSelectedPanel}">
                                 <TextBlock Text="Пользователь не выбран" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -115,7 +115,7 @@
 SelectedValuePath="Id" SelectedItem="{Binding Role}" Margin="0 0 0 20"/>
                                 <TextBox Style="{StaticResource InputTB}" Text="{Binding Login}" Tag="Логин" Margin="0 0 0 20"/>
                                 <TextBox Style="{StaticResource InputTB}" Text="{Binding Password}" Tag="Пароль" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Pincode}" Tag="Пинкод" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Pincode}" Tag="Пинкод" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
                             </StackPanel>
                         </ScrollViewer>
 

@@ -15,9 +15,9 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public static Refund? CurrentRefund => Refund.CurrentRefund;
         public static async Task<RefundViewModel> CreateRefund() => await Refund.CreateRefund();
-        public static async Task<RefundViewModel> RemoveCurrentRefund() => await Refund.RemoveCurrentRefund();
-        public static async Task<RefundViewModel> CreateRefundReason(string reason, DateOnly buydate, int productid) => await Refund.CreateRefundReason(reason, buydate, productid);
-        public static async Task<RefundViewModel> CreateRefundDefect(DateOnly buydate, int productid) => await Refund.CreateRefundDefect(buydate, productid);
+        public static async Task<bool> RemoveCurrentRefund() => await Refund.RemoveCurrentRefund();
+        public static async Task<bool> CreateRefundReason(string reason, DateOnly buydate, int productid) => await Refund.CreateRefundReason(reason, buydate, productid);
+        public static async Task<bool> CreateRefundDefect(DateOnly buydate, int productid) => await Refund.CreateRefundDefect(buydate, productid);
         public static async Task<List<RefundViewModel>> GetRefundedAllProduct() => await Refund.GetRefundedAllProduct();
         public static async Task<List<RefundViewModel>> GetRefundedDefect() => await Refund.GetRefundedDefect();
         public static async Task<List<RefundViewModel>> GetRefundedReason() => await Refund.GetRefundedReason();

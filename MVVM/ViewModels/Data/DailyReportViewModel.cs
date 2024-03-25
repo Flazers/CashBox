@@ -13,7 +13,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         private readonly DailyReport _dailyReport = DailyReports;
 
         public static async Task<DailyReportViewModel?> StartShift(DateOnly date, TimeOnly time) => await DailyReport.StartShift(date, time);
-        public static async Task<DailyReportViewModel?> EndShift(DateTime dateTime, double processed) => await DailyReport.EndShift(dateTime, processed);
+        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double processed) => await DailyReport.EndShift(date, time, processed);
         public static DailyReport? CurrentShift => DailyReport.CurrentShift;
         public int Id => _dailyReport.Id;
 

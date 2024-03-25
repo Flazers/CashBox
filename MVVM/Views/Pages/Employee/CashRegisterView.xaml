@@ -42,7 +42,7 @@
                                         <Grid>
                                             <Border CornerRadius="5" Width="80" Height="80" HorizontalAlignment="Left" VerticalAlignment="Top">
                                                 <Border.Background>
-                                                    <ImageBrush ImageSource="{Binding Image}"/>
+                                                    <ImageBrush ImageSource="{Binding ImageStr}"/>
                                                 </Border.Background>
                                             </Border>
 
@@ -73,7 +73,7 @@
             </Border>
 
             <!--Меню-->
-            <!--<Border Visibility="{Binding MenuPanelVisibility}" DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <Border Visibility="{Binding MenuPanelVisibility}" DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <Grid>
                     <Grid Margin="0 -10 0 30" Height="80" VerticalAlignment="Top">
                         <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Меню"/>
@@ -89,11 +89,11 @@
                     </Grid>
 
                 </Grid>
-            </Border>-->
+            </Border>
             <!--Меню-->
             
             <!--Продажа-->
-            <!--<Border HorizontalAlignment="Right" Visibility="{Binding OrderPanelVisibility}" DockPanel.Dock="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <Border HorizontalAlignment="Right" Visibility="{Binding OrderPanelVisibility}" DockPanel.Dock="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -117,7 +117,7 @@
                                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                                                     <Border CornerRadius="5" Width="80">
                                                         <Border.Background>
-                                                            <ImageBrush ImageSource="{Binding ProductVM.ImageGet}"/>
+                                                            <ImageBrush ImageSource="{Binding ProductVM.ImageStr}"/>
                                                         </Border.Background>
                                                     </Border>
                                                     <DockPanel Margin="10 0 0 0">
@@ -155,7 +155,7 @@
                     </Grid>
 
                 </StackPanel>
-            </Border>-->
+            </Border>
 
             <Border Visibility="{Binding SellPanelVisibility}" DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
@@ -224,14 +224,14 @@
             <!--Продажа-->
             
             <!--Возврат-->
-            <!--<Border HorizontalAlignment="Right" DockPanel.Dock="Right" Visibility="{Binding ReturnPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <Border HorizontalAlignment="Right" DockPanel.Dock="Right" Visibility="{Binding ReturnPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Style="{DynamicResource TitleText}" HorizontalAlignment="Center" Foreground="{StaticResource TextW}" 
                                Text="{Binding CurrentRefund.Id, StringFormat='{}Возврат №{0}'}"/>
                         </StackPanel>
-                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
+                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCurrentCrackReturnCommand}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
 
@@ -239,101 +239,100 @@
                         <StackPanel Height="670" VerticalAlignment="Top">
                             <StackPanel>
                                 <TextBox Style="{StaticResource InputTB}" Text="{Binding RefundReason}" Margin="0 0 0 20" Tag="Причина возврата"/>
-                                <DatePicker Tag="Дата покупки" SelectedDate="{Binding RefundBuyDate}"/>
+                                <DatePicker Tag="Дата покупки" Text="{Binding RefundBuyDate}"/>
                             </StackPanel>
 
-                            <Border BorderThickness="0 2 0 2" Height="60" BorderBrush="{StaticResource BasicW}" Margin="0 40 0 20">
+                            <Border BorderThickness="0 2 0 2" Height="60" BorderBrush="{StaticResource BasicW}" Margin="0 40 0 30">
                                 <TextBlock Text="Товар" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}"/>
                             </Border>
 
-                            <ScrollViewer Height="410">
-                                <ItemsControl d:ItemsSource="{d:SampleData ItemCount=4}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Height="100" Margin="0 0 20 20"
-                                                    Background="{StaticResource PanelW}" Padding="10" 
-                                                    CornerRadius="5">
-                                                <DockPanel>
-                                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                                                        <Border CornerRadius="5" Width="80">
-                                                            <Border.Background>
-                                                                <ImageBrush ImageSource="{Binding ProductVM.ImageGet}"/>
-                                                            </Border.Background>
-                                                        </Border>
-                                                        <DockPanel Margin="10 0 0 0">
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding ProductVM.Brand}" Foreground="{StaticResource TextB}"/>
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding ProductVM.Title}" Foreground="{StaticResource TextB}"/>
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding ProductVM.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
-                                                        </DockPanel>
-                                                    </StackPanel>
-                                                    <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" HorizontalAlignment="Right"
-                                                               Text="{Binding ProductVM.SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
-                                                    
-                                                </DockPanel>
-                                            </Border>
-                                        </DataTemplate> 
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                            
-                        </StackPanel>
-                        <StackPanel VerticalAlignment="Bottom">
-                            <Button Style="{StaticResource ButtonInPanelGreen}" Content="Вернуть товар"/>
-                        </StackPanel>
-                    </Grid>
-
-                </StackPanel>
-            </Border>-->
-            <!--Возврат-->
-
-            <!--Брак-->
-            <!--<Border HorizontalAlignment="Right" Visibility="{Binding CrackPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
-                <StackPanel>
-                    <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
-                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextBlock Style="{DynamicResource TitleText}" HorizontalAlignment="Center" Foreground="{StaticResource TextW}" 
-                               Text="{Binding CurrentRefund.Id, StringFormat='{}Брак №{0}'}"/>
-                        </StackPanel>
-                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
-                        <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
-                    </Grid>
-
-                    <Grid Margin="10 0 10 10" Height="750">
-                        <ScrollViewer Height="670" VerticalAlignment="Top">
-                            <ItemsControl d:ItemsSource="{d:SampleData ItemCount=4}">
+                            <ItemsControl ItemsSource="{Binding SelectedProductRef}" d:ItemsSource="{d:SampleData ItemCount=1}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Height="100" Margin="0 0 20 20"
-                                                Background="{StaticResource PanelW}" Padding="10" 
-                                                CornerRadius="5">
+                                        <Border Height="100" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
                                             <DockPanel>
                                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                                                     <Border CornerRadius="5" Width="80">
                                                         <Border.Background>
-                                                            <ImageBrush ImageSource="{Binding ProductVM.ImageGet}"/>
+                                                            <ImageBrush ImageSource="{Binding ImageStr}"/>
                                                         </Border.Background>
                                                     </Border>
                                                     <DockPanel Margin="10 0 0 0">
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding ProductVM.Brand}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding ProductVM.Title}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding ProductVM.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                     </DockPanel>
                                                 </StackPanel>
-                                                <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" HorizontalAlignment="Right"
-                                                           Text="{Binding ProductVM.SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                <Grid>
+                                                    <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Top" HorizontalAlignment="Right"
+                                                               Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                    <Button Style="{StaticResource ButtonInPanelRed}" Height="40" FontSize="16" HorizontalAlignment="Right" Command="{Binding ClearSelectedProductCommand}" VerticalAlignment="Bottom" Content="Убрать"/>
+                                                </Grid>
 
                                             </DockPanel>
                                         </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                        </ScrollViewer>
+
+                        </StackPanel>
                         <StackPanel VerticalAlignment="Bottom">
-                            <Button Style="{StaticResource ButtonInPanelGreen}" Content="Отметить брак"/>
+                            <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding ReturnProductCommand}" Content="Вернуть товар"/>
+                        </StackPanel>
+                    </Grid>
+
+                </StackPanel>
+            </Border>
+            <!--Возврат-->
+
+            <!--Брак-->
+            <Border HorizontalAlignment="Right" Visibility="{Binding CrackPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+                <StackPanel>
+                    <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Style="{DynamicResource TitleText}" HorizontalAlignment="Center" Foreground="{StaticResource TextW}" 
+                               Text="{Binding CurrentRefund.Id, StringFormat='{}Брак №{0}'}"/>
+                        </StackPanel>
+                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCurrentCrackReturnCommand}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
+                        <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                    </Grid>
+
+                    <Grid Margin="10 0 10 10" Height="750">
+                        <ItemsControl ItemsSource="{Binding SelectedProductRef}" d:ItemsSource="{d:SampleData ItemCount=1}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Height="100"
+                                                Background="{StaticResource PanelW}" Padding="10" 
+                                                CornerRadius="5">
+                                        <DockPanel>
+                                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                                                <Border CornerRadius="5" Width="80">
+                                                    <Border.Background>
+                                                        <ImageBrush ImageSource="{Binding ImageStr}"/>
+                                                    </Border.Background>
+                                                </Border>
+                                                <DockPanel Margin="10 0 0 0">
+                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
+                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
+                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                </DockPanel>
+                                            </StackPanel>
+                                            <Grid>
+                                                <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Top" HorizontalAlignment="Right"
+                                                               Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                <Button Style="{StaticResource ButtonInPanelRed}" Height="40" FontSize="16" HorizontalAlignment="Right" Command="{Binding ClearSelectedProductCommand}" VerticalAlignment="Bottom" Content="Убрать"/>
+                                            </Grid>
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <StackPanel VerticalAlignment="Bottom">
+                            <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding ReturnCrackProductCommand}" Content="Отметить брак"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
-            </Border>-->
+            </Border>
             <!--Брак-->
             
         </DockPanel>

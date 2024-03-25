@@ -64,6 +64,8 @@ namespace Cashbox.MVVM.Models
                 OrderComposition.SellCost = sellcost;
                 OrderProduct.AddListOrderInDataBase(orderProducts);
                 await CashBoxDataContext.Context.SaveChangesAsync();
+                OrderComposition = null;
+                OrderProduct.OrderProducts = [];
                 return true;
             }
             catch (Exception ex)

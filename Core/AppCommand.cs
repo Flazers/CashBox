@@ -48,5 +48,9 @@ namespace Cashbox.Core
 
             return Convert.ToBase64String(hash);
         }
+
+        public static void ErrorMessage(string message, string caption = "Ошибка") => MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+        
+
     }
 }

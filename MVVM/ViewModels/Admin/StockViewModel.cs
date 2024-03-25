@@ -5,7 +5,6 @@ using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
-using System.Windows.Media.Imaging;
 
 namespace Cashbox.MVVM.ViewModels.Admin
 {
@@ -292,26 +291,25 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
         private async void OnAddProductCommandExecuted(object p)
         {
-            if (string.IsNullOrEmpty(ProductData.Image))
-                ProductData.Image = "./Assets/Image/Zagl.png";
-            var data = await ProductViewModel.CreateProduct(ProductData, Amount);
-            if (data != null)
-            {
+            if (string.IsNullOrEmpty(ProductData.Image)) ProductData.Image = "./Assets/Image/Zagl.png";
+            if (ProductData.CategoryId == 0) ProductData.CategoryId = 1;
 
-                Update();
-                OnClosePanelProductCommandExecuted(0);
-                SelectedProduct = CollectionProducts.FirstOrDefault(x => x == data);
-                if (SelectedProductCategory != null && SelectedProductCategory.Id != data.Category.Id)
-                    SelectedProductCategory = CollectionProductCategories.FirstOrDefault(x => x.Id == data.Category.Id);
-                MessageBox.Show("Товар добавлен", "Успех");
-            }
+            var data = await ProductViewModel.CreateProduct(ProductData, Amount);
+            if (data == null)
+                return;
+            Update();
+            OnClosePanelProductCommandExecuted(0);
+            SelectedProduct = CollectionProducts.FirstOrDefault(x => x == data);
+            if (SelectedProductCategory != null && SelectedProductCategory.Id != data.Category.Id)
+                SelectedProductCategory = CollectionProductCategories.FirstOrDefault(x => x.Id == data.Category.Id);
+            MessageBox.Show("Товар добавлен", "Успех");
         }
 
         public RelayCommand EditProductCommand { get; set; }
         private bool CanEditProductCommandExecute(object p) => true;
         private async void OnEditProductCommandExecuted(object p)
         {
-            var data = await ProductViewModel.UpdateProduct(SelectedProduct.Id, SelectedProduct.ArticulCode, SelectedProduct.Title, SelectedProduct.Description, SelectedProduct.Image, SelectedProduct.Brand, SelectedProduct.CategoryId, SelectedProduct.PurchaseСost, SelectedProduct.SellCost, SelectedProduct.Stock.Amount);
+            var data = await ProductViewModel.UpdateProduct(SelectedProduct, SelectedProduct.Stock.Amount);
             if (data != null)
             {
                 Update();

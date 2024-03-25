@@ -80,7 +80,7 @@
                         <Grid>
                             <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource BasicB}"
                                         Text="{TemplateBinding Tag}"/>
-                            <ScrollViewer VerticalAlignment="Center" 
+                            <ScrollViewer VerticalAlignment="Bottom" Margin="0 0 0 15"
                                           x:Name="PART_ContentHost" Focusable="false" 
                                           HorizontalScrollBarVisibility="Hidden" 
                                           VerticalScrollBarVisibility="Hidden"/>

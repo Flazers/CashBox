@@ -1,9 +1,7 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Net.NetworkInformation;
-using System.Windows.Controls;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace Cashbox.MVVM.ViewModels.Data
@@ -20,7 +18,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<List<ProductViewModel>> GetProducts() => await Product.GetProducts();
         public static async Task<List<ProductViewModel>> GetAllProducts() => await Product.GetAllProducts();
         public static async Task<ProductViewModel?> CreateProduct(ProductViewModel? productVM, int Amount) => await Product.CreateProducts(productVM, Amount);
-        public static async Task<ProductViewModel?> UpdateProduct(int id, string? ArticulCode, string Title, string Description, string? Image, string Brand, int CategoryId, double PurchaseСost, double SellCost, int Amount) => await Product.UpdateProducts(id, ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost, Amount);
+        public static async Task<ProductViewModel?> UpdateProduct(ProductViewModel? productVM, int Amount) => await Product.UpdateProducts(productVM, Amount);
         public static async Task<ProductViewModel?> RemoveProduct(int id) => await Product.AvailableProducts(id, false);
         public static async Task<ProductViewModel?> UnRemoveProduct(int id) => await Product.AvailableProducts(id, true);
 
@@ -79,11 +77,13 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         private void LoadImage()
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _product.Image!);
+            if (string.IsNullOrEmpty(_product.Image))
+                return;
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _product.Image);
             if (!File.Exists(path))
                 return;
             var uri = new Uri(path);
-            ImageStr = new BitmapImage(uri);
+            Application.Current.Dispatcher.Invoke(() => ImageStr = new BitmapImage(uri));
         }
 
         public string Brand
