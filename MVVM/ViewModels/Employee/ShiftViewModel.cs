@@ -1,11 +1,8 @@
 ﻿using Cashbox.Core;
 using Cashbox.Core.Commands;
+using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels.Employee
@@ -44,11 +41,9 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _endShiftVisibility, value);
         }
 
-        
-
         #endregion
 
-        private double _startCash;
+        private double _startCash = MoneyBoxViewModel.GetMoney;
         public double StartCash
         {
             get => _startCash;
@@ -60,6 +55,13 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             get => _newCash;
             set => Set(ref _newCash, value);
+        }
+
+        private string? _currentCash;
+        public string? CurrentCash
+        {
+            get => _currentCash;
+            set => Set(ref _currentCash, value);
         }
 
         private double _nalTransit;
@@ -83,18 +85,46 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _cardTransit, value);
         }
 
-        private DateTime _startShiftTime;
-        public DateTime StartShiftTime
+        private double _fullTransit;
+        public double FullTransit
+        {
+            get => _fullTransit;
+            set => Set(ref _fullTransit, value);
+        }
+
+        private ObservableCollection<OrderViewModel>? _collectionOrders;
+        public ObservableCollection<OrderViewModel>? CollectionOrders
+        {
+            get => _collectionOrders;
+            set => Set(ref _collectionOrders, value);
+        }
+
+        private double _processed;
+        public double Processed
+        {
+            get => _processed;
+            set => Set(ref _processed, value);
+        }
+
+        private TimeOnly _startShiftTime;
+        public TimeOnly StartShiftTime
         {
             get => _startShiftTime;
             set => Set(ref _startShiftTime, value);
         }
 
-        private DateTime _endShiftTime;
-        public DateTime EndShiftTime
+        private TimeOnly? _endShiftTime;
+        public TimeOnly? EndShiftTime
         {
             get => _endShiftTime;
             set => Set(ref _endShiftTime, value);
+        }
+
+        private DateOnly _currentDate = DateOnly.FromDateTime(DateTime.Today);
+        public DateOnly CurrentDate
+        {
+            get => _currentDate;
+            set => Set(ref _currentDate, value);
         }
         #endregion
 
@@ -102,42 +132,81 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         #region VisibilityCommand
         public RelayCommand StartShiftCommand { get; set; }
-        private bool CanStartShiftCommandExecute(object p) => true;
-        private void OnStartShiftCommandExecuted(object p)
+        private bool CanStartShiftCommandExecute(object p)
         {
-            StartShiftTime = DateTime.Now;
+            return true;
+        }
+        private async void OnStartShiftCommandExecuted(object p)
+        {
+            StartShiftTime = TimeOnly.FromDateTime(DateTime.Now);
+            DailyReportViewModel drvm = await DailyReportViewModel.StartShift(DateOnly.FromDateTime(DateTime.Now), StartShiftTime);
             StartShiftVisibility = Visibility.Collapsed;
             ProcessShiftVisibility = Visibility.Visible;
             ProcessDoShiftVisibility = Visibility.Visible;
             EndShiftVisibility = Visibility.Collapsed;
+            MessageBox.Show($"Смена {drvm.Id} открыта", "Уведомление", MessageBoxButton.OK);
         }
 
         public RelayCommand EndShiftCommand { get; set; }
         private bool CanEndShiftCommandExecute(object p) => true;
-        private void OnEndShiftCommandExecuted(object p)
+        private async void OnEndShiftCommandExecuted(object p)
         {
-            EndShiftTime = DateTime.Now;
+            if (string.IsNullOrEmpty(CurrentCash))
+            {
+                MessageBox.Show("Пересчитайте деньги в кассе и введите значение в поле \"Денег в кассе\"", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
+                return;
+            }
+            MessageBoxResult result = MessageBox.Show("После закрытия смены, новую можно открыть только на следующий день. \nВы уверены, что хотите ее закрыть?", "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+                return;
+            EndShiftTime = TimeOnly.FromDateTime(DateTime.Now);
+            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, Processed);
             StartShiftVisibility = Visibility.Collapsed;
             ProcessShiftVisibility = Visibility.Visible;
             ProcessDoShiftVisibility = Visibility.Collapsed;
             EndShiftVisibility = Visibility.Visible;
+            MessageBox.Show($"Смена {drvm.Id} закрыта", "Уведомление", MessageBoxButton.OK);
         }
 
         #endregion
 
+
         #endregion
 
-        public override void OnLoad()
+        public override async void Clear()
         {
-            CardTransit = OrderViewModel.GetDayOrdersToMethod(StartShiftTime, 1).Result.Sum(x => x.SellCost);
-            NalTransit = OrderViewModel.GetDayOrdersToMethod(StartShiftTime, 2).Result.Sum(x => x.SellCost);
-            SendTransit = OrderViewModel.GetDayOrdersToMethod(StartShiftTime, 3).Result.Sum(x => x.SellCost);
+            CardTransit = (await OrderViewModel.GetDayOrdersToMethod(DateOnly.FromDateTime(DateTime.Now), 1)).Sum(x => (double)x.SellCost!);
+            NalTransit = (await OrderViewModel.GetDayOrdersToMethod(DateOnly.FromDateTime(DateTime.Now), 2)).Sum(x => (double)x.SellCost!);
+            SendTransit = (await OrderViewModel.GetDayOrdersToMethod(DateOnly.FromDateTime(DateTime.Now), 3)).Sum(x => (double)x.SellCost!);
+            NewCash = StartCash + NalTransit;
+            FullTransit = SendTransit + CardTransit + NalTransit;
+            if (StartShiftVisibility == Visibility.Collapsed)
+                CollectionOrders = new(Order.GetAllDayOrders(DateOnly.FromDateTime(DateTime.Now)).Result);
         }
 
         public ShiftViewModel()
         {
             StartShiftCommand = new RelayCommand(OnStartShiftCommandExecuted, CanStartShiftCommandExecute);
             EndShiftCommand = new RelayCommand(OnEndShiftCommandExecuted, CanEndShiftCommandExecute);
+            DailyReport CurrentShift = DailyReportViewModel.CurrentShift;
+            if (CurrentShift != null)
+            {
+                StartShiftTime = CurrentShift.OpenTime!.Value;
+                StartShiftVisibility = Visibility.Collapsed;
+                ProcessShiftVisibility = Visibility.Visible;
+                if (CurrentShift.CloseTime != null)
+                {
+                    EndShiftTime = CurrentShift.CloseTime;
+                    ProcessDoShiftVisibility = Visibility.Collapsed;
+                    EndShiftVisibility = Visibility.Visible;
+                }
+                else
+                {
+                    ProcessDoShiftVisibility = Visibility.Visible;
+                    EndShiftVisibility = Visibility.Collapsed;
+                }
+
+            }
         }
     }
 }

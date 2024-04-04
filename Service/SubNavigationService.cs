@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace Cashbox.Service
@@ -28,7 +29,7 @@ namespace Cashbox.Service
             ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
             CurrentView = viewModel;
             CurrentView?.Clear();
-            Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() => { CurrentView?.OnLoad(); }));
+            Application.Current.Dispatcher.Invoke(new Action(() => { CurrentView?.OnLoad(); }));
         }
     }
 }

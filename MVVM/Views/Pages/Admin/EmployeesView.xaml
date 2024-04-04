@@ -60,7 +60,7 @@
                             <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Информация о пользователе"/>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
-                        <Grid Margin="10 0 10 10">
+                        <Grid Margin="10 0 10 10" Height="650">
                             <StackPanel Visibility="{Binding UserSelectedPanel}">
                                 <TextBlock Style="{StaticResource BigText}" HorizontalAlignment="Center" Margin="0 0 0 30" Text="{Binding SelectedUser.UserInfo.Role.Role1}" Foreground="{StaticResource TextW}"/>
                                 <Grid Height="40">
@@ -83,6 +83,10 @@
                                     <TextBlock Height="30" Style="{StaticResource RegularText}" Text="Место жительства:" Foreground="{StaticResource TextW}"/>
                                     <TextBlock Style="{StaticResource RegularText}" Text="{Binding SelectedUser.UserInfo.Location}" TextWrapping="Wrap" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
+                            </StackPanel>
+                            <StackPanel Visibility="{Binding UserSelectedPanel}" VerticalAlignment="Bottom" Orientation="Horizontal">
+                                <Button Style="{StaticResource ButtonInPanelGray}" Command="{Binding OpenPanelEmployeeEditCommand}" Width="260" Margin="0 0 20 0" Content="Редактировать"/>
+                                <Button Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveEmployeeCommand}" Width="200" Content="Уволить"/>
                             </StackPanel>
                             <StackPanel VerticalAlignment="Center" Visibility="{Binding NotUserSelectedPanel}">
                                 <TextBlock Text="Пользователь не выбран" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -111,7 +115,7 @@
 SelectedValuePath="Id" SelectedItem="{Binding Role}" Margin="0 0 0 20"/>
                                 <TextBox Style="{StaticResource InputTB}" Text="{Binding Login}" Tag="Логин" Margin="0 0 0 20"/>
                                 <TextBox Style="{StaticResource InputTB}" Text="{Binding Password}" Tag="Пароль" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Pincode}" Tag="Пинкод" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Pincode}" Tag="Пинкод" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
                             </StackPanel>
                         </ScrollViewer>
 
@@ -122,6 +126,40 @@ SelectedValuePath="Id" SelectedItem="{Binding Role}" Margin="0 0 0 20"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
+
+            <!--<StackPanel Visibility="{Binding PanelEditProductVisibility}">
+                <Border Visibility="{Binding PanelEditProductVisibility}" Style="{StaticResource PanelBorder}" Height="880">
+                    <StackPanel>
+                        <Grid Margin="0 -10 0 30" Height="80">
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Редактирование товара"/>
+                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                        <ScrollViewer Height="650" Margin="10 0">
+                            <StackPanel Margin="0 0 20 0">
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.ArticulCode}" Tag="Артикул" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Brand}" Tag="Марка*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Title}" Tag="Наименование*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Description}" Tag="Описание*" Margin="0 0 0 20"/>
+                                <Border CornerRadius="5" Width="190" Height="190" Margin="0 0 0 40">
+                                    <Border.Background>
+                                        <ImageBrush ImageSource="{Binding SelectedProduct.ImageGet}"/>
+                                    </Border.Background>
+                                </Border>
+                                <Button Style="{StaticResource ButtonInPanelWhite}" Command="{Binding EditImageCommand}" Content="{Binding ImageStringProduct}" Margin="0 0 0 20"/>
+                                <ComboBox Tag="Категория*" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionProductCategories}" DisplayMemberPath="Category" 
+                                              SelectedItem="{Binding SelectedProduct.CategoryVM}" SelectedValuePath="Category" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.PurchaseСost}" Tag="Цена закупки*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.SellCost}" Tag="Цена продажи*" Margin="0 0 0 20"/>
+                                <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Stock.Amount}" Tag="Колличество товара*"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                        <StackPanel Orientation="Horizontal" Margin="10 40 10 0">
+                            <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding ClosePanelProductCommand}" Width="230" Margin="0 0 20 0" Content="Закрыть"/>
+                            <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding EditProductCommand}" Width="230" Content="Сохранить"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>-->
 
         </StackPanel>
 

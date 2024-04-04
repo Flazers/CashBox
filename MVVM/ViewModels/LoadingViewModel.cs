@@ -135,7 +135,18 @@ namespace Cashbox.MVVM.ViewModels
             }
             await Task.Delay(mainDelay);
 
-            SetStatus("Загрузка базы данных в локальный кэш", "loading", 7);
+            SetStatus("Проверка таблицы \"AppSetting\" и \"MoneyBox\"", "loading", 7);
+            if (!CashBoxDataContext.Context.AppSettings.Any() && !CashBoxDataContext.Context.MoneyBoxes.Any())
+            {
+                SetStatus("Создаю настройки по умолчанию", "loading", 7);
+                await AppSettingsViewModel.CreateSetting();
+                await MoneyBoxViewModel.CreateBox();
+                await Task.Delay(secondDelay);
+                MessageBox.Show("Зарплата за выход: 1000 ₽ \nДенег в кассе: 0 \nПремия за каждые 5к: 100 ₽ \nЭти данные можно изменить позже в настройках приложения.", "Данные приложения");
+            }
+            await Task.Delay(mainDelay);
+
+            SetStatus("Загрузка базы данных в локальный кэш", "loading", 8);
             CashBoxDataContext.Context.Roles.Load();
             CashBoxDataContext.Context.UserInfos.Load();
             CashBoxDataContext.Context.Users.Load();
@@ -147,13 +158,15 @@ namespace Cashbox.MVVM.ViewModels
             CashBoxDataContext.Context.PaymentMethods.Load();
             CashBoxDataContext.Context.Refunds.Load();
             CashBoxDataContext.Context.Stocks.Load();
+            CashBoxDataContext.Context.AppSettings.Load();
+            CashBoxDataContext.Context.MoneyBoxes.Load();
             await Task.Delay(mainDelay);
 
             try
             {
-                SetStatus("Проверка интернет соединения", "loading", 8);
+                SetStatus("Проверка интернет соединения", "loading", 9);
                 HttpClient client = new();
-                //HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
+                HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
             }
             catch (HttpRequestException)
             {
@@ -162,7 +175,7 @@ namespace Cashbox.MVVM.ViewModels
             }
 
             await Task.Delay(mainDelay);
-            SetStatus("Запуск", "loading", 9);
+            SetStatus("Запуск", "loading", 10);
             await Task.Delay(mainDelay);
 
             return true;
@@ -206,7 +219,7 @@ namespace Cashbox.MVVM.ViewModels
             {
                 try
                 {
-                    if (!CheckApp(9).Result)
+                    if (!CheckApp(10).Result)
                         return;
                     NavigationService = navService;
                     NavigationService.NavigateTo<AuthViewModel>();

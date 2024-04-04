@@ -2,6 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks">
 
+    <Style TargetType="{x:Type TextBox}">
+        <Setter Property="FontFamily" Value="Montserrat"/>
+    </Style>
+
     <Style x:Key="TbPlaceholderTag" TargetType="{x:Type TextBox}">
         <Setter Property="Background" Value="{StaticResource PanelW}"/>
         <Setter Property="Foreground" Value="{StaticResource TextB}"/>
@@ -76,7 +80,7 @@
                         <Grid>
                             <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource BasicB}"
                                         Text="{TemplateBinding Tag}"/>
-                            <ScrollViewer VerticalAlignment="Center" 
+                            <ScrollViewer VerticalAlignment="Bottom" Margin="0 0 0 15"
                                           x:Name="PART_ContentHost" Focusable="false" 
                                           HorizontalScrollBarVisibility="Hidden" 
                                           VerticalScrollBarVisibility="Hidden"/>

@@ -11,16 +11,7 @@ public partial class CashBoxDataContext : DbContext
     }
 
     private static CashBoxDataContext? _context;
-
-    public static CashBoxDataContext Context
-    {
-        get
-        {
-            if (_context == null)
-                _context = new CashBoxDataContext();
-            return _context;
-        }
-    }
+    public static CashBoxDataContext Context => _context ??= new CashBoxDataContext();
 
     public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options)
         : base(options)
@@ -28,6 +19,7 @@ public partial class CashBoxDataContext : DbContext
     }
 
     public virtual DbSet<AuthHistory> AuthHistories { get; set; }
+    public virtual DbSet<AppSettings> AppSettings { get; set; }
 
     public virtual DbSet<AutoDreport> AutoDreports { get; set; }
 
@@ -57,12 +49,20 @@ public partial class CashBoxDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //optionsBuilder.UseSqlite("Data Source=C:\\Users\\nicho\\source\\repos\\Cash\\MVVM\\Models\\Data.db");
-        optionsBuilder.UseSqlite("Data Source=C:\\Users\\Expert\\source\\repos\\Cashboxs\\MVVM\\Models\\Data.db");
+        optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\source\\repos\\CashBox\\MVVM\\Models\\Data.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AppSettings>(entity =>
+        {
+            entity.ToTable("AppSettings");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Salary).HasColumnName("salary");
+            entity.Property(e => e.AwardProcent).HasColumnName("awardprocent");
+        });
+
         modelBuilder.Entity<AuthHistory>(entity =>
         {
             entity.ToTable("AuthHistory");
@@ -231,6 +231,7 @@ public partial class CashBoxDataContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.BuyDate).HasColumnName("buy_date");
             entity.Property(e => e.IsPurchased).HasColumnName("isPurchased");
+            entity.Property(e => e.IsSuccessRefund).HasColumnName("isSuccessRefund");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.Reason)
                 .HasMaxLength(50)

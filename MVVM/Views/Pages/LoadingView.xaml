@@ -9,7 +9,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="1080" d:DesignWidth="1920"
       xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks">
-    <Grid>
+    <Grid Background="{StaticResource BasicW}">
         <Border Padding="30" Style="{StaticResource MainBorder}" MaxWidth="1200" MaxHeight="800">
             <Grid>
                 <TextBlock Text="A5 Detailing" Style="{StaticResource BigText}" VerticalAlignment="Top" Foreground="{StaticResource TextW}" HorizontalAlignment="Center"/>

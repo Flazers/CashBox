@@ -15,6 +15,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
     {
         #region Props
 
+        public static UserViewModel? User { get => Models.User.CurrentUser; }
+
         #region isBoolView
         private bool _isShiftView = true;
         public bool IsShiftView
@@ -27,7 +29,15 @@ namespace Cashbox.MVVM.ViewModels.Employee
         public bool IsCashRegisterView
         {
             get => _isCashRegisterView;
-            set => Set(ref _isCashRegisterView, value);
+            set
+            {
+                if (value == true && User.DailyReports.FirstOrDefault(x => x.Data == DateOnly.FromDateTime(DateTime.Today) && x.CloseTime == null) == null)
+                {
+                    MessageBox.Show("Смена не открыта", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                _isCashRegisterView = value;
+            }
         }
         #endregion
 

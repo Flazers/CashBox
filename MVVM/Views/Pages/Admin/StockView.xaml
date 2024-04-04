@@ -84,7 +84,7 @@
                                                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                                                         <Border CornerRadius="5" Width="80">
                                                             <Border.Background>
-                                                                <ImageBrush ImageSource="{Binding ImageGet}"/>
+                                                                <ImageBrush ImageSource="{Binding ImageStr}"/>
                                                             </Border.Background>
                                                         </Border>
                                                         <DockPanel Margin="10 0 0 0">
@@ -123,7 +123,7 @@
                                 <StackPanel VerticalAlignment="Top">
                                     <Border CornerRadius="5" Width="190" Height="190" Margin="0 0 0 40">
                                         <Border.Background>
-                                            <ImageBrush ImageSource="{Binding SelectedProduct.ImageGet}"/>
+                                            <ImageBrush ImageSource="{Binding SelectedProduct.ImageStr}"/>
                                         </Border.Background>
                                     </Border>
                                     <Grid>
@@ -183,15 +183,15 @@
                             </Grid>
                             <ScrollViewer Height="650" Margin="10 0">
                                 <StackPanel Margin="0 0 20 0">
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ArticulCode}" Tag="Артикул" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding Brand}" Tag="Марка*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding Title}" Tag="Наименование*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding Description}" Tag="Описание*" Margin="0 0 0 20"/>
+                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.ArticulCode, Mode=TwoWay}" Tag="Артикул" Margin="0 0 0 20"/>
+                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.Brand, Mode=TwoWay}" Tag="Марка*" Margin="0 0 0 20"/>
+                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.Title, Mode=TwoWay}" Tag="Наименование*" Margin="0 0 0 20"/>
+                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.Description, Mode=TwoWay}" Tag="Описание*" Margin="0 0 0 20"/>
                                     <Button Style="{StaticResource ButtonInPanelWhite}" Command="{Binding AddImageCommand}" Content="{Binding ImageStringProduct}" Margin="0 0 0 20"/>
                                     <ComboBox Tag="Категория*" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionProductCategories}" DisplayMemberPath="Category" SelectedValuePath="Category" 
-                                              SelectedItem="{Binding Category}" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding PurchaseСost}" Tag="Цена закупки*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding SellCost}" Tag="Цена продажи*" Margin="0 0 0 20"/>
+                                              SelectedItem="{Binding ProductData.CategoryVM, Mode=TwoWay}" Margin="0 0 0 20"/>
+                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.PurchaseСost, Mode=TwoWay}" Tag="Цена закупки*" Margin="0 0 0 20"/>
+                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.SellCost, Mode=TwoWay}" Tag="Цена продажи*" Margin="0 0 0 20"/>
                                     <TextBox Style="{StaticResource InputTB}" Text="{Binding Amount}" Tag="Колличество товара*"/>
                                 </StackPanel>
                             </ScrollViewer>
@@ -204,7 +204,7 @@
                 </StackPanel>
 
                 <StackPanel Visibility="{Binding PanelEditProductVisibility}">
-                    <Border Visibility="{Binding PanelEditProductVisibility}" Style="{StaticResource PanelBorder}" Height="880">
+                    <Border Style="{StaticResource PanelBorder}" Height="880">
                         <StackPanel>
                             <Grid Margin="0 -10 0 30" Height="80">
                                 <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Редактирование товара"/>
@@ -218,7 +218,7 @@
                                     <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Description}" Tag="Описание*" Margin="0 0 0 20"/>
                                     <Border CornerRadius="5" Width="190" Height="190" Margin="0 0 0 40">
                                         <Border.Background>
-                                            <ImageBrush ImageSource="{Binding SelectedProduct.ImageGet}"/>
+                                            <ImageBrush ImageSource="{Binding SelectedProduct.ImageStr}"/>
                                         </Border.Background>
                                     </Border>
                                     <Button Style="{StaticResource ButtonInPanelWhite}" Command="{Binding EditImageCommand}" Content="{Binding ImageStringProduct}" Margin="0 0 0 20"/>

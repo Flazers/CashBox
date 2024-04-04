@@ -1,28 +1,24 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class ProductViewModel(Product product) : ViewModelBase
+    public class ProductViewModel : ViewModelBase
     {
-        private readonly Product _product = product;
+        private readonly Product _product;
+        public ProductViewModel(Product product)
+        {
+            _product = product;
+            Task.Run(LoadImage);
+        }
 
         public static async Task<List<ProductViewModel>> GetProducts() => await Product.GetProducts();
         public static async Task<List<ProductViewModel>> GetAllProducts() => await Product.GetAllProducts();
-        public static async Task<ProductViewModel?> CreateProduct(string? _ArticulCode, string _Title, string _Description, byte[]? _Image, string _Brand, int _CategoryId, double _PurchaseСost, double _SellCost, int _Amount) => await Product.CreateProducts(_ArticulCode, _Title, _Description, _Image, _Brand, _CategoryId, _PurchaseСost, _SellCost, _Amount);
-        public static async Task<ProductViewModel?> UpdateProduct(int id, string? ArticulCode, string Title, string Description, byte[]? Image, string Brand, int CategoryId, double PurchaseСost, double SellCost, int Amount) => await Product.UpdateProducts(id, ArticulCode, Title, Description, Image, Brand, CategoryId, PurchaseСost, SellCost, Amount);
+        public static async Task<ProductViewModel?> CreateProduct(ProductViewModel? productVM, int Amount) => await Product.CreateProducts(productVM, Amount);
+        public static async Task<ProductViewModel?> UpdateProduct(ProductViewModel? productVM, int Amount) => await Product.UpdateProducts(productVM, Amount);
         public static async Task<ProductViewModel?> RemoveProduct(int id) => await Product.AvailableProducts(id, false);
         public static async Task<ProductViewModel?> UnRemoveProduct(int id) => await Product.AvailableProducts(id, true);
 
@@ -58,9 +54,9 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public byte[] Image
+        public string? Image
         {
-            get => _product.Image!;
+            get => _product.Image;
             set
             {
                 _product.Image = value;
@@ -68,26 +64,26 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public BitmapImage ImageGet
+        private BitmapImage? _imageStr;
+        public BitmapImage? ImageStr
         {
-            get
+            get => _imageStr;
+            set
             {
-                BitmapImage image = new();
-                byte[] data = Image;
-                if (Image!.Length < 5) data = File.ReadAllBytes(@"Assets\Image\Zagl.png");
-                using (var mem = new MemoryStream(data))
-                {
-                    mem.Position = 0;
-                    image.BeginInit();
-                    image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                    image.CacheOption = BitmapCacheOption.OnLoad;
-                    image.UriSource = null;
-                    image.StreamSource = mem;
-                    image.EndInit();
-                }
-                image.Freeze();
-                return image;
+                _imageStr = value;
+                OnPropertyChanged();
             }
+        }
+
+        private void LoadImage()
+        {
+            if (string.IsNullOrEmpty(_product.Image))
+                return;
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _product.Image);
+            if (!File.Exists(path))
+                return;
+            var uri = new Uri(path);
+            Application.Current.Dispatcher.Invoke(() => ImageStr = new BitmapImage(uri));
         }
 
         public string Brand
@@ -139,7 +135,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public ProductCategoryViewModel CategoryVM 
+        public ProductCategoryViewModel CategoryVM
         {
             get => new(_product.Category);
             set

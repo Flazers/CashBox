@@ -24,5 +24,20 @@ namespace Cashbox.MVVM.Views.Pages.Admin
         {
             InitializeComponent();
         }
+
+        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (((TextBox)sender).Text.Length >= 6)
+            {
+                e.Handled = true;
+                return;
+            }
+            char number = Convert.ToChar(e.Text);
+
+            if (!Char.IsDigit(number))
+            {
+                e.Handled = true;
+            }
+        }
     }
 }

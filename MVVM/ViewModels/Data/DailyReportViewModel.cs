@@ -8,13 +8,16 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class DailyReportViewModel(DailyReport DailyReport) : ViewModelBase
+    public class DailyReportViewModel(DailyReport DailyReports) : ViewModelBase
     {
-        private readonly DailyReport _dailyReport = DailyReport;
+        private readonly DailyReport _dailyReport = DailyReports;
 
+        public static async Task<DailyReportViewModel?> StartShift(DateOnly date, TimeOnly time) => await DailyReport.StartShift(date, time);
+        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double processed) => await DailyReport.EndShift(date, time, processed);
+        public static DailyReport? CurrentShift => DailyReport.CurrentShift;
         public int Id => _dailyReport.Id;
 
-        public DateOnly Data 
+        public DateOnly? Data 
         {
             get => _dailyReport.Data;
             set
@@ -24,7 +27,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public TimeOnly OpenTime 
+        public TimeOnly? OpenTime 
         {
             get => _dailyReport.OpenTime;
             set
@@ -34,7 +37,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public TimeOnly CloseTime 
+        public TimeOnly? CloseTime 
         {
             get => _dailyReport.CloseTime;
             set
@@ -54,7 +57,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double Proceeds 
+        public double? Proceeds 
         {
             get => _dailyReport.Proceeds;
             set

@@ -18,7 +18,7 @@ namespace Cashbox.MVVM.Models
         public static async Task<AuthHistoryViewModel?> NewAuthUser()
         {
             DateTime dateTime = DateTime.Now;
-            HttpClient client = new HttpClient();
+            HttpClient client = new();
             try
             {
                 HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
@@ -61,9 +61,7 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        public async static Task<List<AuthHistoryViewModel>> GetHistories()
-        {
-            return await CashBoxDataContext.Context.AuthHistories.Select(s => new AuthHistoryViewModel(s)).ToListAsync();
-        }
+        public async static Task<List<AuthHistoryViewModel>> GetHistories() => await CashBoxDataContext.Context.AuthHistories.Select(s => new AuthHistoryViewModel(s)).ToListAsync();
+        
     }
 }

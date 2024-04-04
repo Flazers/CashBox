@@ -41,13 +41,6 @@
                     </StackPanel>
                 </RadioButton>
 
-                <RadioButton Command="{Binding NavigateSubViewCommand}" IsChecked="{Binding IsAccountingView}" Margin="0 20 0 0" Style="{DynamicResource NavRB}">
-                    <StackPanel>
-                        <Icon:PackIconMaterial Kind="Finance" HorizontalAlignment="Center" Width="50" Height="50"/>
-                        <TextBlock Text="Бухгалтерия" Margin="0 5 0 0" FontSize="16" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </RadioButton>
-
                 <RadioButton Command="{Binding NavigateSubViewCommand}" IsChecked="{Binding IsShiftView}" Margin="0 20 0 0" Style="{DynamicResource NavRB}">
                     <StackPanel>
                         <Icon:PackIconMaterial Kind="ClipboardList" HorizontalAlignment="Center" Width="50" Height="50"/>
