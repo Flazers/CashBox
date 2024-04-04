@@ -31,7 +31,6 @@ namespace Cashbox.MVVM.Models
                     Amount = item.Amount,
                 });
             }
-
         }
 
         public static void EditOrderProduct(int orderid, ProductViewModel product, int amount)

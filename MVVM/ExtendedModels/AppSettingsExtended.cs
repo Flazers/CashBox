@@ -17,9 +17,7 @@ namespace Cashbox.MVVM.Models
                 AppSettings appsetting = new()
                 {
                     Salary = 1000,
-                    MoneyBox = 0,
                     AwardProcent = 100,
-                    MainEmail = string.Empty,
                 };
                 CashBoxDataContext.Context.AppSettings.Add(appsetting);
                 await CashBoxDataContext.Context.SaveChangesAsync();
@@ -32,7 +30,7 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        private static async Task<bool> EditSettings(int salary, double moneybox, string email, int award)
+        private static async Task<bool> EditSettings(int salary, int award)
         {
             try
             {
@@ -41,10 +39,6 @@ namespace Cashbox.MVVM.Models
                     appsetting.Salary = salary;
                 if (award != 0)
                     appsetting.AwardProcent = award;
-                if (email != "")
-                    appsetting.MainEmail = email.ToLower().Trim();
-                if (moneybox != 0)
-                    appsetting.MoneyBox = moneybox;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }
@@ -56,6 +50,6 @@ namespace Cashbox.MVVM.Models
         }
 
         public static async Task<bool> CreateSetting() => await CreateSettings();
-        public static async Task<bool> EditSetting(int salary, double moneybox, string email, int award) => await EditSettings(salary, moneybox, email, award);
+        public static async Task<bool> EditSetting(int salary, int award) => await EditSettings(salary, award);
     }
 }

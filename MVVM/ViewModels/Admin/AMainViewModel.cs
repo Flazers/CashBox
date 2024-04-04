@@ -39,13 +39,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _isStockView, value);
         }
 
-        private bool _isAccountingView = false;
-        public bool IsAccountingView
-        {
-            get => _isAccountingView;
-            set => Set(ref _isAccountingView, value);
-        }
-
         private bool _isShiftView = false;
         public bool IsShiftView
         {
@@ -68,8 +61,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 SubNavigationService?.NavigateTo<EmployeesViewModel>();
             if (IsStockView)
                 SubNavigationService?.NavigateTo<StockViewModel>();
-            if (IsAccountingView)
-                SubNavigationService?.NavigateTo<AccountingViewModel>();
             if (IsShiftView)
                 SubNavigationService?.NavigateTo<ShiftViewModel>();
         }
@@ -93,7 +84,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             IsHomeView = true;
             IsEmployeeView = false;
             IsStockView = false;
-            IsAccountingView = false;
             IsShiftView = false;
             NavigateSubViewCommand.Execute(this);
         }

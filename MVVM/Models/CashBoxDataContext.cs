@@ -59,10 +59,8 @@ public partial class CashBoxDataContext : DbContext
             entity.ToTable("AppSettings");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.MoneyBox).HasColumnName("moneybox");
             entity.Property(e => e.Salary).HasColumnName("salary");
             entity.Property(e => e.AwardProcent).HasColumnName("awardprocent");
-            entity.Property(e => e.MainEmail).HasColumnName("mainemail");
         });
 
         modelBuilder.Entity<AuthHistory>(entity =>
