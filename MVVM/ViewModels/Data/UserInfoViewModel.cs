@@ -18,6 +18,8 @@ namespace Cashbox.MVVM.ViewModels.Data
             SetFullName();
         }
 
+        public static async Task<UserInfoViewModel> DeactivateUser(int userId) => await UserInfo.DeactivateUser(userId);
+
         public void SetFullName() { 
             FullName = $"{_userInfo.Surname} {_userInfo.Name} {_userInfo.Patronymic}";
             ShortName = $"{_userInfo.Surname} {_userInfo.Name[0]}. {_userInfo.Patronymic[0]}.";
@@ -108,6 +110,16 @@ namespace Cashbox.MVVM.ViewModels.Data
             set
             {
                 _userInfo.RoleId = value; 
+                OnPropertyChanged();
+            }
+        }
+
+        public RoleViewModel RoleVM
+        {
+            get => new(_userInfo.Role);
+            set
+            {
+                _userInfo.RoleId = value.Id;
                 OnPropertyChanged();
             }
         }

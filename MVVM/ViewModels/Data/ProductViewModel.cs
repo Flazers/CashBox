@@ -1,5 +1,6 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;

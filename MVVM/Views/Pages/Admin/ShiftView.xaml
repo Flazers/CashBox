@@ -8,15 +8,12 @@
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
              d:DataContext="{d:DesignInstance Type=vm:ShiftViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="1000" d:DesignWidth="1700">
+             d:DesignHeight="880" d:DesignWidth="1700">
     <UserControl.DataContext>
         <vm:ShiftViewModel/>
     </UserControl.DataContext>
     <StackPanel>
-        <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
-            <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Администратор: \{0}'}"/>
-        </Border>
-        <StackPanel Margin="0 40 0 0" Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal">
             <StackPanel Margin="0 0 40 0" Width="1020">
                 <Border Style="{StaticResource PanelBorder}" Height="880">
                     <StackPanel>
@@ -28,20 +25,26 @@
                         </Grid>
                         <Grid Margin="10 10 10 30">
                             <TextBox Style="{StaticResource Search}" HorizontalAlignment="Left" Width="300"/>
-                            <Button Style="{StaticResource ButtonInPanelWhite}" HorizontalAlignment="Center" Height="50" Width="50">
-                                <Icon:PackIconMaterial Kind="Reload" Width="30" Height="30"/>
-                            </Button>
-                            <DatePicker Width="300" HorizontalAlignment="Right" Tag="Поиск по дате"/>
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <Button Style="{StaticResource ButtonInPanelWhite}" HorizontalAlignment="Center" Margin="0 0 55 0" Height="50" Width="50">
+                                    <Icon:PackIconMaterial Kind="Reload" Width="30" Height="30"/>
+                                </Button>
+                                <DatePicker SelectedDate="{Binding StartDate}" DisplayDate="{Binding StartDate}" Width="195" Margin="0 0 40 0" Tag="С "/>
+                                <DatePicker SelectedDate="{Binding EndDate}" Width="195" Margin="0 0 40 0" Tag="По"/>
+                                <Button Height="50" Width="50" Command="{Binding SearchDataCommand}" Style="{StaticResource ButtonInPanelGreen}">
+                                    <Icon:PackIconMaterialDesign Kind="Search" Width="30" Height="30"/>
+                                </Button>
+                            </StackPanel>
                         </Grid>
                         <ScrollViewer Height="660" Margin="10 0 10 10">
-                            <ItemsControl d:ItemsSource="{d:SampleData ItemCount=8}" ItemsSource="{Binding CollectionUsers}">
+                            <ItemsControl ItemsSource="{Binding DailyReportCollection}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border Padding="20" Background="{StaticResource BasicW}" CornerRadius="20" Margin="0 0 20 20">
                                             <Grid>
                                                 <StackPanel Height="60">
-                                                    <TextBlock Height="30" Margin="0 0 0 10" Text="12.11.1111" Style="{StaticResource TitleText}"/>
-                                                    <TextBlock Text="Марянян Николай Андроникович" Style="{StaticResource RegularText}"/>
+                                                    <TextBlock Height="30" Margin="0 0 0 5" Text="{Binding Data}" Style="{StaticResource TitleText}"/>
+                                                    <TextBlock Text="{Binding UserInfoVM.FullName}" Style="{StaticResource RegularText}"/>
                                                 </StackPanel>
                                                 <Button Style="{StaticResource ButtonInPanelBase}" Command="{Binding DataContext.SeeUserInfoCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
                                                         CommandParameter="{Binding Id}" Content="Подробнее" HorizontalAlignment="Right"/>

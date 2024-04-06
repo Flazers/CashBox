@@ -5,13 +5,13 @@ using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Cashbox.MVVM.ViewModels.Admin
 {
     public class StockViewModel : ViewModelBase
     {
         #region Props
-        public static UserViewModel? User { get => Models.User.CurrentUser; }
 
         #region VisibilityPanel
 
@@ -333,9 +333,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
         }
 
-        public void Update()
+        public async void Update()
         {
-            CollectionProducts = new(ProductViewModel.GetProducts().Result);
+            CollectionProducts = new(await ProductViewModel.GetProducts());
             if (SelectedProductCategory != null)
                 CollectionProducts = new(_collectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
         }
@@ -357,6 +357,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             GetAllProductCommand = new RelayCommand(OnGetAllProductCommandExecuted, CanGetAllProductCommandExecute);
             AddImageCommand = new RelayCommand(OnAddImageCommandExecuted, CanAddImageCommandExecute);
             EditImageCommand = new RelayCommand(OnEditImageCommandExecuted, CanEditImageCommandExecute);
+            Update();
         }
     }
 }

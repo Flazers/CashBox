@@ -19,7 +19,14 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public int Id => _productCategory.Id;
 
-        public string Category => _productCategory.Category;
+        public string Category 
+        {
+            get => _productCategory.Category;
+            set { 
+                _productCategory.Category = value; 
+                OnPropertyChanged();
+            }
+        }
 
         public virtual ICollection<Product> Products => _productCategory.Products;
     }

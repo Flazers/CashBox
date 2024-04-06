@@ -16,7 +16,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
         #region Props
 
         public static UserViewModel? User { get => Models.User.CurrentUser; }
-
         #region isBoolView
         private bool _isShiftView = true;
         public bool IsShiftView

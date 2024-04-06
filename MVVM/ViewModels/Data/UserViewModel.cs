@@ -30,6 +30,15 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public int Id => _user.Id;
 
+        public int Pin
+        {
+            get => _user.Pin;
+            set { 
+                _user.Pin = value; 
+                OnPropertyChanged();
+            }
+        }
+
         public virtual ICollection<AuthHistory> AuthHistories => _user.AuthHistories;
 
         public virtual ICollection<DailyReport> DailyReports => _user.DailyReports;

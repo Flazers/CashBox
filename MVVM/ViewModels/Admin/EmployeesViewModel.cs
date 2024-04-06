@@ -16,7 +16,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
     {
 
         #region Props
-        public static UserViewModel? User { get => Models.User.CurrentUser; }
 
         #region UserData
 
@@ -122,7 +121,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _notUserSelectedPanel, value);
         }
 
-        
+        private Visibility _visibilityEditUserPanel = Visibility.Collapsed;
+        public Visibility VisibilityEditUserPanel
+        {
+            get => _visibilityEditUserPanel;
+            set => Set(ref _visibilityEditUserPanel, value);
+        }
 
         #endregion
 
@@ -147,7 +151,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set
             {
                 _selectedUser = value;
-                
                 NotUserSelectedPanel = Visibility.Visible;
                 UserSelectedPanel = Visibility.Collapsed;
                 
@@ -202,18 +205,39 @@ namespace Cashbox.MVVM.ViewModels.Admin
             VisibilityCreateUserPanel = Visibility.Collapsed;
         }
 
-        public RelayCommand OpenPanelEmployeeEditCommand { get; set; }
-        private bool CanOpenPanelEmployeeEditCommandExecute(object p) => true;
-        private void OnOpenPanelEmployeeEditCommandExecuted(object p) 
-        {
-        
-        }
-
         public RelayCommand RemoveEmployeeCommand { get; set; }
         private bool CanRemoveEmployeeCommandExecute(object p) => true;
-        private void OnRemoveEmployeeCommandExecuted(object p) 
+        private async void OnRemoveEmployeeCommandExecuted(object p) 
         {
-        
+            MessageBoxResult result = MessageBox.Show($"Вы уверены, что хотите уволить сотрудника {SelectedUser.UserInfo.FullName}?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+                return;
+            await UserInfoViewModel.DeactivateUser(SelectedUser.Id);
+            CollectionUsers.Remove(SelectedUser);
+            MessageBox.Show("Успех");
+        }
+        public RelayCommand OpenPanelEmployeeEditCommand { get; set; }
+        private bool CanOpenPanelEmployeeEditCommandExecute(object p) => true;
+        private void OnOpenPanelEmployeeEditCommandExecuted(object p)
+        {
+            VisibilityEditUserPanel = Visibility.Visible;
+            VisibilityUserInfoPanel = Visibility.Collapsed;
+        }
+
+        public RelayCommand ClosePanelEditUserCommand { get; set; }
+        private bool CanClosePanelEditUserCommandExecute(object p) => true;
+        private void OnClosePanelEditUserCommandExecuted(object p)
+        {
+            VisibilityEditUserPanel = Visibility.Collapsed;
+            VisibilityUserInfoPanel = Visibility.Visible;
+            SelectedUser = null;
+        }
+
+        public RelayCommand EditUserCommand { get; set; }
+        private bool CanEditUserCommandExecute(object p) => true;
+        private void OnEditUserCommandExecuted(object p)
+        {
+
         }
 
         #endregion
@@ -226,6 +250,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             CreateUserCommand = new RelayCommand(OnCreateUserCommandExecuted, CanCreateUserCommandExecute);
             OpenPanelEmployeeEditCommand = new RelayCommand(OnOpenPanelEmployeeEditCommandExecuted, CanOpenPanelEmployeeEditCommandExecute);
             RemoveEmployeeCommand = new RelayCommand(OnRemoveEmployeeCommandExecuted, CanRemoveEmployeeCommandExecute);
+            ClosePanelEditUserCommand = new RelayCommand(OnClosePanelEditUserCommandExecuted, CanClosePanelEditUserCommandExecute);
+            EditUserCommand = new RelayCommand(OnEditUserCommandExecuted, CanEditUserCommandExecute);
         }
     }
 }

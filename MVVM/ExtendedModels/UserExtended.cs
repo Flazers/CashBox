@@ -30,7 +30,7 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<UserViewModel?> GetUserByLogPass(string login, string password)
         {
-            User? user = await CashBoxDataContext.Context.Users.FirstOrDefaultAsync(x => x.Login == login);
+            User? user = await CashBoxDataContext.Context.Users.FirstOrDefaultAsync(x => x.Login == login && x.UserInfo.IsActive == true);
             if (user == null) return null;
             if (!BCrypt.Net.BCrypt.Verify(password, user.Password)) return null;
             return CurrentUser = new UserViewModel(user);
@@ -38,7 +38,7 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<UserViewModel?> GetUserByPin(int pincode)
         {
-            User? user = await CashBoxDataContext.Context.Users.FirstOrDefaultAsync(x => x.Pin == pincode);
+            User? user = await CashBoxDataContext.Context.Users.FirstOrDefaultAsync(x => x.Pin == pincode && x.UserInfo.IsActive == true);
             return user != null ? CurrentUser = new UserViewModel(user) : null;
         }
 

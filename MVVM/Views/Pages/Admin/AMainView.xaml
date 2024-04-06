@@ -58,7 +58,12 @@
         </Grid>
 
         <Border Padding="40" Background="{StaticResource PanelW}" Grid.Column="1">
-            <ContentControl Content="{Binding SubNavigationService.CurrentView}"/>
+            <StackPanel>
+                <Border Grid.Column="1" Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
+                    <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Администратор: \{0}'}"/>
+                </Border>
+                <ContentControl Margin="0 40 0 0" Content="{Binding SubNavigationService.CurrentView}"/>
+            </StackPanel>
         </Border>
         
     </Grid>

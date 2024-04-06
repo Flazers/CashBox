@@ -8,16 +8,12 @@
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
              d:DataContext="{d:DesignInstance Type=vm:StockViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="1000" d:DesignWidth="1700">
+             d:DesignHeight="880" d:DesignWidth="1700">
     <UserControl.DataContext>
         <vm:StockViewModel/>
     </UserControl.DataContext>
     <StackPanel>
-        <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
-            <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Администратор: \{0}'}"/>
-        </Border>
-        
-        <StackPanel Margin="0 40 0 0" Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal">
             
             <StackPanel Margin="0 0 40 0" Width="480">
                 <Border Style="{StaticResource PanelBorder}" Height="580" Margin="0 0 0 40">

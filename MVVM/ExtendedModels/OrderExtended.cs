@@ -1,4 +1,5 @@
-﻿using Cashbox.MVVM.ViewModels.Data;
+﻿using Cashbox.Core;
+using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

@@ -16,13 +16,19 @@ namespace Cashbox.MVVM.ViewModels.Admin
     {
 
         #region Props
-        public static UserViewModel? User { get => Models.User.CurrentUser; }
 
         private List<AuthHistoryViewModel>? _authHistory;
         public List<AuthHistoryViewModel>? AuthHistory
         {
             get => _authHistory;
             set => Set(ref _authHistory, value);
+        }
+
+        private double _cashInBox = MoneyBoxViewModel.GetMoney;
+        public double CashInBox
+        {
+            get => _cashInBox;
+            set => Set(ref _cashInBox, value);
         }
 
         #endregion
@@ -33,7 +39,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public override void OnLoad()
         {
-            var data = Order.GetSellDetail(DateOnly.Parse("2.04.2024"), DateOnly.Parse("5.04.2024"));
+            //var data = Order.GetSellDetail(DateOnly.Parse("2.04.2024"), DateOnly.Parse("5.04.2024"));
             AuthHistory = AuthHistoryViewModel.GetAuthHistories().Result.TakeLast(3).OrderByDescending(x => x.Datetime).ToList();
         }
 

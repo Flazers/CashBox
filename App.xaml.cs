@@ -37,7 +37,6 @@ namespace Cashbox
             services.AddSingleton<HomeViewModel>();
             services.AddSingleton<EmployeesViewModel>();
             services.AddSingleton<StockViewModel>();
-            services.AddSingleton<AccountingViewModel>();
             services.AddSingleton<MVVM.ViewModels.Admin.ShiftViewModel>();
             services.AddSingleton<EMainViewModel>();
             services.AddSingleton<CashRegisterViewModel>();

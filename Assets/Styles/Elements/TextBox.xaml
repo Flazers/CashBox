@@ -149,20 +149,21 @@
                 <ControlTemplate TargetType="{x:Type TextBox}">
                     <Border x:Name="border" Padding="10" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" 
                             BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" SnapsToDevicePixels="True">
-                        <DockPanel>
-                            <Icon:PackIconMaterialDesign x:Name="SearchIcon" Opacity="0.7" DockPanel.Dock="Right" Kind="Search" Width="30" Height="30" Margin="10 0 0 0" VerticalAlignment="Center" Foreground="{DynamicResource TextB}"/>
-                            <Grid>
-                                <TextBlock Visibility="Collapsed" Opacity="0.7" x:Name="placeholder" Text="Поиск..." HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
-                            </Grid>
-                        </DockPanel>
+                        <Grid>
+                            <TextBlock FontSize="{TemplateBinding FontSize}" 
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                       Visibility="Collapsed" 
+                                       Foreground="{StaticResource TextG}" 
+                                       x:Name="placeholder" Text="Поиск"
+                                       VerticalAlignment="Center"/>
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Opacity" TargetName="border" Value="0.56"/>
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter Property="Opacity" TargetName="SearchIcon" Value="1"/>
                             <Setter Property="Visibility" TargetName="placeholder" Value="Collapsed"/>
                         </Trigger>
                         <Trigger Property="Text" Value="">
@@ -170,9 +171,6 @@
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter Property="Visibility" TargetName="placeholder" Value="Collapsed"/>
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Opacity" TargetName="SearchIcon" Value="1"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

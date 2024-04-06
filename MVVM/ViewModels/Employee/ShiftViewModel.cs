@@ -99,15 +99,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _collectionOrders, value);
         }
 
-        private double _processed;
-        public double Processed
-        {
-            get => _processed;
-            set => Set(ref _processed, value);
-        }
-
-        private TimeOnly _startShiftTime;
-        public TimeOnly StartShiftTime
+        private TimeOnly? _startShiftTime;
+        public TimeOnly? StartShiftTime
         {
             get => _startShiftTime;
             set => Set(ref _startShiftTime, value);
@@ -139,7 +132,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private async void OnStartShiftCommandExecuted(object p)
         {
             StartShiftTime = TimeOnly.FromDateTime(DateTime.Now);
-            DailyReportViewModel drvm = await DailyReportViewModel.StartShift(DateOnly.FromDateTime(DateTime.Now), StartShiftTime);
+            DailyReportViewModel drvm = await DailyReportViewModel.StartShift(CurrentDate, (TimeOnly)StartShiftTime);
             StartShiftVisibility = Visibility.Collapsed;
             ProcessShiftVisibility = Visibility.Visible;
             ProcessDoShiftVisibility = Visibility.Visible;
@@ -160,7 +153,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
             if (result == MessageBoxResult.No)
                 return;
             EndShiftTime = TimeOnly.FromDateTime(DateTime.Now);
-            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, Processed);
+            double cash = double.Parse(CurrentCash);
+            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, cash);
             StartShiftVisibility = Visibility.Collapsed;
             ProcessShiftVisibility = Visibility.Visible;
             ProcessDoShiftVisibility = Visibility.Collapsed;
@@ -173,15 +167,19 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         #endregion
 
-        public override async void Clear()
+        public override async void OnLoad()
         {
-            CardTransit = (await OrderViewModel.GetDayOrdersToMethod(DateOnly.FromDateTime(DateTime.Now), 1)).Sum(x => (double)x.SellCost!);
-            NalTransit = (await OrderViewModel.GetDayOrdersToMethod(DateOnly.FromDateTime(DateTime.Now), 2)).Sum(x => (double)x.SellCost!);
-            SendTransit = (await OrderViewModel.GetDayOrdersToMethod(DateOnly.FromDateTime(DateTime.Now), 3)).Sum(x => (double)x.SellCost!);
-            NewCash = StartCash + NalTransit;
+            DateOnly dateOnly = DateOnly.FromDateTime(DateTime.Today);
+            CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCost!);
+            NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCost!);
+            SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCost!);
+            NewCash = StartCash;
+            if (DailyReport.CurrentShift != null)
+                if (DailyReport.CurrentShift.CloseTime != null)
+                    NewCash = StartCash + NalTransit;
             FullTransit = SendTransit + CardTransit + NalTransit;
             if (StartShiftVisibility == Visibility.Collapsed)
-                CollectionOrders = new(Order.GetAllDayOrders(DateOnly.FromDateTime(DateTime.Now)).Result);
+                CollectionOrders = new(Order.GetAllDayOrders(dateOnly).Result);
         }
 
         public ShiftViewModel()
@@ -191,7 +189,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             DailyReport CurrentShift = DailyReportViewModel.CurrentShift;
             if (CurrentShift != null)
             {
-                StartShiftTime = CurrentShift.OpenTime!.Value;
+                StartShiftTime = CurrentShift.OpenTime;
                 StartShiftVisibility = Visibility.Collapsed;
                 ProcessShiftVisibility = Visibility.Visible;
                 if (CurrentShift.CloseTime != null)
