@@ -13,12 +13,12 @@ namespace Cashbox.MVVM.Models
         private PaymentMethod() { }
         private static async Task<List<PaymentMethodViewModel>> CreateBasePayMet()
         {
-            List<PaymentMethod> paymet = new List<PaymentMethod>();
+            List<PaymentMethod> paymet = [];
             try
             {
-                PaymentMethod card = new PaymentMethod() { Id = 1, Method = "Карта" };
-                PaymentMethod papper = new PaymentMethod() { Id = 2, Method = "Наличные" };
-                PaymentMethod trans = new PaymentMethod() { Id = 3, Method = "Перевод" };
+                PaymentMethod card = new() { Id = 1, Method = "Карта" };
+                PaymentMethod papper = new() { Id = 2, Method = "Наличные" };
+                PaymentMethod trans = new() { Id = 3, Method = "Перевод" };
 
                 paymet.Add(card);
                 paymet.Add(papper);
@@ -29,7 +29,7 @@ namespace Cashbox.MVVM.Models
             }
             catch (Exception)
             {
-                return new List<PaymentMethodViewModel>();
+                return [];
             }
             return paymet.Select(s => new PaymentMethodViewModel(s)).ToList();
         }
@@ -38,7 +38,7 @@ namespace Cashbox.MVVM.Models
         {
             List<PaymentMethodViewModel> paymet;
 
-            if (CashBoxDataContext.Context.PaymentMethods.Count() == 0)
+            if (!CashBoxDataContext.Context.PaymentMethods.Any())
                 paymet = await CreateBasePayMet();
             else
                 paymet = await CashBoxDataContext.Context.PaymentMethods.Select(s => new PaymentMethodViewModel(s)).ToListAsync();

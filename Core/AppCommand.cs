@@ -16,7 +16,7 @@ namespace Cashbox.Core
     {
         public static string GenCode(int length = 32)
         {
-            Random random = new Random();
+            Random random = new();
             char[] SymbolCodeChar =
             [
                 'A','a','B','b','C','c',

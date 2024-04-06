@@ -343,7 +343,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #endregion
 
-#pragma warning disable CS8618
         public StockViewModel()
         {
             AddCategoryCommand = new RelayCommand(OnAddCategoryCommandExecuted, CanAddCategoryCommandExecute);
@@ -357,7 +356,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             GetAllProductCommand = new RelayCommand(OnGetAllProductCommandExecuted, CanGetAllProductCommandExecute);
             AddImageCommand = new RelayCommand(OnAddImageCommandExecuted, CanAddImageCommandExecute);
             EditImageCommand = new RelayCommand(OnEditImageCommandExecuted, CanEditImageCommandExecute);
-            Update();
         }
     }
 }
