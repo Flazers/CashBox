@@ -273,14 +273,6 @@ public partial class CashBoxDataContext : DbContext
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Login)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("login");
-            entity.Property(e => e.Password)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("password");
             entity.Property(e => e.Pin).HasColumnName("pin");
         });
 

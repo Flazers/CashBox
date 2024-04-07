@@ -49,7 +49,7 @@
                     </StackPanel>
 
                     <StackPanel Width="500">
-                        <Border Style="{StaticResource PanelBorder}" Height="200">
+                        <Border Style="{StaticResource PanelBorder}" Height="300">
                             <StackPanel>
                                 <Grid Margin="0 -10 0 30" Height="80">
                                     <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Касса"/>
@@ -63,13 +63,13 @@
                                         </StackPanel>
                                         <TextBlock HorizontalAlignment="Right" Text="{Binding CashInBox, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                     </Grid>
+                                    <StackPanel Orientation="Horizontal" Margin="0 50 0 0">
+                                        <TextBox Style="{StaticResource TbPlaceholderTag}" Text="{Binding NewCashInBox}" Width="260" Margin="0 0 40 0" Tag="Новое значение"/>
+                                        <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding EditMoneyBoxCommand}" Width="160" Content="Изменить"/>
+                                    </StackPanel>
                                 </StackPanel>
                             </StackPanel>
                         </Border>
-                        <StackPanel Orientation="Horizontal" Margin="0 40 0 0">
-                            <Button Style="{DynamicResource ButtonOutPanel}" Width="230" Margin="0 0 40 0" Content="Внести деньги"/>
-                            <Button Style="{DynamicResource ButtonOutPanelRed}" Width="230" Content="Изъять деньги"/>
-                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

@@ -31,9 +31,25 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _cashInBox, value);
         }
 
+        private double _newCashInBox = MoneyBoxViewModel.GetMoney;
+        public double NewCashInBox
+        {
+            get => _newCashInBox;
+            set => Set(ref _newCashInBox, value);
+        }
+
         #endregion
 
         #region Commands
+
+        public RelayCommand EditMoneyBoxCommand { get; set; }
+        private bool CanEditMoneyBoxCommandExecute(object p) => true;
+        private async void OnEditMoneyBoxCommandExecuted(object p)
+        {
+            await MoneyBoxViewModel.UpdateMoney(NewCashInBox);
+            MessageBox.Show("Данные обновлены", "Успех");
+            CashInBox = MoneyBoxViewModel.GetMoney;
+        }
 
         #endregion
 
@@ -45,7 +61,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public HomeViewModel()
         {
-
+            EditMoneyBoxCommand = new RelayCommand(OnEditMoneyBoxCommandExecuted, CanEditMoneyBoxCommandExecute);
         }
     }
 }

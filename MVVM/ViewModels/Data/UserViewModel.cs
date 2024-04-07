@@ -17,10 +17,10 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public static UserViewModel? GetCurrentUser() => User.CurrentUser;
         public static void LogOut() => User.LogOut();
-        public static async Task<UserViewModel?> GetUserByLogPass(string login, string password) => await User.GetUserByLogPass(login, password);
         public static async Task<UserViewModel?> GetUserByPin(int pincode) => await User.GetUserByPin(pincode);
-        public static async Task<UserViewModel?> CreateUser(string login, string password, int pincode, string name, string surname, string patronymic, string location, string phone, RoleViewModel role) => await User.CreateUser(login, password, pincode, name, surname, patronymic, location, phone, role);
+        public static async Task<UserViewModel?> CreateUser(int pincode, string name, string surname, string patronymic, string location, string phone, RoleViewModel role) => await User.CreateUser(pincode, name, surname, patronymic, location, phone, role);
         public static async Task<List<UserViewModel>> GetListUsers() => await User.GetListUsers();
+        public static async Task<UserViewModel?> EditUser(UserViewModel userVM) => await User.EditUser(userVM);
 
         public void SetUserInfo(UserInfoViewModel? userInfoViewModel)
         {

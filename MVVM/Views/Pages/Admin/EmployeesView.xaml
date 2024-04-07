@@ -47,7 +47,7 @@
                                                 <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 6" Text="{Binding UserInfo.Surname}"/>
                                                 <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 6" Text="{Binding UserInfo.Name}"/>
                                                 <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 6" Text="{Binding UserInfo.Patronymic}"/>
-                                                <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 10" Text="{Binding UserInfo.Phone}"/>
+                                                <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 10" Text="{Binding UserInfo.Role.Role1}"/>
                                                 <Button Style="{StaticResource ButtonInPanelBase}" Command="{Binding DataContext.SeeUserInfoCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" CommandParameter="{Binding Id}" Content="Посмотреть профиль"/>
                                             </StackPanel>
                                         </Border>
@@ -77,8 +77,8 @@
                             <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.Pin}" Tag="Пинкод" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="10 40 10 0">
-                            <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding ClosePanelEditUserCommand}" Width="230" Margin="0 0 20 0" Content="Закрыть"/>
-                            <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding EditUserCommand}" Width="230" Content="Сохранить"/>
+                        <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding ClosePanelEditUserCommand}" Width="230" Margin="0 0 20 0" Content="Закрыть"/>
+                        <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding EditUserCommand}" Width="230" Content="Сохранить"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -135,20 +135,16 @@
                             <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Добавление пользователя"/>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
-                        <ScrollViewer Height="650" Margin="10 0 10 0">
-                            <StackPanel Margin="0 0 20 0">
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>
-                                <ComboBox Tag="Роль" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionUserRoles}" DisplayMemberPath="Role1" 
-SelectedValuePath="Id" SelectedItem="{Binding Role}" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Login}" Tag="Логин" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Password}" Tag="Пароль" Margin="0 0 0 20"/>
-                                <TextBox Style="{StaticResource InputTB}" Text="{Binding Pincode}" Tag="Пинкод" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
-                            </StackPanel>
-                        </ScrollViewer>
+                        <StackPanel Height="650" Margin="10 0">
+                            <TextBox Style="{StaticResource InputTB}" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
+                            <TextBox Style="{StaticResource InputTB}" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
+                            <TextBox Style="{StaticResource InputTB}" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
+                            <TextBox Style="{StaticResource InputTB}" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
+                            <TextBox Style="{StaticResource InputTB}" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>
+                            <ComboBox Tag="Роль" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionUserRoles}" DisplayMemberPath="Role1" 
+                            SelectedValuePath="Id" SelectedItem="{Binding Role}" Margin="0 0 0 20"/>
+                            <TextBox Style="{StaticResource InputTB}" Text="{Binding Pincode}" Tag="Пинкод" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
+                        </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="10 40 10 10">
                             <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding SeeUserInfoPanelVisibilityCommand}" Width="230" Margin="0 0 20 0" Content="Отмена"/>
@@ -157,8 +153,6 @@ SelectedValuePath="Id" SelectedItem="{Binding Role}" Margin="0 0 0 20"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
-
-            
 
         </StackPanel>
 

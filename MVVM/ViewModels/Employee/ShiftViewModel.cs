@@ -176,7 +176,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
             NewCash = StartCash;
             if (DailyReport.CurrentShift != null)
                 if (DailyReport.CurrentShift.CloseTime != null)
-                    NewCash = StartCash + NalTransit;
+                    NewCash = StartCash;
+                NewCash = StartCash + NalTransit;
             FullTransit = SendTransit + CardTransit + NalTransit;
             if (StartShiftVisibility == Visibility.Collapsed)
                 CollectionOrders = new(Order.GetAllDayOrders(dateOnly).Result);

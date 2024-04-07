@@ -14,7 +14,7 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public async static Task<bool?> CreateBox() => await MoneyBox.CreateBox();
         public static double GetMoney => MoneyBox.GetMoney;
-        public async static Task<bool?> UpdateMoney(double money, int operation = 0) => await MoneyBox.UpdateMoney(money, operation);
+        public async static Task<bool> UpdateMoney(double money, int operation = 0) => await MoneyBox.UpdateMoney(money, operation);
         public int Id => _moneyBox.Id;
 
         public double Money 

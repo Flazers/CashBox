@@ -19,20 +19,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #region UserData
 
-        private string? _login;
-        public string? Login
-        {
-            get => _login;
-            set => Set(ref _login, value);
-        }
-
-        private string? _password;
-        public string? Password
-        {
-            get => _password;
-            set => Set(ref _password, value);
-        }
-
         private int _pincode;
         public int Pincode
         {
@@ -184,8 +170,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanCreateUserCommandExecute(object p) => true;
         private async void OnCreateUserCommandExecuted(object p)
         {
-            if (Login == null || Password == null || Pincode.ToString().Length != 6 || Name == null || Surname == null || Patronymic == null || Location == null || Phone == null || Role == null) return;
-            await UserViewModel.CreateUser(Login, Password, Pincode, Name, Surname, Patronymic, Location, Phone, Role);
+            if (Pincode.ToString().Length != 6 || Name == null || Surname == null || Patronymic == null || Location == null || Phone == null || Role == null) return;
+            UserViewModel user = await UserViewModel.CreateUser(Pincode, Name, Surname, Patronymic, Location, Phone, Role);
+            if (user == null) 
+                MessageBox.Show("Не удалось создать пользователя с данным пинкодом", "Ошибка");
+            else
+                MessageBox.Show("Пользователь создан", "Успех");
             CollectionUsers = new(UserViewModel.GetListUsers().Result);
         }
 
@@ -230,14 +220,21 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             VisibilityEditUserPanel = Visibility.Collapsed;
             VisibilityUserInfoPanel = Visibility.Visible;
-            SelectedUser = null;
         }
 
         public RelayCommand EditUserCommand { get; set; }
         private bool CanEditUserCommandExecute(object p) => true;
-        private void OnEditUserCommandExecuted(object p)
+        private async void OnEditUserCommandExecuted(object p)
         {
-
+            UserViewModel userVM = await UserViewModel.EditUser(SelectedUser);
+            if (userVM == null)
+            {
+                MessageBox.Show("Ошибка при редактировании пользователя");
+                return;
+            }
+            MessageBox.Show("Пользователь отредактирован", "Успех");
+            VisibilityEditUserPanel = Visibility.Collapsed;
+            VisibilityUserInfoPanel = Visibility.Visible;
         }
 
         #endregion

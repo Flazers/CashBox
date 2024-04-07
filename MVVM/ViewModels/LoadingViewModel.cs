@@ -111,10 +111,10 @@ namespace Cashbox.MVVM.ViewModels
             SetStatus("Проверка таблицы \"Users\"", "loading", 4);
             if (!CashBoxDataContext.Context.Users.Any())
             {
-                SetStatus("Создаю пользователя по умолчанию", "loading", 4);
-                await UserViewModel.CreateUser("admin", "admin", 111111, "Name", "Surname", "Patronymic", "location", "phone", (await RoleViewModel.GetRoles())[0]);
+                SetStatus("Создаю администратора по умолчанию", "loading", 4);
+                await UserViewModel.CreateUser(111111, "Name", "Surname", "Patronymic", "location", "phone", (await RoleViewModel.GetRoles())[0]);
                 await Task.Delay(secondDelay);
-                MessageBox.Show("Логин: admin \nПароль: admin \nПин-Код: 111111 \nЭти данные можно изменить позже в настройках приложения.", "Данные администратора");
+                MessageBox.Show("Пин-Код: 111111 \nЕго можно изменить позже во вкладке пользователи.", "Данные администратора");
             }
             await Task.Delay(mainDelay);
 
