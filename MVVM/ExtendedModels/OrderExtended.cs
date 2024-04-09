@@ -52,6 +52,7 @@ namespace Cashbox.MVVM.Models
             OrderComposition = new()
             {
                 UserId = UserViewModel.GetCurrentUser().Id,
+                DailyReportId = DailyReportViewModel.CurrentShift.Id,
                 SellDatetime = DateTime.Now,
             };
             CashBoxDataContext.Context.Add(OrderComposition);

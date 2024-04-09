@@ -54,6 +54,16 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public int DailyReportId
+        {
+            get => _order.DailyReportId;
+            set
+            {
+                _order.DailyReportId = value;
+                OnPropertyChanged();
+            }
+        }
+
         public double? SellCost
         {
             get => _order.SellCost;
@@ -77,6 +87,8 @@ namespace Cashbox.MVVM.ViewModels.Data
         public virtual ICollection<OrderProduct> OrderProducts { get; set; } = [];
 
         public virtual PaymentMethod PaymentMethod { get; set; } = null!;
+
+        public virtual DailyReport DailyReport { get; set; } = null!;
 
         public virtual User User { get; set; } = null!;
     }

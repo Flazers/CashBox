@@ -53,10 +53,12 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _selectedProductRef, value);
         }
 
-        private static ObservableCollection<ProductViewModel> CollectionProductsBase => new(ProductViewModel.GetProducts().Result);
-
-        private ObservableCollection<ProductViewModel> _collectionProducts = CollectionProductsBase;
-        public ObservableCollection<ProductViewModel> CollectionProducts => _collectionProducts;
+        private ObservableCollection<ProductViewModel> _collectionProducts = new(ProductViewModel.GetProducts().Result);
+        public ObservableCollection<ProductViewModel> CollectionProducts 
+        {
+            get => _collectionProducts;
+            set => Set(ref _collectionProducts, value);
+        }
 
         private string? _searchCollectionProduct;
         public string? SearchCollectionProduct
@@ -144,7 +146,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _refundBuyDate, value);
         }
 
-        public string ShiftOpenTime
+        public static string ShiftOpenTime
         {
             get
             {
@@ -381,6 +383,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
                             MessageBox.Show("Успех");
                     break;
             }
+            CollectionProducts = new(await ProductViewModel.GetProducts());
             OrderProductsBasket = [];
             OnOpenMenuPanelCommandExecuted(null!);
         }

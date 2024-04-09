@@ -12,7 +12,7 @@ namespace Cashbox.MVVM.ViewModels.Data
     {
         private readonly AutoDreport _autoDreport = AutoDreports;
 
-        public static AutoDailyReportViewModel? GenEndShiftAuto(DailyReport dailyReport) => AutoDreport.GenReport(dailyReport);
+        public static async Task<AutoDailyReportViewModel> GenEndShiftAuto(DailyReportViewModel dailyReport) => await AutoDreport.GenReport(dailyReport);
         public int DailyReportId => _autoDreport.DailyReportId;
 
         public int? Salary
@@ -35,7 +35,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double Forfeit
+        public double? Forfeit
         {
             get => _autoDreport.Forfeit;
             set

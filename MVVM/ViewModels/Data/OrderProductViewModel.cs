@@ -14,6 +14,7 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public static List<OrderProduct> OrderProducts => OrderProduct.OrderProducts;
         public static void AddListOrderInDataBase(List<OrderProductViewModel> orderProducts) => OrderProduct.AddListOrderInDataBase(orderProducts);
+        public static async Task<List<OrderProductViewModel>> GetInOrderProduct(int OrderId) => await OrderProduct.GetInOrderProduct(OrderId);
 
         public int Id => _orderProduct.Id;
 

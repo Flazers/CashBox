@@ -17,6 +17,10 @@ public partial class DailyReport
 
     public double? Proceeds { get; set; }
 
+    public double? FullTransit { get; set; }
+
+    public virtual ICollection<Order> Orders { get; set; } = [];
+
     public virtual AutoDreport? AutoDreport { get; set; }
 
     public virtual User User { get; set; } = null!;

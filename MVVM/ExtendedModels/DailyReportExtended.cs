@@ -45,7 +45,7 @@ namespace Cashbox.MVVM.Models
             }
 
         }
-        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double Proceeds)
+        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double fulltransit, double Proceeds)
         {
             try
             {
@@ -53,9 +53,8 @@ namespace Cashbox.MVVM.Models
                 DailyReport DR = CashBoxDataContext.Context.DailyReports.FirstOrDefault(x => x.Data == date && x.UserId == user.Id);
                 DR.CloseTime = time;
                 DR.Proceeds = Proceeds;
+                DR.FullTransit = fulltransit;
                 await MoneyBoxViewModel.UpdateMoney(Proceeds, 1);
-                AutoDailyReportViewModel adreport = AutoDailyReportViewModel.GenEndShiftAuto(DR);
-                await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(DR);
             }
             catch (Exception ex)

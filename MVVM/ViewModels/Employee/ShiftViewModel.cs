@@ -41,9 +41,23 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _endShiftVisibility, value);
         }
 
+        private Visibility _checkVisibility = Visibility.Collapsed;
+        public Visibility CheckVisibility
+        {
+            get => _checkVisibility;
+            set => Set(ref _checkVisibility, value);
+        }
+
+        private Visibility _shiftVisibility = Visibility.Visible;
+        public Visibility ShiftVisibility
+        {
+            get => _shiftVisibility;
+            set => Set(ref _shiftVisibility, value);
+        }
+
         #endregion
 
-        private double _startCash = MoneyBoxViewModel.GetMoney;
+        private double _startCash;
         public double StartCash
         {
             get => _startCash;
@@ -90,6 +104,13 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             get => _fullTransit;
             set => Set(ref _fullTransit, value);
+        }
+
+        private AutoDailyReportViewModel? _autoShift;
+        public AutoDailyReportViewModel? AutoShift
+        {
+            get => _autoShift;
+            set => Set(ref _autoShift, value);
         }
 
         private ObservableCollection<OrderViewModel>? _collectionOrders;
@@ -154,12 +175,30 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 return;
             EndShiftTime = TimeOnly.FromDateTime(DateTime.Now);
             double cash = double.Parse(CurrentCash);
-            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, cash);
+            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, FullTransit, cash);
+            AutoDailyReportViewModel adreport = await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
             StartShiftVisibility = Visibility.Collapsed;
             ProcessShiftVisibility = Visibility.Visible;
             ProcessDoShiftVisibility = Visibility.Collapsed;
             EndShiftVisibility = Visibility.Visible;
+            AutoShift = adreport;
             MessageBox.Show($"Смена {drvm.Id} закрыта", "Уведомление", MessageBoxButton.OK);
+        }
+
+        public RelayCommand SeeCheckPanelCommand { get; set; }
+        private bool CanSeeCheckPanelCommandExecute(object p) => true;
+        private void OnSeeCheckPanelCommandExecuted(object p)
+        {
+            ShiftVisibility = Visibility.Collapsed;
+            CheckVisibility = Visibility.Visible;
+        }
+
+        public RelayCommand SeeShiftPanelCommand { get; set; }
+        private bool CanSeeShiftPanelCommandExecute(object p) => true;
+        private void OnSeeShiftPanelCommandExecuted(object p)
+        {
+            ShiftVisibility = Visibility.Visible;
+            CheckVisibility = Visibility.Collapsed;
         }
 
         #endregion
@@ -169,15 +208,18 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         public override async void OnLoad()
         {
+            StartCash = MoneyBoxViewModel.GetMoney;
             DateOnly dateOnly = DateOnly.FromDateTime(DateTime.Today);
             CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCost!);
             NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCost!);
             SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCost!);
+            CollectionOrders = new(await OrderViewModel.GetAllDayOrders(DateOnly.FromDateTime(DateTime.Today)));
             NewCash = StartCash;
             if (DailyReport.CurrentShift != null)
                 if (DailyReport.CurrentShift.CloseTime != null)
                     NewCash = StartCash;
-                NewCash = StartCash + NalTransit;
+                else
+                    NewCash = StartCash + NalTransit;
             FullTransit = SendTransit + CardTransit + NalTransit;
             if (StartShiftVisibility == Visibility.Collapsed)
                 CollectionOrders = new(Order.GetAllDayOrders(dateOnly).Result);
@@ -187,6 +229,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             StartShiftCommand = new RelayCommand(OnStartShiftCommandExecuted, CanStartShiftCommandExecute);
             EndShiftCommand = new RelayCommand(OnEndShiftCommandExecuted, CanEndShiftCommandExecute);
+            SeeCheckPanelCommand = new RelayCommand(OnSeeCheckPanelCommandExecuted, CanSeeCheckPanelCommandExecute);
+            SeeShiftPanelCommand = new RelayCommand(OnSeeShiftPanelCommandExecuted, CanSeeShiftPanelCommandExecute);
             DailyReport CurrentShift = DailyReportViewModel.CurrentShift;
             if (CurrentShift != null)
             {
@@ -198,6 +242,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
                     EndShiftTime = CurrentShift.CloseTime;
                     ProcessDoShiftVisibility = Visibility.Collapsed;
                     EndShiftVisibility = Visibility.Visible;
+                    AutoShift = new(CurrentShift.AutoDreport);
                 }
                 else
                 {

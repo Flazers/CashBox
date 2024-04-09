@@ -11,7 +11,7 @@ public partial class AutoDreport
 
     public double AutoProceeds { get; set; }
 
-    public double Forfeit { get; set; }
+    public double? Forfeit { get; set; }
 
     public double Award { get; set; }
 

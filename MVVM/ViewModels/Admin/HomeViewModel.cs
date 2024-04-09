@@ -42,12 +42,21 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #region Commands
 
-        public RelayCommand EditMoneyBoxCommand { get; set; }
-        private bool CanEditMoneyBoxCommandExecute(object p) => true;
-        private async void OnEditMoneyBoxCommandExecuted(object p)
+        public RelayCommand InEditMoneyBoxCommand { get; set; }
+        private bool CanInEditMoneyBoxCommandExecute(object p) => true;
+        private async void OnInEditMoneyBoxCommandExecuted(object p)
         {
-            await MoneyBoxViewModel.UpdateMoney(NewCashInBox);
-            MessageBox.Show("Данные обновлены", "Успех");
+            await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 1);
+            MessageBox.Show($"{NewCashInBox} ₽ внесено в кассу", "Успех");
+            CashInBox = MoneyBoxViewModel.GetMoney;
+        }
+
+        public RelayCommand OutEditMoneyBoxCommand { get; set; }
+        private bool CanOutEditMoneyBoxCommandExecute(object p) => true;
+        private async void OnOutEditMoneyBoxCommandExecuted(object p)
+        {
+            await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 2);
+            MessageBox.Show($"{NewCashInBox} ₽ вычтено из кассы", "Успех");
             CashInBox = MoneyBoxViewModel.GetMoney;
         }
 
@@ -61,7 +70,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public HomeViewModel()
         {
-            EditMoneyBoxCommand = new RelayCommand(OnEditMoneyBoxCommandExecuted, CanEditMoneyBoxCommandExecute);
+            InEditMoneyBoxCommand = new RelayCommand(OnInEditMoneyBoxCommandExecuted, CanInEditMoneyBoxCommandExecute);
+            OutEditMoneyBoxCommand = new RelayCommand(OnOutEditMoneyBoxCommandExecuted, CanOutEditMoneyBoxCommandExecute);
         }
     }
 }
