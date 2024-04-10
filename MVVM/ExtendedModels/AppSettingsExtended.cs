@@ -17,7 +17,6 @@ namespace Cashbox.MVVM.Models
                 AppSettings appsetting = new()
                 {
                     Salary = 1000,
-                    AwardProcent = 100,
                 };
                 CashBoxDataContext.Context.AppSettings.Add(appsetting);
                 await CashBoxDataContext.Context.SaveChangesAsync();
@@ -37,8 +36,6 @@ namespace Cashbox.MVVM.Models
                 AppSettings appsetting = CashBoxDataContext.Context.AppSettings.FirstOrDefault(x => x.Id == 1)!;
                 if (salary != 0)
                     appsetting.Salary = salary;
-                if (award != 0)
-                    appsetting.AwardProcent = award;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }

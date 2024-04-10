@@ -27,15 +27,5 @@ namespace Cashbox.MVVM.ViewModels.Data
                 OnPropertyChanged();
             }
         }
-
-        public double? AwardProcent
-        {
-            get => _appSettings.AwardProcent;
-            set
-            {
-                _appSettings.AwardProcent = value;
-                OnPropertyChanged();
-            }
-        }
     }
 }

@@ -8,6 +8,4 @@ public partial class AppSettings
     public int Id { get; set; }
 
     public int? Salary { get; set; }
-
-    public double? AwardProcent { get; set; }
 }

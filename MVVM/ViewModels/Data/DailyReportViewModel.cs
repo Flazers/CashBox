@@ -13,7 +13,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         private readonly DailyReport _dailyReport = DailyReports;
 
         public static async Task<DailyReportViewModel?> StartShift(DateOnly date, TimeOnly time) => await DailyReport.StartShift(date, time);
-        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double fulltransit, double processed) => await DailyReport.EndShift(date, time, fulltransit, processed);
+        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double processed) => await DailyReport.EndShift(date, time, processed);
         public static async Task<List<DailyReportViewModel>> GetPeriodReports(DateOnly startDate, DateOnly endDate) => await DailyReport.GetPeriodReports(startDate, endDate);
         public static DailyReport? CurrentShift => DailyReport.CurrentShift;
         public int Id => _dailyReport.Id;
@@ -70,12 +70,12 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double? FullTransit
+        public double CashOnStart
         {
-            get => _dailyReport.FullTransit;
+            get => _dailyReport.CashOnStart;
             set
             {
-                _dailyReport.FullTransit = value;
+                _dailyReport.CashOnStart = value;
                 OnPropertyChanged();
             }
         }

@@ -84,7 +84,21 @@
                         <StackPanel>
                             <Button Style="{StaticResource ButtonInPanelGreen}" Margin="0 0 0 20" Content="Продажа" Command="{Binding OpenBasketOrderPanelCommand}"/>
                             <Button Style="{StaticResource ButtonInPanelGray}" Margin="0 0 0 20" Content="Возврат" Command="{Binding OpenReturnOrderPanelCommand}"/>
-                            <Button Style="{StaticResource ButtonInPanelRed}" Content="Брак" Command="{Binding OpenCrackOrderPanelCommand}"/>
+                            <Button Style="{StaticResource ButtonInPanelRed}" Content="Брак" Margin="0 0 0 20" Command="{Binding OpenCrackOrderPanelCommand}"/>
+                            <Button Style="{StaticResource ButtonInPanelBase}" Content="Розыгрыш" Command="{Binding OpenCrackOrderPanelCommand}">
+                                <Button.Background>
+                                    <LinearGradientBrush>
+                                        <LinearGradientBrush.GradientStops>
+                                            <GradientStop Color="Cyan" Offset="0.1"/>
+                                            <GradientStop Color="Purple" Offset="0.3"/>
+                                            <GradientStop Color="MediumPurple" Offset="0.6"/>
+                                        </LinearGradientBrush.GradientStops>
+                                        <LinearGradientBrush.Transform>
+                                            <RotateTransform Angle="45"/>
+                                        </LinearGradientBrush.Transform>
+                                    </LinearGradientBrush>
+                                </Button.Background>
+                            </Button>
                         </StackPanel>
                     </Grid>
 

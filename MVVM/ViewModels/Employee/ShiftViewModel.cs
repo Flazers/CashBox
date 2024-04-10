@@ -175,7 +175,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 return;
             EndShiftTime = TimeOnly.FromDateTime(DateTime.Now);
             double cash = double.Parse(CurrentCash);
-            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, FullTransit, cash);
+            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, cash);
             AutoDailyReportViewModel adreport = await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
             StartShiftVisibility = Visibility.Collapsed;
             ProcessShiftVisibility = Visibility.Visible;
@@ -208,18 +208,18 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         public override async void OnLoad()
         {
-            StartCash = MoneyBoxViewModel.GetMoney;
             DateOnly dateOnly = DateOnly.FromDateTime(DateTime.Today);
             CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCost!);
             NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCost!);
             SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCost!);
             CollectionOrders = new(await OrderViewModel.GetAllDayOrders(DateOnly.FromDateTime(DateTime.Today)));
-            NewCash = StartCash;
             if (DailyReport.CurrentShift != null)
-                if (DailyReport.CurrentShift.CloseTime != null)
-                    NewCash = StartCash;
-                else
-                    NewCash = StartCash + NalTransit;
+            {
+                StartCash = DailyReport.CurrentShift.CashOnStart;
+                NewCash = StartCash + NalTransit;
+            }
+            else
+                StartCash = MoneyBoxViewModel.GetMoney;
             FullTransit = SendTransit + CardTransit + NalTransit;
             if (StartShiftVisibility == Visibility.Collapsed)
                 CollectionOrders = new(Order.GetAllDayOrders(dateOnly).Result);
@@ -249,7 +249,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
                     ProcessDoShiftVisibility = Visibility.Visible;
                     EndShiftVisibility = Visibility.Collapsed;
                 }
-
             }
         }
     }

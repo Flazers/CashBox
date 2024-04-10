@@ -142,7 +142,7 @@ namespace Cashbox.MVVM.ViewModels
                 await AppSettingsViewModel.CreateSetting();
                 await MoneyBoxViewModel.CreateBox();
                 await Task.Delay(secondDelay);
-                MessageBox.Show("Зарплата за выход: 1000 ₽ \nДенег в кассе: 0 \nПремия за каждые 5к: 100 ₽ \nЭти данные можно изменить позже в настройках приложения.", "Данные приложения");
+                MessageBox.Show("Зарплата за выход: 1000 ₽ \nДенег в кассе: 0 \nЭти данные можно изменить позже в настройках приложения.", "Данные приложения");
             }
             await Task.Delay(mainDelay);
 
