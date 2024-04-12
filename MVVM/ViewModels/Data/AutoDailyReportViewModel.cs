@@ -15,7 +15,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<AutoDailyReportViewModel> GenEndShiftAuto(DailyReportViewModel dailyReport) => await AutoDreport.GenReport(dailyReport);
         public int DailyReportId => _autoDreport.DailyReportId;
 
-        public int? Salary
+        public int Salary
         {
             get => _autoDreport.Salary;
             set
@@ -25,12 +25,22 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double AutoProceeds
+        public double? AutoProceeds
         {
             get => _autoDreport.AutoProceeds;
             set
             {
                 _autoDreport.AutoProceeds = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double? FullTransit
+        {
+            get => _autoDreport.FullTransit;
+            set
+            {
+                _autoDreport.FullTransit = value;
                 OnPropertyChanged();
             }
         }
@@ -45,7 +55,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double Award
+        public double? Award
         {
             get => _autoDreport.Award;
             set

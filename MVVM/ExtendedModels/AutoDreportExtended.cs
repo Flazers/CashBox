@@ -16,14 +16,13 @@ namespace Cashbox.MVVM.Models
                 {
                     DailyReportId = dailyReport.Id,
                     AutoProceeds = OrderViewModel.GetDayOrdersToMethod((DateOnly)dailyReport.Data!, 2).Result.Sum(x => (double)x.SellCost!),
-                    Award = OrderViewModel.GetSumInDay(dailyReport.Data),
+                    Award = 0,
+                    FullTransit = OrderViewModel.GetSumInDay(dailyReport.Data),
                     Salary = setting.Salary,
                 };
                 double forfeit = OrderViewModel.GetSumMethodInDay(dailyReport.Data) - (double)dailyReport.Proceeds!;
                 if (forfeit <= 0)
-                {
                     autoDreport.Forfeit = 0;
-                }
                 else
                 {
                     autoDreport.Forfeit = forfeit;

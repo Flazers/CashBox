@@ -18,7 +18,7 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public int Id => _appSettings.Id;
 
-        public int? Salary
+        public int Salary
         {
             get => _appSettings.Salary;
             set

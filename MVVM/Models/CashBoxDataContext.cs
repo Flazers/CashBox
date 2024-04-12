@@ -90,6 +90,7 @@ public partial class CashBoxDataContext : DbContext
             entity.Property(e => e.AutoProceeds).HasColumnName("auto_proceeds");
             entity.Property(e => e.Award).HasColumnName("award");
             entity.Property(e => e.Forfeit).HasColumnName("forfeit");
+            entity.Property(e => e.FullTransit).HasColumnName("fulltransit");
             entity.Property(e => e.Salary).HasColumnName("salary");
 
             entity.HasOne(d => d.DailyReport).WithOne(p => p.AutoDreport)
