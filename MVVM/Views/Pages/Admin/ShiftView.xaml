@@ -7,7 +7,7 @@
              xmlns:vm="clr-namespace:Cashbox.MVVM.ViewModels.Admin"
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
              d:DataContext="{d:DesignInstance Type=vm:ShiftViewModel}"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="880" d:DesignWidth="1700">
     <UserControl.DataContext>
         <vm:ShiftViewModel/>

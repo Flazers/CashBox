@@ -110,7 +110,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanSearchDataCommandExecute(object p) => true;
         private async void OnSearchDataCommandExecuted(object p)
         {
-            DailyReportCollection = new(DailyReportViewModel.GetPeriodReports(StartDate, EndDate).Result);
+            
         }
 
         public RelayCommand SeeOrderListCommand { get; set; }
@@ -138,9 +138,21 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
         #endregion
 
+        public override async void OnLoad()
+        {
+            List<DailyReportViewModel> list = [];
+            await Task.Run(async () => { list = await DailyReportViewModel.GetPeriodReports(StartDate, EndDate); });
+            list.OrderByDescending(x => x.Data);
+            DailyReportCollection = new(list);
+        }
+
+        public async void dataload()
+        {
+
+        }
+
         public ShiftViewModel()
         {
-            DailyReportCollection = new(DailyReportViewModel.GetPeriodReports(StartDate, EndDate).Result);
             SearchDataCommand = new RelayCommand(OnSearchDataCommandExecuted, CanSearchDataCommandExecute);
             SeeOrderListCommand = new RelayCommand(OnSeeOrderListCommandExecuted, CanSeeOrderListCommandExecute);
             SelectShiftCommand = new RelayCommand(OnSelectShiftCommandExecuted, CanSelectShiftCommandExecute);

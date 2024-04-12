@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Cashbox.MVVM.Models;
 
 public partial class CashBoxDataContext : DbContext
 {
-    public CashBoxDataContext()
-    {
-    }
+    public CashBoxDataContext() {}
+    public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options) : base(options) {}
 
     private static CashBoxDataContext? _context;
     public static CashBoxDataContext Context => _context ??= new CashBoxDataContext();
 
-    public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options)
-        : base(options)
-    {
-    }
-
     public virtual DbSet<AuthHistory> AuthHistories { get; set; }
+
     public virtual DbSet<AppSettings> AppSettings { get; set; }
 
     public virtual DbSet<AutoDreport> AutoDreports { get; set; }
