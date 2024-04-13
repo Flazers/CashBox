@@ -192,9 +192,6 @@ public partial class CashBoxDataContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("description");
-            entity.Property(e => e.Image)
-                .HasColumnType("image")
-                .HasColumnName("image");
             entity.Property(e => e.PurchaseСost).HasColumnName("purchase_сost");
             entity.Property(e => e.SellCost).HasColumnName("sell_cost");
             entity.Property(e => e.Title)

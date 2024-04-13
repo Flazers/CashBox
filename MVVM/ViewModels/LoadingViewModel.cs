@@ -118,16 +118,7 @@ namespace Cashbox.MVVM.ViewModels
             }
             await Task.Delay(mainDelay);
 
-            SetStatus("Проверка таблицы \"ProductCategory\"", "loading", 5);
-            if (!CashBoxDataContext.Context.ProductCategories.Any())
-            {
-                SetStatus("Создаю категорию по умолчанию", "loading", 5);
-                await ProductCategoryViewModel.CreateProductCategory("Нет категории");
-                await Task.Delay(secondDelay);
-            }
-            await Task.Delay(mainDelay);
-
-            SetStatus("Проверка таблицы \"UserInfo\"", "loading", 6);
+            SetStatus("Проверка таблицы \"UserInfo\"", "loading", 5);
             if (!CashBoxDataContext.Context.UserInfos.Any())
             {
                 SetStatus("Некорректно заполнена таблица \"UserInfo\" ", "error");
@@ -135,10 +126,10 @@ namespace Cashbox.MVVM.ViewModels
             }
             await Task.Delay(mainDelay);
 
-            SetStatus("Проверка таблицы \"AppSetting\" и \"MoneyBox\"", "loading", 7);
+            SetStatus("Проверка таблицы \"AppSetting\" и \"MoneyBox\"", "loading", 6);
             if (!CashBoxDataContext.Context.AppSettings.Any() && !CashBoxDataContext.Context.MoneyBoxes.Any())
             {
-                SetStatus("Создаю настройки по умолчанию", "loading", 7);
+                SetStatus("Создаю настройки по умолчанию", "loading", 6);
                 await AppSettingsViewModel.CreateSetting();
                 await MoneyBoxViewModel.CreateBox();
                 await Task.Delay(secondDelay);
@@ -146,7 +137,7 @@ namespace Cashbox.MVVM.ViewModels
             }
             await Task.Delay(mainDelay);
 
-            SetStatus("Загрузка базы данных в локальный кэш", "loading", 8);
+            SetStatus("Загрузка базы данных в локальный кэш", "loading", 7);
             CashBoxDataContext.Context.Roles.Load();
             CashBoxDataContext.Context.UserInfos.Load();
             CashBoxDataContext.Context.Users.Load();
@@ -164,7 +155,7 @@ namespace Cashbox.MVVM.ViewModels
 
             try
             {
-                SetStatus("Проверка интернет соединения", "loading", 9);
+                SetStatus("Проверка интернет соединения", "loading", 8);
                 HttpClient client = new();
                 HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
             }
@@ -175,7 +166,7 @@ namespace Cashbox.MVVM.ViewModels
             }
 
             await Task.Delay(mainDelay);
-            SetStatus("Запуск", "loading", 10);
+            SetStatus("Запуск", "loading", 9);
             await Task.Delay(mainDelay);
 
             return true;
@@ -219,7 +210,7 @@ namespace Cashbox.MVVM.ViewModels
             {
                 try
                 {
-                    if (!CheckApp(10).Result)
+                    if (!CheckApp(9).Result)
                         return;
                     NavigationService = navService;
                     NavigationService.NavigateTo<AuthViewModel>();

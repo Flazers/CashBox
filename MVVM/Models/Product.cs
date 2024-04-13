@@ -10,8 +10,6 @@ public partial class Product
 
     public string Description { get; set; } = null!;
 
-    public string? Image { get; set; }
-
     public string Brand { get; set; } = null!;
 
     public int CategoryId { get; set; }

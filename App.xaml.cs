@@ -10,6 +10,7 @@ using Cashbox.MVVM.ViewModels.Data;
 using System.Data;
 using Cashbox.MVVM.ViewModels.Admin;
 using Cashbox.MVVM.ViewModels.Employee;
+using System.Text;
 
 namespace Cashbox
 {
@@ -49,6 +50,7 @@ namespace Cashbox
         }
         protected override void OnStartup(StartupEventArgs e)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             base.OnStartup(e);

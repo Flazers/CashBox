@@ -44,6 +44,15 @@ namespace Cashbox.MVVM.Models
             catch (Exception) { return null; }
         }
 
+        public static async Task<ProductCategoryViewModel> NewExample(string category)
+        {
+            try
+            {
+                ProductCategory productCategory = new() { Category = category };
+                return new(productCategory);
+            }
+            catch (Exception) { return null!; }
+        }
         public static async Task<List<ProductCategoryViewModel>> GetProductCategories() => await CashBoxDataContext.Context.ProductCategories.Select(s => new ProductCategoryViewModel(s)).ToListAsync();
         public static async Task<ProductCategoryViewModel?> CreateProductCategories(string category) => await NewProductCategory(category);
         public static async Task<ProductCategoryViewModel?> RemoveProductCategories(int id_category, int prodRect) => await RemoveProductCategory(id_category, prodRect);

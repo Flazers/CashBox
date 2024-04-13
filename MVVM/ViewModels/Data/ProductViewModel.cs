@@ -13,7 +13,6 @@ namespace Cashbox.MVVM.ViewModels.Data
         public ProductViewModel(Product product)
         {
             _product = product;
-            Task.Run(LoadImage);
         }
 
         public static async Task<List<ProductViewModel>> GetProducts() => await Product.GetProducts();
@@ -53,38 +52,6 @@ namespace Cashbox.MVVM.ViewModels.Data
                 _product.Description = value;
                 OnPropertyChanged();
             }
-        }
-
-        public string? Image
-        {
-            get => _product.Image;
-            set
-            {
-                _product.Image = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private BitmapImage? _imageStr;
-        public BitmapImage? ImageStr
-        {
-            get => _imageStr;
-            set
-            {
-                _imageStr = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private void LoadImage()
-        {
-            if (string.IsNullOrEmpty(_product.Image))
-                return;
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _product.Image);
-            if (!File.Exists(path))
-                return;
-            var uri = new Uri(path);
-            Application.Current.Dispatcher.Invoke(() => ImageStr = new BitmapImage(uri));
         }
 
         public string Brand

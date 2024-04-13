@@ -25,7 +25,6 @@ namespace Cashbox.MVVM.Models
                     ArticulCode = productVM.ArticulCode,
                     Title = productVM.Title,
                     Description = productVM.Description,
-                    Image = productVM.Image,
                     Brand = productVM.Brand,
                     CategoryId = productVM.CategoryId,
                     PurchaseСost = productVM.PurchaseСost,
@@ -34,11 +33,6 @@ namespace Cashbox.MVVM.Models
                 };
                 CashBoxDataContext.Context.Products.Add(product);
                 await CashBoxDataContext.Context.SaveChangesAsync();
-                if (product.Image == "./Assets/Image/ProductIdTempSaved.jpeg")
-                {
-                    FileSystem.Rename(product.Image, $"./Assets/Image/ProductId{product.Id}Saved.jpeg");
-                    product.Image = $"./Assets/Image/ProductId{product.Id}Saved.jpeg";
-                }
                 await PStockViewModel.CreateProductStock(product.Id, Amount);
                 return new(product);
             }
@@ -54,7 +48,6 @@ namespace Cashbox.MVVM.Models
                 product.ArticulCode = productVM.ArticulCode;
                 product.Title = productVM.Title;
                 product.Description = productVM.Description;
-                product.Image = productVM.Image;
                 product.Brand = productVM.Brand;
                 product.CategoryId = productVM.CategoryId;
                 product.PurchaseСost = productVM.PurchaseСost;

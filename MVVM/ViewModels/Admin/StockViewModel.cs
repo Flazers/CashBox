@@ -1,8 +1,12 @@
 ﻿using Cashbox.Core;
 using Cashbox.Core.Commands;
+using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
+using ExcelDataReader;
 using Microsoft.Win32;
+using ScottPlot.Statistics;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Windows;
 using System.Windows.Threading;
@@ -53,13 +57,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #endregion
 
-        private string _newCategoryTitle = string.Empty;
-        public string NewCategoryTitle
-        {
-            get => _newCategoryTitle;
-            set => Set(ref _newCategoryTitle, value);
-        }
-
         #region ProductData
 
         private ProductViewModel? _productData;
@@ -85,14 +82,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #endregion
 
-        private string _imageStringProduct = "Выбрать фото товара";
-        public string ImageStringProduct
-        {
-            get => _imageStringProduct;
-            set => Set(ref _imageStringProduct, value);
-        }
-
-        private ObservableCollection<ProductViewModel> _collectionProducts = new(ProductViewModel.GetProducts().Result);
+        private ObservableCollection<ProductViewModel> _collectionProducts;
         public ObservableCollection<ProductViewModel> CollectionProducts
         {
             get
@@ -105,7 +95,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _collectionProducts, value);
         }
 
-        private ObservableCollection<ProductCategoryViewModel> _collectionProductCategories = new(ProductCategoryViewModel.GetProductCategory().Result);
+        private ObservableCollection<ProductCategoryViewModel> _collectionProductCategories;
         public ObservableCollection<ProductCategoryViewModel> CollectionProductCategories
         {
             get => _collectionProductCategories;
@@ -145,19 +135,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #region Command
 
-        public RelayCommand AddCategoryCommand { get; set; }
-        private bool CanAddCategoryCommandExecute(object p)
-        {
-            if (NewCategoryTitle == null)
-                return false;
-            return true;
-        }
-        private async void OnAddCategoryCommandExecuted(object p)
-        {
-            var data = await ProductCategoryViewModel.CreateProductCategory(NewCategoryTitle);
-            if (data != null) CollectionProductCategories.Add(data);
-        }
-
         public RelayCommand RemoveCategoryCommand { get; set; }
         private bool CanRemoveCategoryCommandExecute(object p)
         {
@@ -167,11 +144,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
         private async void OnRemoveCategoryCommandExecuted(object p)
         {
-            if (SelectedProductCategory.Id <= 1)
-            {
-                MessageBox.Show("Нельзя удалить категорию по умолчанию");
-                return;
-            }
             ProductCategoryViewModel data = null;
             if (SelectedProductCategory.Products.Count != 0)
             {
@@ -207,56 +179,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
             SelectedProductCategory = null;
         }
 
-        public RelayCommand AddImageCommand { get; set; }
-        private bool CanAddImageCommandExecute(object p) => true;
-        private void OnAddImageCommandExecuted(object p)
-        {
-            File.Delete("./Assets/Image/ProductIdTempSaved.jpeg");
-            OpenFileDialog openFileDialog = new() { Filter = "Изображения (*.BMP;*.JPG;*.PNG;*.JPEG)|*.BMP;*.JPG;*.PNG;*.JPEG|All files (*.*)|*.*", RestoreDirectory = true };
-            bool? result = openFileDialog.ShowDialog();
-            if (result == true)
-            {
-                try
-                {
-                    ImageStringProduct = openFileDialog.FileName;
-                    File.Copy(openFileDialog.FileName, $"./Assets/Image/ProductIdTempSaved.jpeg");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                ProductData.Image = $"./Assets/Image/ProductIdTempSaved.jpeg";
-            }
-        }
-
-        public RelayCommand EditImageCommand { get; set; }
-        private bool CanEditImageCommandExecute(object p) => true;
-        private void OnEditImageCommandExecuted(object p)
-        {
-            OpenFileDialog openFileDialog = new() { Filter = "Изображения (*.BMP;*.JPG;*.PNG;*.JPEG)|*.BMP;*.JPG;*.PNG;*.JPEG|All files (*.*)|*.*", RestoreDirectory = true };
-            bool? result = openFileDialog.ShowDialog();
-            if (result == true)
-            {
-                try
-                {
-                    File.Copy(openFileDialog.FileName, $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg");
-                }
-                catch (IOException)
-                {
-                    File.Copy(openFileDialog.FileName, $"./Assets/Image/ProductId{SelectedProduct.Id}SavedTemp.jpeg");
-                    File.Replace($"./Assets/Image/ProductId{SelectedProduct.Id}SavedTemp.jpeg", $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg", $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg.bac");
-                }
-                SelectedProduct.Image = $"./Assets/Image/ProductId{SelectedProduct.Id}Saved.jpeg";
-            }
-        }
-
         public RelayCommand OpenPanelProductCreateCommand { get; set; }
         private bool CanOpenPanelProductCreateCommandExecute(object p) => true;
         private void OnOpenPanelProductCreateCommandExecuted(object p)
         {
             ProductData = new(new());
             Amount = 0;
-            ImageStringProduct = "Выбрать фото товара";
 
             PanelCreateProductVisibility = Visibility.Visible;
             PanelMainProductVisibility = Visibility.Collapsed;
@@ -267,8 +195,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanOpenPanelProductEditCommandExecute(object p) => true;
         private void OnOpenPanelProductEditCommandExecuted(object p)
         {
-            ImageStringProduct = "Выбрать фото товара";
-
             PanelCreateProductVisibility = Visibility.Collapsed;
             PanelMainProductVisibility = Visibility.Collapsed;
             PanelEditProductVisibility = Visibility.Visible;
@@ -291,7 +217,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
         private async void OnAddProductCommandExecuted(object p)
         {
-            if (string.IsNullOrEmpty(ProductData.Image)) ProductData.Image = "./Assets/Image/Zagl.png";
             if (ProductData.CategoryId == 0) ProductData.CategoryId = 1;
 
             var data = await ProductViewModel.CreateProduct(ProductData, Amount);
@@ -337,7 +262,70 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             CollectionProducts = new(await ProductViewModel.GetProducts());
             if (SelectedProductCategory != null)
-                CollectionProducts = new(_collectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
+                if (SelectedProductCategory.Category == "Все категории")
+                    CollectionProducts = new(await ProductViewModel.GetProducts());
+                else
+                    CollectionProducts = new(_collectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
+        }
+
+        public RelayCommand ImportProductDataCommand { get; set; }
+        private bool CanImportProductDataCommandExecute(object p) => true;
+        private void OnImportProductDataCommandExecuted(object p)
+        {
+            List<ProductViewModel> prod = [];
+            OpenFileDialog openFileDialog = new() { Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*", RestoreDirectory = true };
+            bool? resultOpen = openFileDialog.ShowDialog();
+            if (resultOpen == true)
+            {
+                try
+                {
+                    IExcelDataReader edr;
+                    using var stream = File.Open(openFileDialog.FileName, FileMode.Open, FileAccess.Read);
+                    using var reader = ExcelReaderFactory.CreateReader(stream);
+                    var extension = openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf('.'));
+
+                    if (extension == ".xlsx")
+                        edr = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                    else if (extension == ".xls")
+                        edr = ExcelReaderFactory.CreateBinaryReader(stream);
+                    else
+                        edr = ExcelReaderFactory.CreateOpenXmlReader(stream);
+
+                    do
+                    {
+                        reader.Read();
+                        ProductCategoryViewModel category = CollectionProductCategories.FirstOrDefault(x => x.Category == reader.Name);
+                        if (category == null) break;
+                        while (reader.Read())
+                        {
+                            Product product = new()
+                            {
+                                Brand = reader.GetString(1),
+                                Title = reader.GetString(2),
+                                Description = reader.GetString(3),
+                                PurchaseСost = reader.GetDouble(4),
+                                SellCost = reader.GetDouble(5),
+                                CategoryId = category.Id,
+                                IsAvailable = true
+                            };
+                            if (reader.GetValue(0) == null)
+                                product.ArticulCode = string.Empty;
+                            else
+                                product.ArticulCode = (reader.GetDouble(0)).ToString();
+                                prod.Add(new(product));
+                        }
+                    } while (reader.NextResult());
+                    edr.Close();
+
+                }
+                catch (IOException)
+                {
+                    AppCommand.ErrorMessage("Процесс используется другим приложением (Возможно файл открыт).");
+                    return;
+                }
+            }
+
+            
         }
         #endregion
 
@@ -345,7 +333,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public StockViewModel()
         {
-            AddCategoryCommand = new RelayCommand(OnAddCategoryCommandExecuted, CanAddCategoryCommandExecute);
+            List<ProductCategoryViewModel> productcategory = [];
+            productcategory.Add(ProductCategoryViewModel.NewExample("Все категории").Result);
+            productcategory.AddRange(ProductCategoryViewModel.GetProductCategory().Result);
+            CollectionProductCategories = new(productcategory);
+
             RemoveCategoryCommand = new RelayCommand(OnRemoveCategoryCommandExecuted, CanRemoveCategoryCommandExecute);
             AddProductCommand = new RelayCommand(OnAddProductCommandExecuted, CanAddProductCommandExecute);
             EditProductCommand = new RelayCommand(OnEditProductCommandExecuted, CanEditProductCommandExecute);
@@ -354,8 +346,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             OpenPanelProductEditCommand = new RelayCommand(OnOpenPanelProductEditCommandExecuted, CanOpenPanelProductEditCommandExecute);
             ClosePanelProductCommand = new RelayCommand(OnClosePanelProductCommandExecuted, CanClosePanelProductCommandExecute);
             GetAllProductCommand = new RelayCommand(OnGetAllProductCommandExecuted, CanGetAllProductCommandExecute);
-            AddImageCommand = new RelayCommand(OnAddImageCommandExecuted, CanAddImageCommandExecute);
-            EditImageCommand = new RelayCommand(OnEditImageCommandExecuted, CanEditImageCommandExecute);
+            ImportProductDataCommand = new RelayCommand(OnImportProductDataCommandExecuted, CanImportProductDataCommandExecute);
         }
     }
 }
