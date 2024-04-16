@@ -21,10 +21,7 @@ namespace Cashbox.Core
             return true;
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
+        public void Dispose() => Dispose(true);
         private bool _Disposed;
         protected virtual void Dispose(bool disposing)
         {
@@ -33,6 +30,6 @@ namespace Cashbox.Core
         }
 
         public virtual void Clear() { }
-        public virtual void OnLoad() { }
+        public virtual async void OnLoad() { }
     }
 }

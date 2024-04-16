@@ -1,4 +1,5 @@
-﻿using Cashbox.MVVM.ViewModels.Data;
+﻿using Cashbox.Core;
+using Cashbox.MVVM.ViewModels.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,23 @@ namespace Cashbox.MVVM.Models
                 return new UserInfoViewModel(userInfo);
             }
             catch (Exception) { return null; }
+        }
+
+        public static async Task<UserInfoViewModel> DeactivateUser(int userId)
+        {
+            try
+            {
+                UserInfo user = CashBoxDataContext.Context.UserInfos.FirstOrDefault(x => x.UserId == userId);
+                user.IsActive = false;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return new(user);
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return null!;
+            }
+
         }
     }
 }

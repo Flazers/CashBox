@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Cashbox.MVVM.Models;
+﻿namespace Cashbox.MVVM.Models;
 
 public partial class Refund
 {
     public int Id { get; set; }
+
+    public int DailyReportId { get; set; }
 
     public int? ProductId { get; set; }
 
@@ -18,4 +17,5 @@ public partial class Refund
     public bool IsSuccessRefund { get; set; }
 
     public virtual Product? Product { get; set; } = null!;
+    public virtual DailyReport DailyReport { get; set; } = null!;
 }

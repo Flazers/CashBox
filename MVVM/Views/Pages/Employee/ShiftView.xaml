@@ -14,7 +14,7 @@
             <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Сотрудник: \{0}'}"/>
         </Border>
 
-        <DockPanel Margin="0 40 0 0">
+        <Grid Margin="0 40 0 0">
             <Border HorizontalAlignment="Left" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid Margin="0 -10 0 30" Height="80">
@@ -37,8 +37,8 @@
 
                     <DockPanel Visibility="{Binding ProcessShiftVisibility}" Margin="10 0 10 10">
                         <Grid DockPanel.Dock="Bottom">
-                            <Button Style="{StaticResource ButtonInPanelGreen}" HorizontalAlignment="Left" Width="270" Content="Смена"/>
-                            <Button Style="{StaticResource ButtonInPanelGray}" HorizontalAlignment="Right" Width="270" Content="Чеки"/>
+                            <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding SeeShiftPanelCommand}" HorizontalAlignment="Left" Width="270" Content="Смена"/>
+                            <Button Style="{StaticResource ButtonInPanelGray}" Command="{Binding SeeCheckPanelCommand}" HorizontalAlignment="Right" Width="270" Content="Чеки"/>
                         </Grid>
                         <StackPanel Height="690">
                             <Grid>
@@ -97,7 +97,7 @@
                 </StackPanel>
             </Border>
 
-            <Border HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <Border HorizontalAlignment="Right" Visibility="{Binding ShiftVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid Margin="0 -10 0 30" Height="80">
                         <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Смена"/>
@@ -128,7 +128,6 @@
                     </DockPanel>
 
                     <DockPanel Visibility="{Binding EndShiftVisibility}" Margin="10 0 10 10">
-                        <Button Style="{StaticResource ButtonInPanelGreen}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Content="Отправить отчет по смене на почту"/>
                         <StackPanel Height="690">
                             <Grid>
                                 <StackPanel Orientation="Horizontal">
@@ -161,28 +160,58 @@
                                     <Icon:PackIconMaterial Kind="CashMinus" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="Штраф" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding EndShiftTime}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
-                            </Grid>
-                            <Grid Margin="0 10 0 0">
-                                <StackPanel Orientation="Horizontal">
-                                    <Icon:PackIconMaterial Kind="CashPlus" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
-                                    <TextBlock Margin="10 0 0 0" Text="Премия" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
-                                </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding EndShiftTime}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding AutoShift.Forfeit}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                             <Grid Margin="0 10 0 0">
                                 <StackPanel Orientation="Horizontal">
                                     <Icon:PackIconMaterial Kind="CashFast" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="К выплате" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding EndShiftTime}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding AutoShift.Salary}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                         </StackPanel>
                     </DockPanel>
                 </StackPanel>
             </Border>
-            
-        </DockPanel>
+
+            <Border HorizontalAlignment="Right" Visibility="{Binding CheckVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+                <StackPanel>
+                    <Grid Margin="0 -10 0 30" Height="80">
+                        <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Чеки"/>
+                        <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                    </Grid>
+
+                    <DockPanel Visibility="{Binding CheckListVisibility}" Margin="10 0 10 10">
+                        <ScrollViewer Height="750">
+                            <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding CollectionOrders}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="10" Background="{StaticResource BasicW}" CornerRadius="10" Margin="0 0 20 20">
+                                            <Grid>
+                                                <StackPanel Height="60">
+                                                    <TextBlock Height="30" Margin="0 0 0 5" Text="{Binding Id, StringFormat='\Чек №{0}'}" Style="{StaticResource TitleText}"/>
+                                                    <TextBlock Text="{Binding SellCost, StringFormat='\Сумма чека {0} ₽'}" Style="{StaticResource RegularText}"/>
+                                                </StackPanel>
+                                                
+                                                <Button Style="{StaticResource ButtonInPanelBase}" Command="{Binding DataContext.SeeUserInfoCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding Id}" Content="Подробнее" HorizontalAlignment="Right"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+
+                    <DockPanel Visibility="{Binding CheckListOneObjVisibility}" Margin="10 0 10 10">
+                        <StackPanel Height="620">
+                            
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+
+        </Grid>
         
     </StackPanel>
 </UserControl>

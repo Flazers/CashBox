@@ -25,20 +25,5 @@ namespace Cashbox.MVVM.Views.Pages
         {
             InitializeComponent();
         }
-
-        private void login_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-                password.Focus();
-        }
-
-        private void password_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                authBtn.Focus();
-                authBtn.Command.Execute(null);
-            }
-        }
     }
 }

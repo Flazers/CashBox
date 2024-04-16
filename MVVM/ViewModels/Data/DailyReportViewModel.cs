@@ -14,6 +14,7 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public static async Task<DailyReportViewModel?> StartShift(DateOnly date, TimeOnly time) => await DailyReport.StartShift(date, time);
         public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double processed) => await DailyReport.EndShift(date, time, processed);
+        public static async Task<List<DailyReportViewModel>> GetPeriodReports(DateOnly startDate, DateOnly endDate) => await DailyReport.GetPeriodReports(startDate, endDate);
         public static DailyReport? CurrentShift => DailyReport.CurrentShift;
         public int Id => _dailyReport.Id;
 
@@ -27,6 +28,8 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public string? DataString => ((DateOnly)Data!).ToString("dd/MM/yyyy");
+        
         public TimeOnly? OpenTime 
         {
             get => _dailyReport.OpenTime;
@@ -67,7 +70,23 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public double CashOnStart
+        {
+            get => _dailyReport.CashOnStart;
+            set
+            {
+                _dailyReport.CashOnStart = value;
+                OnPropertyChanged();
+            }
+        }
+
         public virtual AutoDreport? AutoDreport { get; set; }
+
+        public virtual AutoDailyReportViewModel? AutoDreportVM { get => new(_dailyReport.AutoDreport); }
+
+        public virtual UserInfoViewModel UserInfoVM => new(_dailyReport.User.UserInfo!);
+
+        public virtual ICollection<Order> Orders { get => _dailyReport.Orders; }
 
         public virtual User User { get; set; } = null!;
     }

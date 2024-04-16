@@ -1,7 +1,9 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Cashbox.MVVM.ViewModels.Data
@@ -12,15 +14,14 @@ namespace Cashbox.MVVM.ViewModels.Data
         public ProductViewModel(Product product)
         {
             _product = product;
-            Task.Run(LoadImage);
         }
 
-        public static async Task<List<ProductViewModel>> GetProducts() => await Product.GetProducts();
-        public static async Task<List<ProductViewModel>> GetAllProducts() => await Product.GetAllProducts();
-        public static async Task<ProductViewModel?> CreateProduct(ProductViewModel? productVM, int Amount) => await Product.CreateProducts(productVM, Amount);
-        public static async Task<ProductViewModel?> UpdateProduct(ProductViewModel? productVM, int Amount) => await Product.UpdateProducts(productVM, Amount);
+        public static async Task<List<ProductViewModel>> GetProducts(bool ShowNoAvailable = false) => await Product.GetProducts(ShowNoAvailable);
+        public static async Task<ProductViewModel?> CreateProduct(ProductViewModel? productVM) => await Product.CreateProducts(productVM);
+        public static async Task<ProductViewModel?> UpdateProduct(ProductViewModel? productVM) => await Product.UpdateProducts(productVM);
         public static async Task<ProductViewModel?> RemoveProduct(int id) => await Product.AvailableProducts(id, false);
         public static async Task<ProductViewModel?> UnRemoveProduct(int id) => await Product.AvailableProducts(id, true);
+        public static async Task<bool> ImportProduct(List<ProductViewModel?> productVM) => await Product.ImportProductVM(productVM);
 
         public int Id => _product.Id;
 
@@ -54,38 +55,6 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public string? Image
-        {
-            get => _product.Image;
-            set
-            {
-                _product.Image = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private BitmapImage? _imageStr;
-        public BitmapImage? ImageStr
-        {
-            get => _imageStr;
-            set
-            {
-                _imageStr = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private void LoadImage()
-        {
-            if (string.IsNullOrEmpty(_product.Image))
-                return;
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _product.Image);
-            if (!File.Exists(path))
-                return;
-            var uri = new Uri(path);
-            Application.Current.Dispatcher.Invoke(() => ImageStr = new BitmapImage(uri));
-        }
-
         public string Brand
         {
             get => _product.Brand;
@@ -106,16 +75,6 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double PurchaseСost
-        {
-            get => _product.PurchaseСost;
-            set
-            {
-                _product.PurchaseСost = value;
-                OnPropertyChanged();
-            }
-        }
-
         public double SellCost
         {
             get => _product.SellCost;
@@ -125,6 +84,10 @@ namespace Cashbox.MVVM.ViewModels.Data
                 OnPropertyChanged();
             }
         }
+
+        public double ReSellCost { get; set; }
+        public Visibility ReSellCostVisibility { get; set; }
+
         public bool IsAvailable
         {
             get => _product.IsAvailable;
@@ -134,6 +97,20 @@ namespace Cashbox.MVVM.ViewModels.Data
                 OnPropertyChanged();
             }
         }
+
+        public SolidColorBrush? BackGroundColor
+        {
+            get
+            {
+                if (_product.Stock.Amount == 0) 
+                    return (SolidColorBrush)Application.Current.Resources["DisabledRed"];
+                if (IsAvailable)
+                    return (SolidColorBrush)Application.Current.Resources["BasicW"];
+                return (SolidColorBrush)Application.Current.Resources["PressedW"];
+            }
+        }
+
+        public int AmountRes { get; set; }
 
         public ProductCategoryViewModel CategoryVM
         {

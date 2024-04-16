@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Cashbox.MVVM.Models;
+﻿namespace Cashbox.MVVM.Models;
 
 public partial class DailyReport
 {
@@ -16,6 +13,10 @@ public partial class DailyReport
     public int UserId { get; set; }
 
     public double? Proceeds { get; set; }
+
+    public double CashOnStart { get; set; }
+
+    public virtual ICollection<Order> Orders { get; set; } = [];
 
     public virtual AutoDreport? AutoDreport { get; set; }
 

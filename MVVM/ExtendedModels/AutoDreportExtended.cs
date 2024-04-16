@@ -7,7 +7,7 @@ namespace Cashbox.MVVM.Models
     {
         public AutoDreport() { }
 
-        public static AutoDailyReportViewModel? GenReport(DailyReport dailyReport)
+        public static async Task<AutoDailyReportViewModel> GenReport(DailyReportViewModel dailyReport)
         {
             try
             {
@@ -15,17 +15,27 @@ namespace Cashbox.MVVM.Models
                 AutoDreport autoDreport = new()
                 {
                     DailyReportId = dailyReport.Id,
+                    AutoProceeds = OrderViewModel.GetDayOrdersToMethod((DateOnly)dailyReport.Data!, 2).Result.Sum(x => (double)x.SellCost!),
+                    Award = 0,
+                    FullTransit = OrderViewModel.GetSumInDay(dailyReport.Data),
                     Salary = setting.Salary,
-                    Award = OrderViewModel.GetSumInDay(dailyReport.Data),
-                    Forfeit = OrderViewModel.GetSumMethodInDay(dailyReport.Data) - (double)dailyReport.Proceeds!,
                 };
+                double forfeit = OrderViewModel.GetSumMethodInDay(dailyReport.Data) - (double)dailyReport.Proceeds!;
+                if (forfeit <= 0)
+                    autoDreport.Forfeit = 0;
+                else
+                {
+                    autoDreport.Forfeit = forfeit;
+                    autoDreport.Salary -= Convert.ToInt32(forfeit);
+                }
+                await CashBoxDataContext.Context.AutoDreports.AddAsync(autoDreport);
+                await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(autoDreport);
-
             }
             catch (Exception ex)
             {
                 AppCommand.ErrorMessage(ex.Message);
-                return null;
+                return null!;
             }
         }
     }

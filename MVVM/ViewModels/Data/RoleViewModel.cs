@@ -1,4 +1,5 @@
-﻿using Cashbox.MVVM.Models;
+﻿using Cashbox.Core;
+using Cashbox.MVVM.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class RoleViewModel(Role role)
+    public class RoleViewModel(Role role) : ViewModelBase
     {
         private readonly Role _role = role;
 
@@ -15,6 +16,14 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public int Id => _role.Id;
 
-        public string Role1 => _role.Role1;
+        public string Role1
+        {
+            get => _role.Role1;
+            set
+            {
+                _role.Role1 = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }

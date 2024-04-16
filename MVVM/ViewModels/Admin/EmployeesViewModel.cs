@@ -16,23 +16,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
     {
 
         #region Props
-        public static UserViewModel? User { get => Models.User.CurrentUser; }
 
         #region UserData
-
-        private string? _login;
-        public string? Login
-        {
-            get => _login;
-            set => Set(ref _login, value);
-        }
-
-        private string? _password;
-        public string? Password
-        {
-            get => _password;
-            set => Set(ref _password, value);
-        }
 
         private int _pincode;
         public int Pincode
@@ -122,7 +107,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _notUserSelectedPanel, value);
         }
 
-        
+        private Visibility _visibilityEditUserPanel = Visibility.Collapsed;
+        public Visibility VisibilityEditUserPanel
+        {
+            get => _visibilityEditUserPanel;
+            set => Set(ref _visibilityEditUserPanel, value);
+        }
 
         #endregion
 
@@ -147,7 +137,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set
             {
                 _selectedUser = value;
-                
                 NotUserSelectedPanel = Visibility.Visible;
                 UserSelectedPanel = Visibility.Collapsed;
                 
@@ -181,9 +170,17 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanCreateUserCommandExecute(object p) => true;
         private async void OnCreateUserCommandExecuted(object p)
         {
-            if (Login == null || Password == null || Pincode.ToString().Length != 6 || Name == null || Surname == null || Patronymic == null || Location == null || Phone == null || Role == null) return;
-            await UserViewModel.CreateUser(Login, Password, Pincode, Name, Surname, Patronymic, Location, Phone, Role);
+            if (Pincode.ToString().Length != 6 || Name == null || Surname == null || Patronymic == null || Location == null || Phone == null || Role == null) return;
+            UserViewModel user = await UserViewModel.CreateUser(Pincode, Name, Surname, Patronymic, Location, Phone, Role);
+            if (user == null)
+            {
+                MessageBox.Show("Не удалось создать пользователя с данным пинкодом", "Ошибка");
+                return;
+            }
             CollectionUsers = new(UserViewModel.GetListUsers().Result);
+            MessageBox.Show("Пользователь создан", "Успех");
+            SelectedUser = user;
+            OnSeeUserInfoPanelVisibilityCommandExecuted(p);
         }
 
         public RelayCommand AddUserPanelVisibilityCommand { get; set; }
@@ -202,18 +199,46 @@ namespace Cashbox.MVVM.ViewModels.Admin
             VisibilityCreateUserPanel = Visibility.Collapsed;
         }
 
-        public RelayCommand OpenPanelEmployeeEditCommand { get; set; }
-        private bool CanOpenPanelEmployeeEditCommandExecute(object p) => true;
-        private void OnOpenPanelEmployeeEditCommandExecuted(object p) 
-        {
-        
-        }
-
         public RelayCommand RemoveEmployeeCommand { get; set; }
         private bool CanRemoveEmployeeCommandExecute(object p) => true;
-        private void OnRemoveEmployeeCommandExecuted(object p) 
+        private async void OnRemoveEmployeeCommandExecuted(object p) 
         {
-        
+            MessageBoxResult result = MessageBox.Show($"Вы уверены, что хотите уволить сотрудника {SelectedUser.UserInfo.FullName}?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+                return;
+            await UserInfoViewModel.DeactivateUser(SelectedUser.Id);
+            CollectionUsers.Remove(SelectedUser);
+            MessageBox.Show("Успех");
+        }
+        public RelayCommand OpenPanelEmployeeEditCommand { get; set; }
+        private bool CanOpenPanelEmployeeEditCommandExecute(object p) => true;
+        private void OnOpenPanelEmployeeEditCommandExecuted(object p)
+        {
+            VisibilityEditUserPanel = Visibility.Visible;
+            VisibilityUserInfoPanel = Visibility.Collapsed;
+        }
+
+        public RelayCommand ClosePanelEditUserCommand { get; set; }
+        private bool CanClosePanelEditUserCommandExecute(object p) => true;
+        private void OnClosePanelEditUserCommandExecuted(object p)
+        {
+            VisibilityEditUserPanel = Visibility.Collapsed;
+            VisibilityUserInfoPanel = Visibility.Visible;
+        }
+
+        public RelayCommand EditUserCommand { get; set; }
+        private bool CanEditUserCommandExecute(object p) => true;
+        private async void OnEditUserCommandExecuted(object p)
+        {
+            UserViewModel userVM = await UserViewModel.EditUser(SelectedUser);
+            if (userVM == null)
+            {
+                MessageBox.Show("Ошибка при редактировании пользователя");
+                return;
+            }
+            MessageBox.Show("Пользователь отредактирован", "Успех");
+            VisibilityEditUserPanel = Visibility.Collapsed;
+            VisibilityUserInfoPanel = Visibility.Visible;
         }
 
         #endregion
@@ -226,6 +251,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             CreateUserCommand = new RelayCommand(OnCreateUserCommandExecuted, CanCreateUserCommandExecute);
             OpenPanelEmployeeEditCommand = new RelayCommand(OnOpenPanelEmployeeEditCommandExecuted, CanOpenPanelEmployeeEditCommandExecute);
             RemoveEmployeeCommand = new RelayCommand(OnRemoveEmployeeCommandExecuted, CanRemoveEmployeeCommandExecute);
+            ClosePanelEditUserCommand = new RelayCommand(OnClosePanelEditUserCommandExecuted, CanClosePanelEditUserCommandExecute);
+            EditUserCommand = new RelayCommand(OnEditUserCommandExecuted, CanEditUserCommandExecute);
         }
     }
 }

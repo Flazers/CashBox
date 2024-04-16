@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Cashbox.MVVM.Models;
+﻿namespace Cashbox.MVVM.Models;
 
 public partial class Product
 {
@@ -13,13 +10,9 @@ public partial class Product
 
     public string Description { get; set; } = null!;
 
-    public string? Image { get; set; }
-
     public string Brand { get; set; } = null!;
 
     public int CategoryId { get; set; }
-
-    public double PurchaseСost { get; set; }
 
     public double SellCost { get; set; }
 

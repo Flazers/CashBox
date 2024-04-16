@@ -1,4 +1,5 @@
 ﻿using BCrypt.Net;
+using Cashbox.Core;
 using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
@@ -28,17 +29,9 @@ namespace Cashbox.MVVM.Models
 
         private static async void SetAuth() => await AuthHistory.NewAuthUser();
 
-        public static async Task<UserViewModel?> GetUserByLogPass(string login, string password)
-        {
-            User? user = await CashBoxDataContext.Context.Users.FirstOrDefaultAsync(x => x.Login == login);
-            if (user == null) return null;
-            if (!BCrypt.Net.BCrypt.Verify(password, user.Password)) return null;
-            return CurrentUser = new UserViewModel(user);
-        }
-
         public static async Task<UserViewModel?> GetUserByPin(int pincode)
         {
-            User? user = await CashBoxDataContext.Context.Users.FirstOrDefaultAsync(x => x.Pin == pincode);
+            User? user = await CashBoxDataContext.Context.Users.FirstOrDefaultAsync(x => x.Pin == pincode && x.UserInfo.IsActive == true);
             return user != null ? CurrentUser = new UserViewModel(user) : null;
         }
 
@@ -47,14 +40,13 @@ namespace Cashbox.MVVM.Models
             CurrentUser = null;
         }
 
-        public static async Task<UserViewModel?> CreateUser(string login, string password, int pincode, string name, string surname, string patronymic, string location, string phone, RoleViewModel role)
+        public static async Task<UserViewModel?> CreateUser(int pincode, string name, string surname, string patronymic, string location, string phone, RoleViewModel role)
         {
             try
             {
+                if (CashBoxDataContext.Context.Users.FirstOrDefault(x => x.Pin == pincode) != null) { return null; }
                 User user = new()
                 {
-                    Login = login,
-                    Password = BCrypt.Net.BCrypt.HashPassword(password),
                     Pin = pincode,
                 };
                 await CashBoxDataContext.Context.Users.AddAsync(user);
@@ -64,7 +56,35 @@ namespace Cashbox.MVVM.Models
                 userVM.SetUserInfo(userinfoVM);
                 return userVM;
             }
-            catch (Exception) { return null; }
+            catch (Exception ex) 
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return null;
+            }
+        }
+
+        public static async Task<UserViewModel?> EditUser(UserViewModel userVMdata)
+        {
+            try
+            {
+                User user = CashBoxDataContext.Context.Users.FirstOrDefault(x => x.Id == userVMdata.Id);
+                if (user == null) return null;
+                user.Pin = userVMdata.Pin;
+                user.UserInfo.Name = userVMdata.UserInfo.Name;
+                user.UserInfo.Surname = userVMdata.UserInfo.Surname;
+                user.UserInfo.Patronymic = userVMdata.UserInfo.Patronymic;
+                user.UserInfo.Phone = userVMdata.UserInfo.Phone;
+                user.UserInfo.Location = userVMdata.UserInfo.Location;
+                user.UserInfo.RoleId = userVMdata.UserInfo.RoleId;
+                UserViewModel userVM = new(user);
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return userVM;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return null;
+            }
         }
 
         public static async Task<List<UserViewModel>> GetListUsers() => await CashBoxDataContext.Context.Users.Where(x => x.UserInfo.IsActive == true).Select(s => new UserViewModel(s)).ToListAsync();

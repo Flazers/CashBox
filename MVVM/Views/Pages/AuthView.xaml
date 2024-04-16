@@ -26,16 +26,9 @@
 
                 <Grid Margin="50 40" Grid.Column="0">
 
-                    <StackPanel VerticalAlignment="Top">
-                        <TextBlock Text="A5 Detailing" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 16"/>
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton Style="{DynamicResource AuthRB}" Command="{Binding SwipeAuthMethodVisibilityCommand}" IsChecked="{Binding IsAuthMethodPinEnabled}" Content="По пин-коду" Margin="0 0 20 0"/>
-                            <RadioButton Style="{DynamicResource AuthRB}" Command="{Binding SwipeAuthMethodVisibilityCommand}" IsChecked="{Binding IsAuthMethodLPEnabled}" Content="По логину"/>
-                        </StackPanel>
-                    </StackPanel>
+                    <TextBlock VerticalAlignment="Top" Text="A5 Detailing" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 16"/>
 
-
-                    <StackPanel VerticalAlignment="Bottom" Visibility="{Binding AuthMethodPinVisibility}">
+                    <StackPanel VerticalAlignment="Bottom">
                         <TextBox Style="{StaticResource TbPlaceholderTag}" Margin="0 0 0 20" Text="{Binding StringPin}" IsReadOnly="True" MaxLength="6" FontSize="32" Height="90" FontWeight="Bold" HorizontalContentAlignment="Center" Tag="Пин-код"/>
                         <WrapPanel Orientation="Horizontal" Margin="0 10 0 0">
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding EnterPinCommand}" CommandParameter="1" Margin="0 0 20 10" Width="120" Height="120" Content="1" FontSize="32"/>
@@ -53,15 +46,6 @@
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding EnterPinCommand}" CommandParameter="0" Margin="0 0 20 0" Width="120" Height="120" Content="0" FontSize="32"/>
                             <Button Style="{DynamicResource AuthBT}" Command="{Binding AuthByPinCommand}" Margin="0 0 0 0" Width="120" Height="120" Content="ОК" FontSize="32"/>
                         </WrapPanel>
-                    </StackPanel>
-
-                    <StackPanel VerticalAlignment="Center" Visibility="{Binding AuthMethodLPVisibility}">
-                        <TextBlock Text="Аутентификация" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 20"/>
-                        
-                        <TextBox x:Name="login" KeyDown="login_KeyDown" Style="{DynamicResource AuthTB}" Text="фывафывафыва" Tag="логин"/>
-                        <TextBox x:Name="password" KeyDown="password_KeyDown" Style="{DynamicResource AuthTB}" Margin="0 10 0 20" Text="{Binding Password}" Tag="пароль"/>
-                        
-                        <Button x:Name="authBtn" Style="{DynamicResource AuthBT}" Command="{Binding AuthByLogPassCommand}" Width="180" Height="60" FontSize="24" HorizontalAlignment="Left" Content="Войти"/>
                     </StackPanel>
 
                 </Grid>

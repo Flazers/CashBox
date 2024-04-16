@@ -1,4 +1,5 @@
 ﻿using Cashbox.MVVM.ViewModels.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,18 +19,18 @@ namespace Cashbox.MVVM.Models
             set => _orderProducts = value;
         }
 
-        public static void AddProduct(List<OrderProductViewModel> orderProducts)
+        public static async void AddProduct(List<OrderProductViewModel> orderProducts)
         {
             foreach (var item in orderProducts) 
             {
-                OrderProducts.Add(new OrderProduct()
+                OrderProducts.Add(new()
                 {
                     OrderId = item.OrderId,
                     ProductId = item.ProductId,
-                    PurchaseСost = item.PurchaseСost,
                     SellCost = item.SellCost,
                     Amount = item.Amount,
                 });
+                await PStockViewModel.UpdateProductStock(item.ProductId, item.ProductVM.Stock.Amount - item.Amount);
             }
         }
 
@@ -44,5 +45,8 @@ namespace Cashbox.MVVM.Models
             CashBoxDataContext.Context.OrderProducts.AddRangeAsync(OrderProducts);
             return true;
         }
+
+        public static async Task<List<OrderProductViewModel>> GetInOrderProduct(int OrderId) => await CashBoxDataContext.Context.OrderProducts.Where(x => x.OrderId == OrderId).Select(s => new OrderProductViewModel(s)).ToListAsync();
+        public static async Task<List<OrderProductViewModel>> GetOrderProduct(DateTime StartDate, DateTime EndDate) => await CashBoxDataContext.Context.OrderProducts.Where(x => x.Order.SellDatetime!.Value.Date >= StartDate.Date && x.Order.SellDatetime!.Value.Date <= EndDate.Date).Select(s => new OrderProductViewModel(s)).ToListAsync();
     }
 }

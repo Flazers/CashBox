@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Cashbox.MVVM.Models;
+﻿namespace Cashbox.MVVM.Models;
 
 public partial class OrderProduct
 {
@@ -12,8 +9,6 @@ public partial class OrderProduct
     public int ProductId { get; set; }
 
     public int Amount { get; set; }
-
-    public double PurchaseСost { get; set; }
 
     public double SellCost { get; set; }
 

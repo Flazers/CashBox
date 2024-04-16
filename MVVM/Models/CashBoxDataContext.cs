@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Cashbox.MVVM.Models;
 
 public partial class CashBoxDataContext : DbContext
 {
-    public CashBoxDataContext()
-    {
-    }
+    public CashBoxDataContext() {}
+    public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options) : base(options) {}
 
     private static CashBoxDataContext? _context;
     public static CashBoxDataContext Context => _context ??= new CashBoxDataContext();
 
-    public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options)
-        : base(options)
-    {
-    }
-
     public virtual DbSet<AuthHistory> AuthHistories { get; set; }
+
     public virtual DbSet<AppSettings> AppSettings { get; set; }
 
     public virtual DbSet<AutoDreport> AutoDreports { get; set; }
@@ -26,6 +19,8 @@ public partial class CashBoxDataContext : DbContext
     public virtual DbSet<DailyReport> DailyReports { get; set; }
 
     public virtual DbSet<MoneyBox> MoneyBoxes { get; set; }
+
+    public virtual DbSet<ComingProduct> ComingProducts { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
 
@@ -60,7 +55,6 @@ public partial class CashBoxDataContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Salary).HasColumnName("salary");
-            entity.Property(e => e.AwardProcent).HasColumnName("awardprocent");
         });
 
         modelBuilder.Entity<AuthHistory>(entity =>
@@ -91,6 +85,7 @@ public partial class CashBoxDataContext : DbContext
             entity.Property(e => e.AutoProceeds).HasColumnName("auto_proceeds");
             entity.Property(e => e.Award).HasColumnName("award");
             entity.Property(e => e.Forfeit).HasColumnName("forfeit");
+            entity.Property(e => e.FullTransit).HasColumnName("fulltransit");
             entity.Property(e => e.Salary).HasColumnName("salary");
 
             entity.HasOne(d => d.DailyReport).WithOne(p => p.AutoDreport)
@@ -108,6 +103,7 @@ public partial class CashBoxDataContext : DbContext
             entity.Property(e => e.Data).HasColumnName("data");
             entity.Property(e => e.OpenTime).HasColumnName("open_time");
             entity.Property(e => e.Proceeds).HasColumnName("proceeds");
+            entity.Property(e => e.CashOnStart).HasColumnName("cash_on_start");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.User).WithMany(p => p.DailyReports)
@@ -129,6 +125,7 @@ public partial class CashBoxDataContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Discount).HasColumnName("discount");
             entity.Property(e => e.PaymentMethodId).HasColumnName("payment_method_id");
+            entity.Property(e => e.DailyReportId).HasColumnName("daily_report_id");
             entity.Property(e => e.SellCost).HasColumnName("sell_cost");
             entity.Property(e => e.SellDatetime)
                 .HasColumnType("datetime")
@@ -154,7 +151,6 @@ public partial class CashBoxDataContext : DbContext
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
-            entity.Property(e => e.PurchaseСost).HasColumnName("purchase_сost");
             entity.Property(e => e.SellCost).HasColumnName("sell_cost");
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderProducts)
@@ -179,6 +175,20 @@ public partial class CashBoxDataContext : DbContext
                 .HasColumnName("method");
         });
 
+        modelBuilder.Entity<ComingProduct>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CommingDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("comming_dt");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ComingProducts)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ComingProduct_User");
+        });
+
         modelBuilder.Entity<Product>(entity =>
         {
             entity.ToTable("Product");
@@ -197,10 +207,6 @@ public partial class CashBoxDataContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("description");
-            entity.Property(e => e.Image)
-                .HasColumnType("image")
-                .HasColumnName("image");
-            entity.Property(e => e.PurchaseСost).HasColumnName("purchase_сost");
             entity.Property(e => e.SellCost).HasColumnName("sell_cost");
             entity.Property(e => e.Title)
                 .HasMaxLength(50)
@@ -273,14 +279,6 @@ public partial class CashBoxDataContext : DbContext
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Login)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("login");
-            entity.Property(e => e.Password)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("password");
             entity.Property(e => e.Pin).HasColumnName("pin");
         });
 

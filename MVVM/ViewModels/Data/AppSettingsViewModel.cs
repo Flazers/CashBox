@@ -18,22 +18,12 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public int Id => _appSettings.Id;
 
-        public int? Salary
+        public int Salary
         {
             get => _appSettings.Salary;
             set
             {
                 _appSettings.Salary = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public double? AwardProcent
-        {
-            get => _appSettings.AwardProcent;
-            set
-            {
-                _appSettings.AwardProcent = value;
                 OnPropertyChanged();
             }
         }

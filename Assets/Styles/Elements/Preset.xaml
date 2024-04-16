@@ -96,5 +96,68 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style x:Key="ToggleSettings" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Background" Value="{DynamicResource BasicRed}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextW}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="FontFamily" Value="Montserrat"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            Background="{TemplateBinding Background}" 
+                            SnapsToDevicePixels="true"
+                            CornerRadius="15"
+                            Padding="3"
+                            MinWidth="70"
+                            Height="30">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Ellipse Panel.ZIndex="2" Grid.Column="0" 
+                                     HorizontalAlignment="Left" 
+                                     Fill="{StaticResource TextW}" 
+                                     x:Name="elipse" 
+                                     Width="24" Height="24"/>
+                            <TextBlock x:Name="on" Visibility="Collapsed" 
+                                       Foreground="{TemplateBinding Foreground}" 
+                                       Grid.Column="0" Margin="0 1 0 0" 
+                                       FontSize="12" Text="Вкл" VerticalAlignment="Center" 
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="off" Grid.Column="1" 
+                                       Foreground="{TemplateBinding Foreground}" 
+                                       FontSize="12" Text="Выкл" Margin="0 1 0 0" 
+                                       VerticalAlignment="Center" 
+                                       HorizontalAlignment="Center"/>
+                            <ContentPresenter Grid.Column="1" x:Name="contentPresenter"/>
+                        </Grid>
+
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource TextW}"/>
+                            <Setter Property="Background" Value="{StaticResource BasicGreen}"/>
+                            <Setter Property="Fill" TargetName="elipse" Value="{StaticResource BasicW}"/>
+                            <Setter Property="Grid.Column" TargetName="elipse" Value="1"/>
+                            <Setter Property="HorizontalAlignment" TargetName="elipse" Value="Right"/>
+                            <Setter Property="Visibility" TargetName="off" Value="Collapsed"/>
+                            <Setter Property="Visibility" TargetName="on" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

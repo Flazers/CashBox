@@ -3,9 +3,9 @@ using Cashbox.MVVM.ViewModels.Data;
 
 namespace Cashbox.MVVM.Models
 {
-    public partial class AppSettings
+    public partial class ComingProduct
     {
-        public AppSettings() { }
+        public ComingProduct() { }
 
         private static AppSettings _settings = CashBoxDataContext.Context.AppSettings.FirstOrDefault(x => x.Id == 1)!;
         public static AppSettings Settings => _settings;
