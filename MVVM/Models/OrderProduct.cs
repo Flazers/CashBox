@@ -10,8 +10,6 @@ public partial class OrderProduct
 
     public int Amount { get; set; }
 
-    public double PurchaseСost { get; set; }
-
     public double SellCost { get; set; }
 
     public virtual Order Order { get; set; } = null!;

@@ -50,7 +50,9 @@ namespace Cashbox.Core
         }
 
         public static void ErrorMessage(string message, string caption = "Ошибка") => MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
-        
+        public static void WarningMessage(string message, string caption = "Предупреждение") => MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
+        public static void SuccessMessage(string message, string caption = "Успех") => MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+        public static void QuestionMessage(string message, string caption = "Подтверждение") => MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Question);
 
     }
 }

@@ -5,6 +5,7 @@ using Cashbox.MVVM.ViewModels.Data;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,39 +56,51 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _selectedOrder, value);
         }
 
-        private ObservableCollection<ProductViewModel?> _selectedOrderProduct;
-        public ObservableCollection<ProductViewModel?> SelectedOrderProduct
+        private ObservableCollection<ProductViewModel> _selectedOrderProduct = [];
+        public ObservableCollection<ProductViewModel> SelectedOrderProduct
         {
             get => _selectedOrderProduct;
             set => Set(ref _selectedOrderProduct, value);
         }
 
-        private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Today);
-        public DateOnly EndDate
+        private DateTime _endDate = DateTime.Today;
+        public DateTime EndDate
         {
             get => _endDate;
-            set => Set(ref _endDate, value);
+            set
+            {
+                if (value < StartDate)
+                {
+                    AppCommand.WarningMessage("Дата конца не может быть меньше даты начала");
+                    return;
+                }
+                _endDate = value;
+                OnPropertyChanged();
+            }
         }
 
-        private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-30));
-        public DateOnly StartDate
+        private DateTime _startDate = DateTime.Today.AddDays(-30);
+        public DateTime StartDate
         {
             get => _startDate;
-            set => Set(ref _startDate, value);
+            set
+            {
+                if (value > EndDate)
+                {
+                    AppCommand.WarningMessage("Дата начала не может быть больше даты конца");
+                    return;
+                }
+                _startDate = value;
+                OnPropertyChanged();
+            }
         }
 
-        public string EndDateString 
+        private ObservableCollection<ProductViewModel> _productCollection = [];
+        public ObservableCollection<ProductViewModel> ProductCollection
         {
-            get => _endDate.ToString("dd/MM/yyyy");
-            set => Set(ref _endDate, DateOnly.ParseExact(value, @"dd/MM/yyyy", null));
+            get => _productCollection;
+            set => Set(ref _productCollection, value);
         }
-
-        public string StartDateString
-        {
-            get => _startDate.ToString("dd/MM/yyyy");
-            set => Set(ref _startDate, DateOnly.ParseExact(value, @"dd/MM/yyyy", null));
-        }
-        
 
         private ObservableCollection<DailyReportViewModel> _dailyReportCollection = [];
         public ObservableCollection<DailyReportViewModel> DailyReportCollection
@@ -110,18 +123,21 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanSearchDataCommandExecute(object p) => true;
         private async void OnSearchDataCommandExecuted(object p)
         {
-            
+            dataload();
         }
 
         public RelayCommand SeeOrderListCommand { get; set; }
         private bool CanSeeOrderListCommandExecute(object p) => true;
-        private async void OnSeeOrderListCommandExecuted(object p)
+        private void OnSeeOrderListCommandExecuted(object p)
         {
             if (p == null) return;
+            SelectedOrderProduct = [];
             SelectedOrder = SelectedOrderList.FirstOrDefault(x => x.Id == (int)p)!;
-            List<OrderProductViewModel> temp = await OrderProductViewModel.GetInOrderProduct(SelectedOrder.Id);
-            foreach (OrderProductViewModel item in temp)
-                SelectedOrderProduct.Add(item.ProductVM);
+            foreach (OrderProduct item in SelectedOrder.OrderProducts)
+            {
+                ProductViewModel product = new(item.Product);
+                SelectedOrderProduct.Add(product);
+            }
             CheckListVisibility = Visibility.Collapsed;
             CheckListOneObjVisibility = Visibility.Visible;
         }
@@ -140,15 +156,14 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public override async void OnLoad()
         {
-            List<DailyReportViewModel> list = [];
-            await Task.Run(async () => { list = await DailyReportViewModel.GetPeriodReports(StartDate, EndDate); });
-            list.OrderByDescending(x => x.Data);
-            DailyReportCollection = new(list);
+            ProductCollection = new(await ProductViewModel.GetProducts(true));
+            dataload();
         }
 
         public async void dataload()
         {
-
+            List<DailyReportViewModel> data = await DailyReportViewModel.GetPeriodReports(DateOnly.FromDateTime(StartDate), DateOnly.FromDateTime(EndDate));
+            DailyReportCollection = new(data.OrderByDescending(x => x.Data));
         }
 
         public ShiftViewModel()

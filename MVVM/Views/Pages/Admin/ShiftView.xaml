@@ -29,15 +29,15 @@
                                 <Button Style="{StaticResource ButtonInPanelWhite}" HorizontalAlignment="Center" Margin="0 0 55 0" Height="50" Width="50">
                                     <Icon:PackIconMaterial Kind="Reload" Width="30" Height="30"/>
                                 </Button>
-                                <DatePicker SelectedDate="{Binding StartDateString}" Text="{Binding StartDateString}" Width="195" Margin="0 0 40 0" Tag="С "/>
-                                <DatePicker SelectedDate="{Binding EndDateString}" Text="{Binding EndDateString}" Width="195" Margin="0 0 40 0" Tag="По"/>
+                                <DatePicker SelectedDate="{Binding StartDate}" Width="195" Margin="0 0 40 0" Tag="С "/>
+                                <DatePicker SelectedDate="{Binding EndDate}" Width="195" Margin="0 0 40 0" Tag="По"/>
                                 <Button Height="50" Width="50" Command="{Binding SearchDataCommand}" Style="{StaticResource ButtonInPanelGreen}">
                                     <Icon:PackIconMaterialDesign Kind="Search" Width="30" Height="30"/>
                                 </Button>
                             </StackPanel>
                         </Grid>
                         <ScrollViewer Height="660" Margin="10 0 10 10">
-                            <ItemsControl ItemsSource="{Binding DailyReportCollection}">
+                            <ItemsControl ItemsSource="{Binding DailyReportCollection}" d:ItemsSource="{d:SampleData ItemCount=2}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border Padding="20" Background="{StaticResource BasicW}" CornerRadius="20" Margin="0 0 20 20">
@@ -106,7 +106,11 @@
                         </Grid>
                         <Grid Margin="10" Height="740">
                             <DockPanel Visibility="{Binding CheckListVisibility}">
-                                <ScrollViewer Height="740">
+                                <StackPanel DockPanel.Dock="Top" VerticalAlignment="Top" Orientation="Horizontal">
+                                    <RadioButton Style="{StaticResource AuthRB}" IsChecked="True" HorizontalContentAlignment="Center" Content="Чеки" Width="200" Margin="0 0 40 0"/>
+                                    <RadioButton Style="{StaticResource AuthRB}" HorizontalContentAlignment="Center" Content="Возвраты, Браки, Розыгрыши" Width="360"/>
+                                </StackPanel>
+                                <ScrollViewer DockPanel.Dock="Top" Visibility="{Binding CheckListVisibility}" VerticalAlignment="Bottom" Height="680">
                                     <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding SelectedOrderList}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
@@ -125,6 +129,26 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </ScrollViewer>
+                                
+                                <!--<ScrollViewer DockPanel.Dock="Top" VerticalAlignment="Bottom" Height="680">
+                                    <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding DailyRefund}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Padding="10" Background="{StaticResource BasicW}" CornerRadius="10" Margin="0 0 20 20">
+                                                    <Grid>
+                                                        <StackPanel Height="60">
+                                                            <TextBlock Height="30" Margin="0 0 0 5" Text="{Binding Id, StringFormat='\Чек №{0}'}" Style="{StaticResource TitleText}"/>
+                                                            <TextBlock Text="{Binding SellCost, StringFormat='\Сумма чека {0} ₽'}" Style="{StaticResource RegularText}"/>
+                                                        </StackPanel>
+
+                                                        <Button Style="{StaticResource ButtonInPanelBase}" Command="{Binding DataContext.SeeOrderListCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
+                                                                CommandParameter="{Binding Id}" Content="Подробнее" HorizontalAlignment="Right"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>-->
                             </DockPanel>
                             <DockPanel Visibility="{Binding CheckListOneObjVisibility}">
                                 <StackPanel Height="740">
@@ -143,8 +167,12 @@
                                                                     <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                                 </DockPanel>
                                                             </StackPanel>
-                                                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource TitleText}" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                                                            <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center">
+                                                                <TextBlock Style="{StaticResource TitleText}" HorizontalAlignment="Right" 
                                                                        Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                                <TextBlock Style="{StaticResource RegularText}" HorizontalAlignment="Right" 
+                                                                       Text="{Binding SellCost, StringFormat='\Продано за {0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                            </StackPanel>
                                                         </DockPanel>
                                                     </Border>
                                                 </DataTemplate>
@@ -153,12 +181,6 @@
                                     </ScrollViewer>
                                     <StackPanel Height="160" VerticalAlignment="Bottom">
                                         <StackPanel Orientation="Horizontal" Margin="0 0 0 20">
-                                            <Border CornerRadius="5" Height="80" Margin="0 0 20 0" Padding="10" Width="190" Background="{StaticResource BasicRed}">
-                                                <Grid>
-                                                    <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource SmallText}" TextWrapping="Wrap" Text="Указана другая цена:" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                                    <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource RegularText}" Text="Нет" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
-                                                </Grid>
-                                            </Border>
                                             <Border CornerRadius="5" Height="80" Margin="0 0 20 0" Padding="10" Width="180" Background="{StaticResource BasicRed}">
                                                 <Grid>
                                                     <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource SmallText}" TextWrapping="Wrap" Text="Цена (По чеку):" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top"/>

@@ -144,7 +144,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         #region Command
 
-        #region VisibilityCommand
         public RelayCommand StartShiftCommand { get; set; }
         private bool CanStartShiftCommandExecute(object p)
         {
@@ -174,8 +173,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             if (result == MessageBoxResult.No)
                 return;
             EndShiftTime = TimeOnly.FromDateTime(DateTime.Now);
-            double cash = double.Parse(CurrentCash);
-            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, cash);
+            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, NalTransit);
             AutoDailyReportViewModel adreport = await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
             StartShiftVisibility = Visibility.Collapsed;
             ProcessShiftVisibility = Visibility.Visible;
@@ -200,9 +198,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
             ShiftVisibility = Visibility.Visible;
             CheckVisibility = Visibility.Collapsed;
         }
-
-        #endregion
-
 
         #endregion
 

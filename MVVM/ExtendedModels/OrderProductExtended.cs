@@ -23,11 +23,10 @@ namespace Cashbox.MVVM.Models
         {
             foreach (var item in orderProducts) 
             {
-                OrderProducts.Add(new OrderProduct()
+                OrderProducts.Add(new()
                 {
                     OrderId = item.OrderId,
                     ProductId = item.ProductId,
-                    PurchaseСost = item.PurchaseСost,
                     SellCost = item.SellCost,
                     Amount = item.Amount,
                 });
@@ -48,5 +47,6 @@ namespace Cashbox.MVVM.Models
         }
 
         public static async Task<List<OrderProductViewModel>> GetInOrderProduct(int OrderId) => await CashBoxDataContext.Context.OrderProducts.Where(x => x.OrderId == OrderId).Select(s => new OrderProductViewModel(s)).ToListAsync();
+        public static async Task<List<OrderProductViewModel>> GetOrderProduct(DateTime StartDate, DateTime EndDate) => await CashBoxDataContext.Context.OrderProducts.Where(x => x.Order.SellDatetime!.Value.Date >= StartDate.Date && x.Order.SellDatetime!.Value.Date <= EndDate.Date).Select(s => new OrderProductViewModel(s)).ToListAsync();
     }
 }

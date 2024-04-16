@@ -14,8 +14,6 @@ public partial class Product
 
     public int CategoryId { get; set; }
 
-    public double PurchaseСost { get; set; }
-
     public double SellCost { get; set; }
 
     public bool IsAvailable { get; set; }

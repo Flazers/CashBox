@@ -14,7 +14,7 @@
     </UserControl.DataContext>
     <StackPanel>
         <StackPanel Orientation="Horizontal">
-            
+
             <StackPanel Margin="0 0 40 0" Width="480">
                 <Border Style="{StaticResource PanelBorder}" Height="560" Margin="0 0 0 40">
                     <DockPanel LastChildFill="True">
@@ -43,178 +43,68 @@
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
                         <StackPanel Margin="10 0 10 10">
-                            <ComboBox Style="{StaticResource InputCB}" Text="{Binding NewCategoryTitle}" Tag="Куда перемещать товары"/>
-                            <Button HorizontalAlignment="Stretch" Command="{Binding RemoveCategoryCommand}" Style="{StaticResource ButtonInPanelRed}" Content="Удалить категорию" Margin="0 20 0 0"/>
+                            <ComboBox Tag="Куда перемещать товары" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionProductCategories}" DisplayMemberPath="Category" SelectedValuePath="Category" 
+                                      SelectedItem="{Binding ProductData.CategoryVM, Mode=TwoWay}" Margin="0 0 0 20"/>
+                            <Button HorizontalAlignment="Stretch" Command="{Binding RemoveCategoryCommand}" Style="{StaticResource ButtonInPanelRed}" Content="Удалить категорию"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
             </StackPanel>
 
-            <StackPanel Margin="0 0 40 0" Width="620">
-                <Border Style="{StaticResource PanelBorder}" Height="880">
+            <StackPanel Width="1180">
+                <Border Style="{StaticResource PanelBorder}" Margin="0 0 0 40" Height="780">
                     <DockPanel>
                         <Grid DockPanel.Dock="Top" Margin="0 -10 0 30" Height="80">
                             <DockPanel Margin="5 0" VerticalAlignment="Center">
                                 <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Список товаров"/>
-                                <TextBox Style="{StaticResource Search}" Width="300" Height="50" HorizontalAlignment="Right"/>
+                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                    <ToggleButton VerticalAlignment="Center" IsChecked="{Binding IsShowAllProduct}" Style="{StaticResource ToggleSettings}"/>
+                                    <TextBlock Text="Снятые с продаж" Margin="10 0 40 0" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}"/>
+                                    <TextBox Style="{StaticResource Search}" Width="300" Height="50"/>
+                                </StackPanel>
                             </DockPanel>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
                         <TextBlock DockPanel.Dock="Top" Height="30" Visibility="{Binding PanelContentProductVisibility}" Text="{Binding CollectionProducts.Count, StringFormat='Всего товаров: \{0}'}" HorizontalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}" VerticalAlignment="Top" Margin="0 0 0 20"/>
                         <DockPanel Margin="10 0 10 10">
-                            <ScrollViewer DockPanel.Dock="Top" Height="700" Visibility="{Binding PanelContentProductVisibility}">
-                                <ListBox ItemContainerStyle="{StaticResource LBItemContainerStyle}" Width="540" 
-                                         ItemsSource="{Binding CollectionProducts}"
-                                         SelectedItem="{Binding SelectedProduct}"
-                                         HorizontalContentAlignment="Stretch"
-                                         Padding="0" Margin="0 0 20 0" 
-                                         d:ItemsSource="{d:SampleData ItemCount=20}" Background="{StaticResource BasicB}">
-                                    <ListBox.ItemTemplate>
+                            <ScrollViewer DockPanel.Dock="Top" Height="600" Visibility="{Binding PanelContentProductVisibility}">
+                                <ItemsControl Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=10}"  ItemsSource="{Binding CollectionProducts}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Margin="-10"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Height="100"
-                                                    Background="{StaticResource PanelW}" Padding="10" 
-                                                    CornerRadius="5">
-                                                <DockPanel>
-                                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                                                        <DockPanel>
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
-                                                        </DockPanel>
+                                            <Border Padding="20" Width="340" Height="190" Background="{Binding BackGroundColor}" CornerRadius="20" Margin="10">
+                                                <Grid>
+                                                    <StackPanel>
+                                                        <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" ScrollViewer.CanContentScroll="True"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" Text="{Binding Title}" ScrollViewer.CanContentScroll="True"/>
+                                                        <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}" ScrollViewer.CanContentScroll="True"/>
                                                     </StackPanel>
-                                                    <DockPanel Margin="10 0 0 0" HorizontalAlignment="Right" DockPanel.Dock="Right">
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" HorizontalAlignment="Right" Text="{Binding PurchaseСost, StringFormat='Закупка: \{0} ₽'}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" HorizontalAlignment="Right" Text="{Binding SellCost, StringFormat='Продажа: \{0} ₽'}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" HorizontalAlignment="Right" Text="{Binding Stock.Amount, StringFormat='В наличии: \{0} шт.'}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
-                                                    </DockPanel>
-                                                </DockPanel>
+                                                    <StackPanel VerticalAlignment="Bottom">
+                                                        <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Right" Text="{Binding SellCost, StringFormat='Цена: \{0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Right" Text="{Binding Stock.Amount, StringFormat='В наличии: \{0} шт.'}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                    </StackPanel>
+                                                    <Button Height="30" Width="30" Background="{StaticResource BasicB}" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource RemoveIconButton}"
+                                                    Command="{Binding DataContext.RemoveProductCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" 
+                                                    CommandParameter="{Binding Id}"/>
+                                                </Grid>
                                             </Border>
                                         </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </ScrollViewer>
                             <TextBlock Text="Товаров нет" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </DockPanel>
                     </DockPanel>
                 </Border>
-            </StackPanel>
-
-            <Grid Margin="0 0 40 0" Width="520">
-
-                <StackPanel Visibility="{Binding PanelMainProductVisibility}">
-                    <Border Style="{StaticResource PanelBorder}" Height="780" Margin="0 0 0 40">
-                        <DockPanel>
-                            <Grid DockPanel.Dock="Top" Margin="0 -10 0 30" Height="80">
-                                <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Информация о товаре"/>
-                                <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
-                            </Grid>
-                            <Grid DockPanel.Dock="Top" Visibility="{Binding PanelCurrentProductVisibility}" Height="650" Margin="10 0 10 10">
-                                <StackPanel VerticalAlignment="Top">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="200"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="25"/>
-                                        </Grid.RowDefinitions>
-
-                                        <TextBlock Text="Артикул:" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Grid.Row="0" Grid.Column="0" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="Марка:" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Grid.Row="1" Grid.Column="0" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="Название:" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Grid.Row="2" Grid.Column="0" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="Описание:" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Grid.Row="3" Grid.Column="0" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="Категория:" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Grid.Row="4" Grid.Column="0" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="Цена закупки:" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Grid.Row="7" Grid.Column="0" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="Цена на продажу:" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Grid.Row="8" Grid.Column="0" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="В наличии:" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Grid.Row="9" Grid.Column="0" Foreground="{StaticResource TextW}"/>
-
-                                        <TextBlock Text="{Binding SelectedProduct.ArticulCode}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="0" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding SelectedProduct.Brand}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="1" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding SelectedProduct.Title}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="2" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding SelectedProduct.Description}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="3" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding SelectedProduct.Category.Category}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="4" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding SelectedProduct.PurchaseСost, StringFormat='{}{0} ₽'}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="7" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding SelectedProduct.SellCost, StringFormat='{}{0} ₽'}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="8" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                        <TextBlock Text="{Binding SelectedProduct.Stock.Amount, StringFormat='{}{0} шт.'}" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{StaticResource RegularText}" Grid.Row="9" Grid.Column="1" Foreground="{StaticResource TextW}"/>
-                                    </Grid>
-                                </StackPanel>
-                            </Grid>
-                            <TextBlock Text="Товар не выбран" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </DockPanel>
-                    </Border>
-                    <StackPanel Orientation="Horizontal">
-                        <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding ImportProductDataCommand}" Width="240" Margin="0 0 40 0" Content="Импорт товаров"/>
-                        <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding OpenPanelProductCreateCommand}" Width="240" Content="Экспорт товаров"/>
-                    </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding ImportProductDataCommand}" Width="240" Margin="0 0 40 0" Content="Импорт товаров"/>
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding ExportProductDataCommand}" Width="240" Content="Экспорт товаров"/>
                 </StackPanel>
-
-                <!--<StackPanel Visibility="{Binding PanelCreateProductVisibility}">
-                    <Border Style="{StaticResource PanelBorder}" Height="880">
-                        <StackPanel>
-                            <Grid Margin="0 -10 0 30" Height="80">
-                                <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Добавление товара"/>
-                                <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
-                            </Grid>
-                            <ScrollViewer Height="650" Margin="10 0">
-                                <StackPanel Margin="0 0 20 0">
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.ArticulCode, Mode=TwoWay}" Tag="Артикул" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.Brand, Mode=TwoWay}" Tag="Марка*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.Title, Mode=TwoWay}" Tag="Наименование*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.Description, Mode=TwoWay}" Tag="Описание*" Margin="0 0 0 20"/>
-                                    <ComboBox Tag="Категория*" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionProductCategories}" DisplayMemberPath="Category" SelectedValuePath="Category" 
-                                              SelectedItem="{Binding ProductData.CategoryVM, Mode=TwoWay}" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.PurchaseСost, Mode=TwoWay}" Tag="Цена закупки*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding ProductData.SellCost, Mode=TwoWay}" Tag="Цена продажи*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding Amount}" Tag="Колличество товара*"/>
-                                </StackPanel>
-                            </ScrollViewer>
-                            <StackPanel Orientation="Horizontal" Margin="10 40 10 0">
-                                <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding ClosePanelProductCommand}" Width="230" Margin="0 0 20 0" Content="Отмена"/>
-                                <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding AddProductCommand}" Width="230" Content="Добавить"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>-->
-
-                <!--<StackPanel Visibility="{Binding PanelEditProductVisibility}">
-                    <Border Style="{StaticResource PanelBorder}" Height="880">
-                        <StackPanel>
-                            <Grid Margin="0 -10 0 30" Height="80">
-                                <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Редактирование товара"/>
-                                <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
-                            </Grid>
-                            <ScrollViewer Height="650" Margin="10 0">
-                                <StackPanel Margin="0 0 20 0">
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.ArticulCode}" Tag="Артикул" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Brand}" Tag="Марка*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Title}" Tag="Наименование*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Description}" Tag="Описание*" Margin="0 0 0 20"/>
-                                    <ComboBox Tag="Категория*" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionProductCategories}" DisplayMemberPath="Category" 
-                                              SelectedItem="{Binding SelectedProduct.CategoryVM}" SelectedValuePath="Category" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.PurchaseСost}" Tag="Цена закупки*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.SellCost}" Tag="Цена продажи*" Margin="0 0 0 20"/>
-                                    <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedProduct.Stock.Amount}" Tag="Колличество товара*"/>
-                                </StackPanel>
-                            </ScrollViewer>
-                            <StackPanel Orientation="Horizontal" Margin="10 40 10 0">
-                                <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding ClosePanelProductCommand}" Width="230" Margin="0 0 20 0" Content="Закрыть"/>
-                                <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding EditProductCommand}" Width="230" Content="Сохранить"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>-->
-
-            </Grid>
-
+            </StackPanel>
         </StackPanel>
     </StackPanel>
 </UserControl>

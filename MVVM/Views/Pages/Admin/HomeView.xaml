@@ -72,45 +72,29 @@
                 <Border Style="{StaticResource PanelBorder}" Height="880">
                     <StackPanel>
                         <Grid Margin="0 -10 0 30" Height="80">
-                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Детализация"/>
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Детализация доходов"/>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
-                        <StackPanel Height="680">
-                            <Expander Header="Доходы" FontSize="24" Foreground="{StaticResource TextW}">
-                                <ItemsControl d:ItemsSource="{d:SampleData ItemCount=12}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="sdfsdf"/>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Expander>
-
-                            <Expander Header="Расходы" FontSize="24" Foreground="{StaticResource TextW}">
-                                <ItemsControl d:ItemsSource="{d:SampleData ItemCount=12}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="sdfsdf"/>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Expander>
-
-                            <Expander Header="Прибыль" FontSize="24" Foreground="{StaticResource TextW}">
-                                <ItemsControl d:ItemsSource="{d:SampleData ItemCount=12}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="sdfsdf"/>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Expander>
+                        <StackPanel Height="680" Margin="10 0 10 10">
+                            <ItemsControl ItemsSource="{Binding Details}" d:ItemsSource="{d:SampleData ItemCount=6}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Icon:PackIconMaterial Kind="Safe" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
+                                                <TextBlock Margin="10 0 0 0" Text="{Binding Category}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                            </StackPanel>
+                                            <TextBlock HorizontalAlignment="Right" Text="{Binding Money, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
 
                         <StackPanel Margin="10" Orientation="Horizontal">
-                            <DatePicker Width="195" Margin="0 0 40 0" Tag="С "/>
-                            <DatePicker Width="195" Margin="0 0 40 0" Tag="По"/>
-                            <Button Height="50" Width="50"  Style="{StaticResource ButtonInPanelGreen}">
+                            <DatePicker Width="195" Margin="0 0 40 0" SelectedDate="{Binding StartDate}" Tag="С "/>
+                            <DatePicker Width="195" Margin="0 0 40 0" SelectedDate="{Binding EndDate}" Tag="По"/>
+                            <Button Height="50" Width="50" Command="{Binding GetDetailCommand}" Style="{StaticResource ButtonInPanelGreen}">
                                 <Icon:PackIconMaterialDesign Kind="Search" Width="30" Height="30"/>
                             </Button>
                         </StackPanel>

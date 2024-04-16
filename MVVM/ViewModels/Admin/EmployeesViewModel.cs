@@ -172,11 +172,15 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             if (Pincode.ToString().Length != 6 || Name == null || Surname == null || Patronymic == null || Location == null || Phone == null || Role == null) return;
             UserViewModel user = await UserViewModel.CreateUser(Pincode, Name, Surname, Patronymic, Location, Phone, Role);
-            if (user == null) 
+            if (user == null)
+            {
                 MessageBox.Show("Не удалось создать пользователя с данным пинкодом", "Ошибка");
-            else
-                MessageBox.Show("Пользователь создан", "Успех");
+                return;
+            }
             CollectionUsers = new(UserViewModel.GetListUsers().Result);
+            MessageBox.Show("Пользователь создан", "Успех");
+            SelectedUser = user;
+            OnSeeUserInfoPanelVisibilityCommandExecuted(p);
         }
 
         public RelayCommand AddUserPanelVisibilityCommand { get; set; }

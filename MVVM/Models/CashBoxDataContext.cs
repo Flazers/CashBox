@@ -20,6 +20,8 @@ public partial class CashBoxDataContext : DbContext
 
     public virtual DbSet<MoneyBox> MoneyBoxes { get; set; }
 
+    public virtual DbSet<ComingProduct> ComingProducts { get; set; }
+
     public virtual DbSet<Order> Orders { get; set; }
 
     public virtual DbSet<OrderProduct> OrderProducts { get; set; }
@@ -149,7 +151,6 @@ public partial class CashBoxDataContext : DbContext
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
-            entity.Property(e => e.PurchaseСost).HasColumnName("purchase_сost");
             entity.Property(e => e.SellCost).HasColumnName("sell_cost");
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderProducts)
@@ -174,6 +175,20 @@ public partial class CashBoxDataContext : DbContext
                 .HasColumnName("method");
         });
 
+        modelBuilder.Entity<ComingProduct>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CommingDatetime)
+                .HasColumnType("datetime")
+                .HasColumnName("comming_dt");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ComingProducts)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ComingProduct_User");
+        });
+
         modelBuilder.Entity<Product>(entity =>
         {
             entity.ToTable("Product");
@@ -192,7 +207,6 @@ public partial class CashBoxDataContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("description");
-            entity.Property(e => e.PurchaseСost).HasColumnName("purchase_сost");
             entity.Property(e => e.SellCost).HasColumnName("sell_cost");
             entity.Property(e => e.Title)
                 .HasMaxLength(50)

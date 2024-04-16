@@ -15,6 +15,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static List<OrderProduct> OrderProducts => OrderProduct.OrderProducts;
         public static void AddListOrderInDataBase(List<OrderProductViewModel> orderProducts) => OrderProduct.AddListOrderInDataBase(orderProducts);
         public static async Task<List<OrderProductViewModel>> GetInOrderProduct(int OrderId) => await OrderProduct.GetInOrderProduct(OrderId);
+        public static async Task<List<OrderProductViewModel>> GetOrderProduct(DateTime StartDate, DateTime EndDate) => await OrderProduct.GetOrderProduct(StartDate, EndDate);
 
         public int Id => _orderProduct.Id;
 
@@ -45,15 +46,7 @@ namespace Cashbox.MVVM.ViewModels.Data
                 OnPropertyChanged();
             }
         }
-        public double PurchaseСost
-        {
-            get => _orderProduct.PurchaseСost;
-            set
-            {
-                _orderProduct.PurchaseСost = value;
-                OnPropertyChanged();
-            }
-        }
+
         public double SellCost
         {
             get => _orderProduct.SellCost;
@@ -66,7 +59,15 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public virtual Order Order { get; set; } = null!;
 
-        public virtual Product Product { get; set; } = null!;
+        public virtual Product Product 
+        {
+            get => _orderProduct.Product;
+            set 
+            { 
+                _orderProduct.Product = value; 
+                OnPropertyChanged();
+            }
+        }
 
         public ProductViewModel ProductVM { get; set; } = null!;
 

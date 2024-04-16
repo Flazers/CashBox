@@ -82,11 +82,11 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public virtual AutoDreport? AutoDreport { get; set; }
 
-        public virtual AutoDailyReportViewModel? AutoDreportVM { get; set; } = null;
+        public virtual AutoDailyReportViewModel? AutoDreportVM { get => new(_dailyReport.AutoDreport); }
 
         public virtual UserInfoViewModel UserInfoVM => new(_dailyReport.User.UserInfo!);
 
-        public virtual ICollection<Order> Orders { get; set; } = [];
+        public virtual ICollection<Order> Orders { get => _dailyReport.Orders; }
 
         public virtual User User { get; set; } = null!;
     }

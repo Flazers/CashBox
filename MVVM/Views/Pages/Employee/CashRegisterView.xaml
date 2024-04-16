@@ -56,10 +56,6 @@
                                                     <Icon:PackIconMaterial Kind="Plus" Foreground="{StaticResource TextW}"/>
                                                 </Button>
                                             </StackPanel>
-
-
-
-
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -69,7 +65,7 @@
                 </StackPanel>
             </Border>
 
-            <!--Меню-->
+            <!--Меню -->
             <Border Visibility="{Binding MenuPanelVisibility}" DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <Grid>
                     <Grid Margin="0 -10 0 30" Height="80" VerticalAlignment="Top">
@@ -82,7 +78,7 @@
                             <Button Style="{StaticResource ButtonInPanelGreen}" Margin="0 0 0 20" Content="Продажа" Command="{Binding OpenBasketOrderPanelCommand}"/>
                             <Button Style="{StaticResource ButtonInPanelGray}" Margin="0 0 0 20" Content="Возврат" Command="{Binding OpenReturnOrderPanelCommand}"/>
                             <Button Style="{StaticResource ButtonInPanelRed}" Content="Брак" Margin="0 0 0 20" Command="{Binding OpenCrackOrderPanelCommand}"/>
-                            <Button Style="{StaticResource ButtonInPanelBase}" Content="Розыгрыш" Command="{Binding OpenCrackOrderPanelCommand}">
+                            <Button Style="{StaticResource ButtonInPanelCyan}" Content="Розыгрыш" Command="{Binding OpenDrawPanelCommand}">
                                 <Button.Background>
                                     <LinearGradientBrush>
                                         <LinearGradientBrush.GradientStops>
@@ -133,9 +129,11 @@
                                                     </DockPanel>
                                                 </StackPanel>
                                                 <Grid DockPanel.Dock="Right" HorizontalAlignment="Right">
-                                                    <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Top" HorizontalAlignment="Center"
-                                                               Text="{Binding ProductVM.SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
-                                                    
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
+                                                        <TextBox Style="{StaticResource TbPlaceholderTag}" FontSize="18" Text="{Binding ProductVM.SellCost}" Foreground="{StaticResource TextB}" Height="40"/>
+                                                        <TextBlock Text=" ₽" VerticalAlignment="Center" Style="{StaticResource RegularText}"/>
+                                                    </StackPanel>
+
                                                     <Border Width="160" Height="30" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="5">
                                                         <StackPanel Orientation="Horizontal">
                                                             <Button Style="{StaticResource RemoveIconButton}" Command="{Binding DataContext.RemoveProductInBasketCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" CommandParameter="{Binding ProductId}" Margin="0 0 10 0" Width="30" Height="30"/>
@@ -330,7 +328,51 @@
                 </StackPanel>
             </Border>
             <!--Брак-->
-            
+
+            <!--Розыгрыш-->
+            <Border HorizontalAlignment="Right" Visibility="{Binding DrawPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+                <StackPanel>
+                    <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock Style="{DynamicResource TitleText}" HorizontalAlignment="Center" Foreground="{StaticResource TextW}" 
+                               Text="{Binding CurrentRefund.Id, StringFormat='{}Розыгрыш №{0}'}"/>
+                        </StackPanel>
+                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCurrentCrackReturnCommand}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
+                        <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                    </Grid>
+
+                    <Grid Margin="10 0 10 10" Height="750">
+                        <ItemsControl ItemsSource="{Binding SelectedProductRef}" d:ItemsSource="{d:SampleData ItemCount=1}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Height="100"
+                                                Background="{StaticResource PanelW}" Padding="10" 
+                                                CornerRadius="5">
+                                        <DockPanel>
+                                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                                                <DockPanel>
+                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
+                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
+                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                </DockPanel>
+                                            </StackPanel>
+                                            <Grid>
+                                                <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Top" HorizontalAlignment="Right"
+                                                               Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                <Button Style="{StaticResource ButtonInPanelRed}" Height="40" FontSize="16" HorizontalAlignment="Right" Command="{Binding ClearSelectedProductCommand}" VerticalAlignment="Bottom" Content="Убрать"/>
+                                            </Grid>
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <StackPanel VerticalAlignment="Bottom">
+                            <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding DrawProductCommand}" Content="Разыграть"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+            <!--Розыгрыш-->
         </DockPanel>
 
     </StackPanel>

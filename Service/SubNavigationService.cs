@@ -29,7 +29,7 @@ namespace Cashbox.Service
             ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
             CurrentView = viewModel;
             CurrentView?.Clear();
-            Task.Run(new Action(() => { CurrentView?.OnLoad(); }));
+            Application.Current.Dispatcher.Invoke(new Action(() => { CurrentView?.OnLoad(); }));
         }
     }
 }

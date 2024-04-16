@@ -42,6 +42,7 @@ namespace Cashbox.MVVM.Models
             CurrentRefund.BuyDate = buydate;
             CurrentRefund.Reason = reason;
             CurrentRefund.ProductId = productid;
+            CurrentRefund.DailyReportId = DailyReportViewModel.CurrentShift.Id;
             CurrentRefund.IsPurchased = true;
             CurrentRefund.IsSuccessRefund = false;
             await CashBoxDataContext.Context.SaveChangesAsync();
@@ -49,11 +50,23 @@ namespace Cashbox.MVVM.Models
             return true;
         }
 
-        public static async Task<bool> CreateRefundDefect(DateOnly buydate, int productid)
+        public static async Task<bool> CreateRefundDefect(int productid)
         {
-            CurrentRefund.BuyDate = buydate;
             CurrentRefund.Reason = "Брак";
             CurrentRefund.ProductId = productid;
+            CurrentRefund.DailyReportId = DailyReportViewModel.CurrentShift.Id;
+            CurrentRefund.IsPurchased = false;
+            CurrentRefund.IsSuccessRefund = false;
+            await CashBoxDataContext.Context.SaveChangesAsync();
+            CurrentRefund = null;
+            return true;
+        }
+
+        public static async Task<bool> CreateDraw(int productid)
+        {
+            CurrentRefund.Reason = "Розыгрыш";
+            CurrentRefund.ProductId = productid;
+            CurrentRefund.DailyReportId = DailyReportViewModel.CurrentShift.Id;
             CurrentRefund.IsPurchased = false;
             CurrentRefund.IsSuccessRefund = false;
             await CashBoxDataContext.Context.SaveChangesAsync();

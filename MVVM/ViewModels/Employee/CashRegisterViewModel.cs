@@ -19,12 +19,14 @@ namespace Cashbox.MVVM.ViewModels.Employee
             get => _sellPanelVisibility;
             set => Set(ref _sellPanelVisibility, value);
         }
+
         private Visibility _orderPanelVisibility = Visibility.Collapsed;
         public Visibility OrderPanelVisibility
         {
             get => _orderPanelVisibility;
             set => Set(ref _orderPanelVisibility, value);
         }
+
         private Visibility _returnPanelVisibility = Visibility.Collapsed;
         public Visibility ReturnPanelVisibility
         {
@@ -37,6 +39,14 @@ namespace Cashbox.MVVM.ViewModels.Employee
             get => _crackPanelVisibility;
             set => Set(ref _crackPanelVisibility, value);
         }
+
+        private Visibility _drawPanelVisibility = Visibility.Collapsed;
+        public Visibility DrawPanelVisibility
+        {
+            get => _drawPanelVisibility;
+            set => Set(ref _drawPanelVisibility, value);
+        }
+
         private Visibility _menuPanelVisibility = Visibility.Visible;
         public Visibility MenuPanelVisibility
         {
@@ -249,7 +259,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
                         {
                             ProductId = SelectedProduct.Id,
                             SellCost = SelectedProduct.SellCost,
-                            PurchaseСost = SelectedProduct.PurchaseСost,
                             OrderId = OrderViewModel.OrderComposition.Id,
                             Amount = 1,
                         }
@@ -286,9 +295,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             SellPanelVisibility = Visibility.Visible;
             OrderPanelVisibility = Visibility.Collapsed;
-            ReturnPanelVisibility = Visibility.Collapsed;
-            CrackPanelVisibility = Visibility.Collapsed;
-            MenuPanelVisibility = Visibility.Collapsed;
         }
 
         public RelayCommand OpenBasketOrderPanelCommand { get; set; }
@@ -298,10 +304,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             if (OrderViewModel.OrderComposition == null)
                 await OrderViewModel.CreateOrder();
             SelectedOrder = Order.OrderComposition;
-            SellPanelVisibility = Visibility.Collapsed;
             OrderPanelVisibility = Visibility.Visible;
-            ReturnPanelVisibility = Visibility.Collapsed;
-            CrackPanelVisibility = Visibility.Collapsed;
             MenuPanelVisibility = Visibility.Collapsed;
         }
 
@@ -312,12 +315,19 @@ namespace Cashbox.MVVM.ViewModels.Employee
             if (RefundViewModel.CurrentRefund == null)
                 await RefundViewModel.CreateRefund();
             RefundReason = string.Empty;
-            SelectedProductRef = [];
             CurrentRefund = RefundViewModel.CurrentRefund;
-            SellPanelVisibility = Visibility.Collapsed;
-            OrderPanelVisibility = Visibility.Collapsed;
             ReturnPanelVisibility = Visibility.Visible;
-            CrackPanelVisibility = Visibility.Collapsed;
+            MenuPanelVisibility = Visibility.Collapsed;
+        }
+
+        public RelayCommand OpenDrawPanelCommand { get; set; }
+        private bool CanOpenDrawPanelCommandExecute(object p) => true;
+        private async void OnOpenDrawPanelCommandExecuted(object p)
+        {
+            if (RefundViewModel.CurrentRefund == null)
+                await RefundViewModel.CreateRefund();
+            CurrentRefund = RefundViewModel.CurrentRefund;
+            DrawPanelVisibility = Visibility.Visible;
             MenuPanelVisibility = Visibility.Collapsed;
         }
 
@@ -327,11 +337,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             if (RefundViewModel.CurrentRefund == null)
                 await RefundViewModel.CreateRefund();
-            SelectedProductRef = [];
             CurrentRefund = RefundViewModel.CurrentRefund;
-            SellPanelVisibility = Visibility.Collapsed;
-            OrderPanelVisibility = Visibility.Collapsed;
-            ReturnPanelVisibility = Visibility.Collapsed;
             CrackPanelVisibility = Visibility.Visible;
             MenuPanelVisibility = Visibility.Collapsed;
         }
@@ -344,7 +350,10 @@ namespace Cashbox.MVVM.ViewModels.Employee
             OrderPanelVisibility = Visibility.Collapsed;
             ReturnPanelVisibility = Visibility.Collapsed;
             CrackPanelVisibility = Visibility.Collapsed;
+            DrawPanelVisibility = Visibility.Collapsed;
             MenuPanelVisibility = Visibility.Visible;
+            SelectedProductRef = [];
+            OrderProductsBasket = [];
         }
 
         public RelayCommand RemoveCurrentCrackReturnCommand { get; set; }
@@ -384,8 +393,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
                     break;
             }
             CollectionProducts = new(await ProductViewModel.GetProducts());
-            OrderProductsBasket = [];
-            OnOpenMenuPanelCommandExecuted(null!);
+            OnOpenMenuPanelCommandExecuted(p);
         }
 
         public RelayCommand ReturnProductCommand { get; set; }
@@ -401,7 +409,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
             if (data)
                 MessageBox.Show($"Возврат продукта выполнен");
             CurrentRefund = null;
-            SelectedProductRef = [];
             OnOpenMenuPanelCommandExecuted(p);
         }
 
@@ -415,21 +422,31 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
         private async void OnReturnCrackProductCommandExecuted(object p)
         {
-            bool data = await RefundViewModel.CreateRefundDefect(DateOnly.FromDateTime(DateTime.Today), SelectedProductRef[0].Id);
+            bool data = await RefundViewModel.CreateRefundDefect(SelectedProductRef[0].Id);
             if (data)
                 MessageBox.Show($"Брак отмечен");
             CurrentRefund = null;
-            SelectedProductRef = [];
             OnOpenMenuPanelCommandExecuted(p);
         }
 
-        public RelayCommand ClearSelectedProductCommand { get; set; }
-        private bool CanClearSelectedProductCommandExecute(object p)
+        public RelayCommand DrawProductCommand { get; set; }
+        private bool CanDrawProductCommandExecute(object p)
         {
             if (SelectedProductRef == null)
                 return false;
             return true;
         }
+        private async void OnDrawProductCommandExecuted(object p)
+        {
+            bool data = await RefundViewModel.CreateDraw(SelectedProductRef[0].Id);
+            if (data)
+                MessageBox.Show($"Продукт разыгран");
+            CurrentRefund = null;
+            OnOpenMenuPanelCommandExecuted(p);
+        }
+
+        public RelayCommand ClearSelectedProductCommand { get; set; }
+        private bool CanClearSelectedProductCommandExecute(object p) => true;
         private void OnClearSelectedProductCommandExecuted(object p)
         {
             SelectedProductRef = [];
@@ -447,6 +464,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             SellOrderCommand = new RelayCommand(OnSellOrderCommandExecuted, CanSellOrderCommandExecute);
             ReturnProductCommand = new RelayCommand(OnReturnProductCommandExecuted, CanReturnProductCommandExecute);
             ReturnCrackProductCommand = new RelayCommand(OnReturnCrackProductCommandExecuted, CanReturnCrackProductCommandExecute);
+            DrawProductCommand = new RelayCommand(OnDrawProductCommandExecuted, CanDrawProductCommandExecute);
             ClearSelectedProductCommand = new RelayCommand(OnClearSelectedProductCommandExecuted, CanClearSelectedProductCommandExecute);
 
             OpenSellOrderPanelCommand = new RelayCommand(OnOpenSellOrderPanelCommandExecuted, CanOpenSellOrderPanelCommandExecute);
@@ -454,6 +472,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             OpenReturnOrderPanelCommand = new RelayCommand(OnOpenReturnOrderPanelCommandExecuted, CanOpenReturnOrderPanelCommandExecute);
             OpenCrackOrderPanelCommand = new RelayCommand(OnOpenCrackOrderPanelCommandExecuted, CanOpenCrackOrderPanelCommandExecute);
             OpenMenuPanelCommand = new RelayCommand(OnOpenMenuPanelCommandExecuted, CanOpenMenuPanelCommandExecute);
+            OpenDrawPanelCommand = new RelayCommand(OnOpenDrawPanelCommandExecuted, CanOpenDrawPanelCommandExecute);
         }
     }
 }
