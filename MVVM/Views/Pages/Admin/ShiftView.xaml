@@ -101,7 +101,7 @@
                                            Text="{Binding SelectedDReport.DataString, StringFormat='{}Отчет за {0}'}"/>
                                 <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Center" Text="{Binding SelectedDReport.UserInfoVM.FullName}" Foreground="{StaticResource TextG}"/>
                             </StackPanel>
-                            <Button Height="50" Width="100" Style="{StaticResource ButtonInPanelWhite}" HorizontalAlignment="Right" Content="Назад" Margin="0 0 5 0"/>
+                            <Button Height="50" Width="100" Style="{StaticResource ButtonInPanelWhite}" Command="{Binding GoBackOrderCommand}" HorizontalAlignment="Right" Content="Назад" Margin="0 0 5 0"/>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
                         <Grid Margin="10" Height="740">
@@ -152,7 +152,7 @@
                             </DockPanel>
                             <DockPanel Visibility="{Binding CheckListOneObjVisibility}">
                                 <StackPanel Height="740">
-                                    <ScrollViewer VerticalAlignment="Top" Height="540" Margin="0 0 0 40">
+                                    <ScrollViewer VerticalAlignment="Top" Height="560" Margin="0 0 0 40">
                                         <ItemsControl d:ItemsSource="{d:SampleData ItemCount=3}" ItemsSource="{Binding SelectedOrderProduct}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
@@ -170,8 +170,10 @@
                                                             <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center">
                                                                 <TextBlock Style="{StaticResource TitleText}" HorizontalAlignment="Right" 
                                                                        Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
-                                                                <TextBlock Style="{StaticResource RegularText}" HorizontalAlignment="Right" 
-                                                                       Text="{Binding SellCost, StringFormat='\Продано за {0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                                <TextBlock Style="{StaticResource RegularText}" FontWeight="Bold" Foreground="{StaticResource BasicRed}" Visibility="{Binding ReSellCostVisibility}" HorizontalAlignment="Right" 
+                                                                       Text="{Binding ReSellCost, StringFormat='\Продано за {0} ₽'}"/>
+                                                                <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Right" 
+                                                                       Text="{Binding AmountRes, StringFormat='\{0} шт.'}" Foreground="{StaticResource TextB}"/>
                                                             </StackPanel>
                                                         </DockPanel>
                                                     </Border>
@@ -179,24 +181,18 @@
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </ScrollViewer>
-                                    <StackPanel Height="160" VerticalAlignment="Bottom">
+                                    <StackPanel Height="140" VerticalAlignment="Bottom">
                                         <StackPanel Orientation="Horizontal" Margin="0 0 0 20">
-                                            <Border CornerRadius="5" Height="80" Margin="0 0 20 0" Padding="10" Width="180" Background="{StaticResource BasicRed}">
-                                                <Grid>
-                                                    <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource SmallText}" TextWrapping="Wrap" Text="Цена (По чеку):" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                                    <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource RegularText}" Text="{Binding SelectedOrder.SellCost}" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
-                                                </Grid>
+                                            <Border Height="60" Width="600" Background="{StaticResource BasicW}" CornerRadius="5">
+                                                <TextBlock Text="{Binding SelectedOrder.SellCost, StringFormat='\Итого: {0} ₽'}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
                                             </Border>
-                                            <Border CornerRadius="5" Height="80" Padding="10" Width="190" Background="{StaticResource BasicRed}">
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border CornerRadius="5" Margin="0 0 20 0" Height="60" Padding="10" Width="290" Background="{StaticResource BasicRed}">
                                                 <Grid>
                                                     <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource SmallText}" TextWrapping="Wrap" Text="Скидка:" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                                     <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource RegularText}" Text="{Binding SelectedOrder.Discount}" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
                                                 </Grid>
-                                            </Border>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Border Height="60" Width="290" Margin="0 0 20 0" Background="{StaticResource BasicW}" CornerRadius="5">
-                                                <TextBlock Text="{Binding SelectedOrder.SellCost, StringFormat='\Итого: {0} ₽'}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
                                             </Border>
                                             <Border Height="60" Width="290" Background="{StaticResource BasicGreen}" CornerRadius="5">
                                                 <StackPanel VerticalAlignment="Center">

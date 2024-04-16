@@ -126,6 +126,20 @@ namespace Cashbox.MVVM.ViewModels.Admin
             dataload();
         }
 
+        public RelayCommand GoBackOrderCommand { get; set; }
+        private bool CanGoBackOrderCommandExecute(object p) 
+        {
+            if (SelectedOrder != null) 
+                return true;
+            return false;
+        }
+        private void OnGoBackOrderCommandExecuted(object p)
+        {
+            SelectedOrder = null;
+            CheckListOneObjVisibility = Visibility.Collapsed;
+            CheckListVisibility = Visibility.Visible;
+        }
+
         public RelayCommand SeeOrderListCommand { get; set; }
         private bool CanSeeOrderListCommandExecute(object p) => true;
         private void OnSeeOrderListCommandExecuted(object p)
@@ -136,6 +150,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
             foreach (OrderProduct item in SelectedOrder.OrderProducts)
             {
                 ProductViewModel product = new(item.Product);
+                if (item.SellCost != product.SellCost)
+                    product.ReSellCost = item.SellCost;
+                product.AmountRes = item.Amount;
                 SelectedOrderProduct.Add(product);
             }
             CheckListVisibility = Visibility.Collapsed;
@@ -171,6 +188,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             SearchDataCommand = new RelayCommand(OnSearchDataCommandExecuted, CanSearchDataCommandExecute);
             SeeOrderListCommand = new RelayCommand(OnSeeOrderListCommandExecuted, CanSeeOrderListCommandExecute);
             SelectShiftCommand = new RelayCommand(OnSelectShiftCommandExecuted, CanSelectShiftCommandExecute);
+            GoBackOrderCommand = new RelayCommand(OnGoBackOrderCommandExecuted, CanGoBackOrderCommandExecute);
         }
     }
 }

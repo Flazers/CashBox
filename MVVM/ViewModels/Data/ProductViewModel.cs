@@ -86,7 +86,15 @@ namespace Cashbox.MVVM.ViewModels.Data
         }
 
         public double ReSellCost { get; set; }
-        public Visibility ReSellCostVisibility { get; set; }
+        public Visibility ReSellCostVisibility
+        {
+            get
+            {
+                if (ReSellCost != 0)
+                    return Visibility.Visible;
+                return Visibility.Collapsed;
+            }
+        }
 
         public bool IsAvailable
         {

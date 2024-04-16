@@ -86,7 +86,15 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public virtual ICollection<OrderProduct> OrderProducts => _order.OrderProducts!;
 
-        public virtual PaymentMethod PaymentMethod { get; set; } = null!;
+        public virtual PaymentMethod PaymentMethod
+        {
+            get => _order.PaymentMethod!;
+            set 
+            { 
+                _order.PaymentMethod = value;
+                OnPropertyChanged();
+            }
+        }
 
         public virtual DailyReport DailyReport { get; set; } = null!;
 
