@@ -286,7 +286,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 wb.Worksheets[i].Cells[$"E{cell}"].PutValue(product.Description);
                 wb.Worksheets[i].Cells[$"F{cell}"].PutValue(product.SellCost);
                 wb.Worksheets[i].Cells[$"G{cell}"].PutValue(product.Stock.Amount);
-                wb.Worksheets[i].Cells[$"H{cell}"].PutValue(product.IsAvailable);
+                if (product.IsAvailable)
+                    wb.Worksheets[i].Cells[$"H{cell}"].PutValue(1);
+                else
+                    wb.Worksheets[i].Cells[$"H{cell}"].PutValue(0);
             }
 
             void SetRowStyle(Workbook wb, int i, int cell, Aspose.Cells.Style style)

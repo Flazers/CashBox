@@ -178,6 +178,7 @@ public partial class CashBoxDataContext : DbContext
         modelBuilder.Entity<ComingProduct>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BuyCost).HasColumnName("buy_cost");
             entity.Property(e => e.CommingDatetime)
                 .HasColumnType("datetime")
                 .HasColumnName("comming_dt");
@@ -248,6 +249,10 @@ public partial class CashBoxDataContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Refund_Product");
+            entity.HasOne(d => d.DailyReport).WithMany(p => p.Refunds)
+                .HasForeignKey(d => d.DailyReportId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Refunds_DailyReport");
         });
 
         modelBuilder.Entity<Role>(entity =>

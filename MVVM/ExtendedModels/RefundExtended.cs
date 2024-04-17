@@ -1,4 +1,5 @@
-﻿using Cashbox.MVVM.ViewModels.Data;
+﻿using Cashbox.Core;
+using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cashbox.MVVM.Models
@@ -15,6 +16,7 @@ namespace Cashbox.MVVM.Models
             {
                 IsPurchased = false,
                 IsSuccessRefund = false,
+                DailyReportId = DailyReportViewModel.CurrentShift.Id,
             };
             CashBoxDataContext.Context.Refunds.Add(refund);
             await CashBoxDataContext.Context.SaveChangesAsync();
@@ -39,53 +41,104 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<bool> CreateRefundReason(string reason, DateOnly buydate, int productid)
         {
-            CurrentRefund.BuyDate = buydate;
-            CurrentRefund.Reason = reason;
-            CurrentRefund.ProductId = productid;
-            CurrentRefund.DailyReportId = DailyReportViewModel.CurrentShift.Id;
-            CurrentRefund.IsPurchased = true;
-            CurrentRefund.IsSuccessRefund = false;
-            await CashBoxDataContext.Context.SaveChangesAsync();
-            CurrentRefund = null;
-            return true;
+            try
+            {
+                CurrentRefund.BuyDate = buydate;
+                CurrentRefund.Reason = reason;
+                CurrentRefund.ProductId = productid;
+                CurrentRefund.IsPurchased = true;
+                CurrentRefund.IsSuccessRefund = false;
+                CurrentRefund = null;
+                await CreateRefundDefect(productid, reason);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
+
         }
 
-        public static async Task<bool> CreateRefundDefect(int productid)
+        public static async Task<bool> CreateRefundDefect(int productid, string reason)
         {
-            CurrentRefund.Reason = "Брак";
-            CurrentRefund.ProductId = productid;
-            CurrentRefund.DailyReportId = DailyReportViewModel.CurrentShift.Id;
-            CurrentRefund.IsPurchased = false;
-            CurrentRefund.IsSuccessRefund = false;
-            await CashBoxDataContext.Context.SaveChangesAsync();
-            CurrentRefund = null;
-            return true;
+            try
+            {
+                CurrentRefund.Reason = reason;
+                CurrentRefund.ProductId = productid;
+                CurrentRefund.BuyDate = null;
+                CurrentRefund.IsPurchased = false;
+                CurrentRefund.IsSuccessRefund = false;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                CurrentRefund = null;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
         }
 
-        public static async Task<bool> CreateDraw(int productid)
+        public static async Task<bool> CreateDraw(int productid, DateOnly datedraw)
         {
-            CurrentRefund.Reason = "Розыгрыш";
-            CurrentRefund.ProductId = productid;
-            CurrentRefund.DailyReportId = DailyReportViewModel.CurrentShift.Id;
-            CurrentRefund.IsPurchased = false;
-            CurrentRefund.IsSuccessRefund = false;
-            await CashBoxDataContext.Context.SaveChangesAsync();
-            CurrentRefund = null;
-            return true;
+            try
+            {
+                CurrentRefund.Reason = "Розыгрыш";
+                CurrentRefund.BuyDate = datedraw;
+                CurrentRefund.ProductId = productid;
+                CurrentRefund.IsPurchased = false;
+                CurrentRefund.IsSuccessRefund = false;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                CurrentRefund = null;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
+        }
+
+        public static async Task<bool> SuccessRefund(int productid, bool success)
+        {
+            try
+            {
+                CurrentRefund = await CashBoxDataContext.Context.Refunds.FirstOrDefaultAsync(x => x.ProductId == productid);
+                CurrentRefund.IsSuccessRefund = success;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
+
         }
 
         public static async Task<List<RefundViewModel>> GetRefundedAllProduct() => await CashBoxDataContext.Context.Refunds
                                                                                 .Select(s => new RefundViewModel(s))
                                                                                 .ToListAsync();
 
+        public static async Task<List<RefundViewModel>> GetRefundedDailyProduct(int DRid) => await CashBoxDataContext.Context.Refunds
+                                                                        .Where(x => x.DailyReportId == DRid && x.IsPurchased == true)
+                                                                        .Select(s => new RefundViewModel(s))
+                                                                        .ToListAsync();
+
         public static async Task<List<RefundViewModel>> GetRefundedDefect() => await CashBoxDataContext.Context.Refunds
                                                                             .Select(s => new RefundViewModel(s))
-                                                                            .Where(x => x.IsPurchased == false && x.IsSuccessRefund == false)
+                                                                            .Where(x => x.IsPurchased == false)
                                                                             .ToListAsync();
 
         public static async Task<List<RefundViewModel>> GetRefundedReason() => await CashBoxDataContext.Context.Refunds
                                                                             .Select(s => new RefundViewModel(s))
-                                                                            .Where(x => x.IsPurchased == true && x.IsSuccessRefund == false)
+                                                                            .Where(x => x.IsPurchased == true && x.BuyDate == null)
                                                                             .ToListAsync();
+
+        public static async Task<List<RefundViewModel>> GetDraw() => await CashBoxDataContext.Context.Refunds
+                                                                    .Select(s => new RefundViewModel(s))
+                                                                    .Where(x => x.IsPurchased == false && x.BuyDate != null)
+                                                                    .ToListAsync();
     }
 }

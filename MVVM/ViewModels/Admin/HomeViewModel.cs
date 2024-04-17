@@ -25,8 +25,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _details, value);
         }
 
-        private List<AuthHistoryViewModel>? _authHistory;
-        public List<AuthHistoryViewModel>? AuthHistory
+        private ObservableCollection<AuthHistoryViewModel>? _authHistory;
+        public ObservableCollection<AuthHistoryViewModel>? AuthHistory
         {
             get => _authHistory;
             set => Set(ref _authHistory, value);
@@ -139,7 +139,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public override async void OnLoad()
         {
             //var data = Order.GetSellDetail(DateOnly.Parse("2.04.2024"), DateOnly.Parse("5.04.2024"));
-            AuthHistory = AuthHistoryViewModel.GetAuthHistories().Result.TakeLast(3).OrderByDescending(x => x.Datetime).ToList();
+            AuthHistory = new(await AuthHistoryViewModel.GetAuthHistories());
+            AuthHistory = new(AuthHistory.TakeLast(3).OrderByDescending(x => x.Datetime).ToList());
+
         }
 
         public HomeViewModel()

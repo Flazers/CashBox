@@ -18,11 +18,13 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<RefundViewModel> CreateRefund() => await Refund.CreateRefund();
         public static async Task<bool> RemoveCurrentRefund() => await Refund.RemoveCurrentRefund();
         public static async Task<bool> CreateRefundReason(string reason, DateOnly buydate, int productid) => await Refund.CreateRefundReason(reason, buydate, productid);
-        public static async Task<bool> CreateRefundDefect(int productid) => await Refund.CreateRefundDefect(productid);
-        public static async Task<bool> CreateDraw(int productid) => await Refund.CreateDraw(productid);
+        public static async Task<bool> CreateRefundDefect(int productid, string reason) => await Refund.CreateRefundDefect(productid, reason);
+        public static async Task<bool> CreateDraw(int productid, DateOnly datedraw) => await Refund.CreateDraw(productid, datedraw);
         public static async Task<List<RefundViewModel>> GetRefundedAllProduct() => await Refund.GetRefundedAllProduct();
+        public static async Task<List<RefundViewModel>> GetRefundedDailyProduct(int DRid) => await Refund.GetRefundedDailyProduct(DRid);
         public static async Task<List<RefundViewModel>> GetRefundedDefect() => await Refund.GetRefundedDefect();
         public static async Task<List<RefundViewModel>> GetRefundedReason() => await Refund.GetRefundedReason();
+        public static async Task<List<RefundViewModel>> GetDraw() => await Refund.GetDraw();
 
         public int Id => _refund.Id;
 
@@ -86,7 +88,16 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public virtual Product? Product { get; set; } = null!;
+        public virtual Product? Product 
+        {
+            get => _refund.Product;
+            private set
+            {
+                _refund.Product = value;
+                OnPropertyChanged();
+            }
+        }
+
         public virtual DailyReport DailyReport { get; set; } = null!;
     }
 }

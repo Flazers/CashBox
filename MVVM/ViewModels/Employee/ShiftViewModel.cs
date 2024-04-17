@@ -64,13 +64,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _startCash, value);
         }
 
-        private double _newCash;
-        public double NewCash
-        {
-            get => _newCash;
-            set => Set(ref _newCash, value);
-        }
-
         private string? _currentCash;
         public string? CurrentCash
         {
@@ -173,7 +166,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             if (result == MessageBoxResult.No)
                 return;
             EndShiftTime = TimeOnly.FromDateTime(DateTime.Now);
-            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, NalTransit);
+            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, double.Parse(CurrentCash));
             AutoDailyReportViewModel adreport = await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
             StartShiftVisibility = Visibility.Collapsed;
             ProcessShiftVisibility = Visibility.Visible;
@@ -209,10 +202,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCost!);
             CollectionOrders = new(await OrderViewModel.GetAllDayOrders(DateOnly.FromDateTime(DateTime.Today)));
             if (DailyReport.CurrentShift != null)
-            {
                 StartCash = DailyReport.CurrentShift.CashOnStart;
-                NewCash = StartCash + NalTransit;
-            }
             else
                 StartCash = MoneyBoxViewModel.GetMoney;
             FullTransit = SendTransit + CardTransit + NalTransit;

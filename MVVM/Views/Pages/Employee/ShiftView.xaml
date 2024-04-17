@@ -41,19 +41,12 @@
                             <Button Style="{StaticResource ButtonInPanelGray}" Command="{Binding SeeCheckPanelCommand}" HorizontalAlignment="Right" Width="270" Content="Чеки"/>
                         </Grid>
                         <StackPanel Height="690">
-                            <Grid>
+                            <Grid Margin="0 10 0 0">
                                 <StackPanel Orientation="Horizontal">
                                     <Icon:PackIconMaterial Kind="Safe" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="На начало смены" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
                                 <TextBlock HorizontalAlignment="Right" Text="{Binding StartCash, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
-                            </Grid>
-                            <Grid Margin="0 10 0 0">
-                                <StackPanel Orientation="Horizontal">
-                                    <Icon:PackIconMaterial Kind="CashCheck" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
-                                    <TextBlock Margin="10 0 0 0" Text="Денег в кассе" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
-                                </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding NewCash, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                             <Grid Height="60" Margin="0 10 0 0">
                                 <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Top" CornerRadius="1"/>

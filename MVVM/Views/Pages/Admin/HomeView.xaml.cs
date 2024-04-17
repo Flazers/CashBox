@@ -51,7 +51,7 @@ namespace Cashbox.MVVM.Views.Pages.Admin
             List<DailyReportViewModel> data = await DailyReportViewModel.GetPeriodReports(DateOnly.FromDateTime(startDate), DateOnly.FromDateTime(endDate));
             foreach (var item in data)
             {
-                yMoney[item.Data!.Value.Day - 1] = item.AutoDreportVM.FullTransit!.Value - item.CashOnStart;
+                yMoney[item.Data!.Value.Day - 1] = item.AutoDreportVM.FullTransit!.Value;
             }
 
             var bars = WpfPlot1.Plot.Add.Bars(xDays, yMoney);

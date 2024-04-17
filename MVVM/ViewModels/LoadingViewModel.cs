@@ -80,7 +80,7 @@ namespace Cashbox.MVVM.ViewModels
         {
             MaxProgress = maxProg;
             int mainDelay = 100;
-            int secondDelay = 500;
+            int secondDelay = 300;
 
             SetStatus("Поиск базы данных...", "loading", 1);
             if (CashBoxDataContext.Context.Database.EnsureCreated())
@@ -138,19 +138,22 @@ namespace Cashbox.MVVM.ViewModels
             await Task.Delay(mainDelay);
 
             SetStatus("Загрузка базы данных в локальный кэш", "loading", 7);
-            CashBoxDataContext.Context.Roles.Load();
-            CashBoxDataContext.Context.UserInfos.Load();
-            CashBoxDataContext.Context.Users.Load();
+            CashBoxDataContext.Context.AppSettings.Load();
             CashBoxDataContext.Context.AuthHistories.Load();
             CashBoxDataContext.Context.AutoDreports.Load();
+            CashBoxDataContext.Context.ComingProducts.Load();
             CashBoxDataContext.Context.DailyReports.Load();
+            CashBoxDataContext.Context.MoneyBoxes.Load();
             CashBoxDataContext.Context.Orders.Load();
             CashBoxDataContext.Context.OrderProducts.Load();
             CashBoxDataContext.Context.PaymentMethods.Load();
+            CashBoxDataContext.Context.Products.Load();
+            CashBoxDataContext.Context.ProductCategories.Load();
             CashBoxDataContext.Context.Refunds.Load();
+            CashBoxDataContext.Context.Roles.Load();
             CashBoxDataContext.Context.Stocks.Load();
-            CashBoxDataContext.Context.AppSettings.Load();
-            CashBoxDataContext.Context.MoneyBoxes.Load();
+            CashBoxDataContext.Context.UserInfos.Load();
+            CashBoxDataContext.Context.Users.Load();
             await Task.Delay(mainDelay);
 
             try
@@ -161,7 +164,7 @@ namespace Cashbox.MVVM.ViewModels
             }
             catch (HttpRequestException)
             {
-                MessageBox.Show("Нет интернет соединения \nНекоторые функции могут быть недоступны", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Нет интернет соединения \nПриложение может работать некорректно", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                 await Task.Delay(secondDelay);
             }
 

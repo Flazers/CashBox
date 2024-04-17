@@ -20,12 +20,17 @@
             </DockPanel>
         </Border>
 
-        <DockPanel Margin="0 40 0 0">
+        <Grid Margin="0 40 0 0">
             <Border HorizontalAlignment="Left" Style="{StaticResource PanelBorder}" Height="880" Width="870">
                 <StackPanel>
                     <Grid Margin="0 -10 0 30" Height="80">
                         <TextBlock Style="{DynamicResource TitleText}" Margin="5 0 0 0" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Товары"/>
-                        <TextBox Style="{StaticResource Search}" Text="{Binding SearchCollectionProduct}" Margin="0 0 5 0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="340"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBox Style="{StaticResource Search}" Text="{Binding SearchCollectionProduct}" Height="50" Margin="0 0 40 0" Width="300" VerticalAlignment="Center"/>
+                            <Button Height="50" Width="50" Command="{Binding SearchDataCommand}" VerticalAlignment="Center" Style="{StaticResource ButtonInPanelGreen}">
+                                <Icon:PackIconMaterialDesign Kind="Search" Width="30" Height="30"/>
+                            </Button>
+                        </StackPanel>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
 
@@ -66,7 +71,7 @@
             </Border>
 
             <!--Меню -->
-            <Border Visibility="{Binding MenuPanelVisibility}" DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <Border Visibility="{Binding MenuPanelVisibility}" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <Grid>
                     <Grid Margin="0 -10 0 30" Height="80" VerticalAlignment="Top">
                         <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Меню"/>
@@ -100,7 +105,7 @@
             <!--Меню-->
             
             <!--Продажа-->
-            <Border HorizontalAlignment="Right" Visibility="{Binding OrderPanelVisibility}" DockPanel.Dock="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <Border HorizontalAlignment="Right" Visibility="{Binding OrderPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -161,7 +166,7 @@
                 </StackPanel>
             </Border>
 
-            <Border Visibility="{Binding SellPanelVisibility}" DockPanel.Dock="Right" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <Border Visibility="{Binding SellPanelVisibility}" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -228,14 +233,14 @@
             <!--Продажа-->
             
             <!--Возврат-->
-            <Border HorizontalAlignment="Right" DockPanel.Dock="Right" Visibility="{Binding ReturnPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <Border HorizontalAlignment="Right" Visibility="{Binding ReturnPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Style="{DynamicResource TitleText}" HorizontalAlignment="Center" Foreground="{StaticResource TextW}" 
                                Text="{Binding CurrentRefund.Id, StringFormat='{}Возврат №{0}'}"/>
                         </StackPanel>
-                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCurrentCrackReturnCommand}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
+                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCurrentRefundCommand}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
 
@@ -243,7 +248,7 @@
                         <StackPanel Height="670" VerticalAlignment="Top">
                             <StackPanel>
                                 <TextBox Style="{StaticResource InputTB}" Text="{Binding RefundReason}" Margin="0 0 0 20" Tag="Причина возврата"/>
-                                <DatePicker Tag="Дата покупки" Text="{Binding RefundBuyDate}"/>
+                                <DatePicker Tag="Дата покупки" SelectedDate="{Binding RefundBuyDate}"/>
                             </StackPanel>
 
                             <Border BorderThickness="0 2 0 2" Height="60" BorderBrush="{StaticResource BasicW}" Margin="0 40 0 30">
@@ -292,12 +297,20 @@
                             <TextBlock Style="{DynamicResource TitleText}" HorizontalAlignment="Center" Foreground="{StaticResource TextW}" 
                                Text="{Binding CurrentRefund.Id, StringFormat='{}Брак №{0}'}"/>
                         </StackPanel>
-                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCurrentCrackReturnCommand}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
+                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCurrentRefundCommand}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
 
-                    <Grid Margin="10 0 10 10" Height="750">
-                        <ItemsControl ItemsSource="{Binding SelectedProductRef}" d:ItemsSource="{d:SampleData ItemCount=1}">
+                    <StackPanel Margin="10 0 10 10" Height="750">
+                        <StackPanel>
+                            <TextBox Style="{StaticResource InputTB}" Text="{Binding RefundReason}" Tag="Причина брака"/>
+                        </StackPanel>
+
+                        <Border BorderThickness="0 2 0 2" Height="60" BorderBrush="{StaticResource BasicW}" Margin="0 40 0 30">
+                            <TextBlock Text="Товар" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}"/>
+                        </Border>
+
+                        <ItemsControl ItemsSource="{Binding SelectedProductRef}" Height="490" d:ItemsSource="{d:SampleData ItemCount=1}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Height="100"
@@ -324,7 +337,7 @@
                         <StackPanel VerticalAlignment="Bottom">
                             <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding ReturnCrackProductCommand}" Content="Отметить брак"/>
                         </StackPanel>
-                    </Grid>
+                    </StackPanel>
                 </StackPanel>
             </Border>
             <!--Брак-->
@@ -337,12 +350,19 @@
                             <TextBlock Style="{DynamicResource TitleText}" HorizontalAlignment="Center" Foreground="{StaticResource TextW}" 
                                Text="{Binding CurrentRefund.Id, StringFormat='{}Розыгрыш №{0}'}"/>
                         </StackPanel>
-                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCurrentCrackReturnCommand}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
+                        <Button Height="50" Width="120" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCurrentRefundCommand}" HorizontalAlignment="Right" Content="Удалить" Margin="0 0 5 0"/>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
 
-                    <Grid Margin="10 0 10 10" Height="750">
-                        <ItemsControl ItemsSource="{Binding SelectedProductRef}" d:ItemsSource="{d:SampleData ItemCount=1}">
+                    <StackPanel Margin="10 0 10 10" Height="750">
+                        <StackPanel>
+                            <DatePicker Tag="Дата розыгрыша" SelectedDate="{Binding RefundBuyDate}"/>
+                        </StackPanel>
+
+                        <Border BorderThickness="0 2 0 2" Height="60" BorderBrush="{StaticResource BasicW}" Margin="0 40 0 30">
+                            <TextBlock Text="Товар" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}"/>
+                        </Border>
+                        <ItemsControl ItemsSource="{Binding SelectedProductRef}" Height="510" d:ItemsSource="{d:SampleData ItemCount=1}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Height="100"
@@ -369,11 +389,11 @@
                         <StackPanel VerticalAlignment="Bottom">
                             <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding DrawProductCommand}" Content="Разыграть"/>
                         </StackPanel>
-                    </Grid>
+                    </StackPanel>
                 </StackPanel>
             </Border>
             <!--Розыгрыш-->
-        </DockPanel>
+        </Grid>
 
     </StackPanel>
 </UserControl>

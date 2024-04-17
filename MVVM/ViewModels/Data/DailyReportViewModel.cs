@@ -80,13 +80,18 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public int RefundCount => _dailyReport.Refunds.Where(x => x.IsPurchased == true).Count(); 
+        public int CrackCount => _dailyReport.Refunds.Where(x => x.IsPurchased == false && x.BuyDate == null).Count();
+        public int DrawCount => _dailyReport.Refunds.Where(x => x.IsPurchased == false && x.BuyDate != null).Count();
+
         public virtual AutoDreport? AutoDreport { get; set; }
 
-        public virtual AutoDailyReportViewModel? AutoDreportVM { get => new(_dailyReport.AutoDreport); }
+        public virtual AutoDailyReportViewModel? AutoDreportVM { get => new(_dailyReport.AutoDreport!); }
 
         public virtual UserInfoViewModel UserInfoVM => new(_dailyReport.User.UserInfo!);
 
         public virtual ICollection<Order> Orders { get => _dailyReport.Orders; }
+        public virtual ICollection<Refund> Refunds { get => _dailyReport.Refunds; }
 
         public virtual User User { get; set; } = null!;
     }

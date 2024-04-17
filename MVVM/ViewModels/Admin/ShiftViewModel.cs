@@ -28,6 +28,48 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
         }
 
+        private Visibility _refundListVisibilityPanel = Visibility.Collapsed;
+        public Visibility RefundListVisibilityPanel
+        {
+            get => _refundListVisibilityPanel;
+            set => Set(ref _refundListVisibilityPanel, value);
+        }
+
+        private Visibility _ordersListVisibility = Visibility.Visible;
+        public Visibility OrdersListVisibility
+        {
+            get => _ordersListVisibility;
+            set => Set(ref _ordersListVisibility, value);
+        }
+
+        private bool _checkBool = true;
+        public bool CheckBool
+        {
+            get => _checkBool;
+            set 
+            {
+                _checkBool = value;
+                OrdersListVisibility = Visibility.Collapsed;
+                if (value)
+                    OrdersListVisibility = Visibility.Visible;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _refundBool = false;
+        public bool RefundBool
+        {
+            get => _refundBool;
+            set
+            {
+                _refundBool = value;
+                RefundListVisibilityPanel = Visibility.Collapsed;
+                if (value)
+                    RefundListVisibilityPanel = Visibility.Visible;
+                OnPropertyChanged();
+            }
+        }
+
         private Visibility _checkListVisibility = Visibility.Collapsed;
         public Visibility CheckListVisibility
         {
@@ -40,6 +82,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get => _checkListOneObjVisibility;
             set => Set(ref _checkListOneObjVisibility, value);
+        }
+
+        private string _search = string.Empty;
+        public string Search
+        {
+            get => _search;
+            set => Set(ref _search, value);
         }
 
         private ObservableCollection<OrderViewModel> _selectedOrderList = [];
@@ -61,6 +110,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get => _selectedOrderProduct;
             set => Set(ref _selectedOrderProduct, value);
+        }
+
+        private ObservableCollection<RefundViewModel> _dailyRefundCollection = [];
+        public ObservableCollection<RefundViewModel> DailyRefundCollection
+        {
+            get => _dailyRefundCollection;
+            set => Set(ref _dailyRefundCollection, value);
         }
 
         private DateTime _endDate = DateTime.Today;
@@ -121,18 +177,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public RelayCommand SearchDataCommand { get; set; }
         private bool CanSearchDataCommandExecute(object p) => true;
-        private async void OnSearchDataCommandExecuted(object p)
+        private void OnSearchDataCommandExecuted(object p)
         {
-            dataload();
+            Dataload(Search);
         }
 
         public RelayCommand GoBackOrderCommand { get; set; }
-        private bool CanGoBackOrderCommandExecute(object p) 
-        {
-            if (SelectedOrder != null) 
-                return true;
-            return false;
-        }
+        private bool CanGoBackOrderCommandExecute(object p) => true;
         private void OnGoBackOrderCommandExecuted(object p)
         {
             SelectedOrder = null;
@@ -166,6 +217,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (p == null) return;
             SelectedDReport = DailyReportCollection.FirstOrDefault(x => x.Id == (int)p)!;
             SelectedOrderList = new(await OrderViewModel.GetAllDayOrders((DateOnly)SelectedDReport.Data!));
+            DailyRefundCollection = new(await RefundViewModel.GetRefundedDailyProduct(SelectedDReport.Id));
             CheckListOneObjVisibility = Visibility.Collapsed;
             CheckListVisibility = Visibility.Visible;
         }
@@ -174,17 +226,21 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public override async void OnLoad()
         {
             ProductCollection = new(await ProductViewModel.GetProducts(true));
-            dataload();
+            Dataload();
         }
 
-        public async void dataload()
+        public async void Dataload(string search = "")
         {
             List<DailyReportViewModel> data = await DailyReportViewModel.GetPeriodReports(DateOnly.FromDateTime(StartDate), DateOnly.FromDateTime(EndDate));
-            DailyReportCollection = new(data.OrderByDescending(x => x.Data));
+            if (search == "")
+                DailyReportCollection = new(data.OrderByDescending(x => x.Data));
+            else
+                DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.Contains(search.ToLower().Trim())).OrderByDescending(x => x.Data));
         }
 
         public ShiftViewModel()
         {
+            Dataload();
             SearchDataCommand = new RelayCommand(OnSearchDataCommandExecuted, CanSearchDataCommandExecute);
             SeeOrderListCommand = new RelayCommand(OnSeeOrderListCommandExecuted, CanSeeOrderListCommandExecute);
             SelectShiftCommand = new RelayCommand(OnSelectShiftCommandExecuted, CanSelectShiftCommandExecute);

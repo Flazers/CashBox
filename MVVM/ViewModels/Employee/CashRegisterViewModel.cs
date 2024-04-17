@@ -63,7 +63,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _selectedProductRef, value);
         }
 
-        private ObservableCollection<ProductViewModel> _collectionProducts = new(ProductViewModel.GetProducts().Result);
+        private ObservableCollection<ProductViewModel> _collectionProducts = [];
         public ObservableCollection<ProductViewModel> CollectionProducts 
         {
             get => _collectionProducts;
@@ -74,26 +74,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         public string? SearchCollectionProduct
         {
             get => _searchCollectionProduct;
-            set
-            {
-                //OnLoad();
-                //_searchCollectionProduct = value;
-                //Task.Delay(200);
-                //if (string.IsNullOrWhiteSpace(_searchCollectionProduct) || value == null)
-                //    CollectionProducts = CollectionProductsBase;
-                //else
-                //{
-                //    CollectionProducts =
-                //        new(CollectionProductsBase
-                //            .Where(x =>
-                //                x.Title.Contains(value) ||
-                //                x.Brand.Contains(value) ||
-                //                x.Description.Contains(value)
-                //            )
-                //        );
-                //}
-                OnPropertyChanged();
-            }
+            set => Set(ref _searchCollectionProduct, value);
         }
 
         private ObservableCollection<OrderProductViewModel> _orderProductsBasket = [];
@@ -149,8 +130,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _refundReason, value);
         }
 
-        private DateOnly _refundBuyDate;
-        public DateOnly RefundBuyDate
+        private DateTime _refundBuyDate = DateTime.Today;
+        public DateTime RefundBuyDate
         {
             get => _refundBuyDate;
             set => Set(ref _refundBuyDate, value);
@@ -234,7 +215,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
         private void OnAddProductInBasketCommandExecuted(object p)
         {
-            if (ReturnPanelVisibility == Visibility.Visible || CrackPanelVisibility == Visibility.Visible)
+            if (ReturnPanelVisibility == Visibility.Visible || CrackPanelVisibility == Visibility.Visible || DrawPanelVisibility == Visibility.Visible)
             {
                 SelectedProductRef = [];
                 SelectedProductRef.Add(CollectionProducts.FirstOrDefault(x => x.Id == (int)p));
@@ -356,9 +337,9 @@ namespace Cashbox.MVVM.ViewModels.Employee
             OrderProductsBasket = [];
         }
 
-        public RelayCommand RemoveCurrentCrackReturnCommand { get; set; }
-        private bool CanRemoveCurrentCrackReturnCommandExecute(object p) => true;
-        private async void OnRemoveCurrentCrackReturnCommandExecuted(object p)
+        public RelayCommand RemoveCurrentRefundCommand { get; set; }
+        private bool CanRemoveCurrentRefundCommandExecute(object p) => true;
+        private async void OnRemoveCurrentRefundCommandExecuted(object p)
         {
             if (CurrentRefund == null) return;
             await RefundViewModel.RemoveCurrentRefund();
@@ -405,7 +386,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
         private async void OnReturnProductCommandExecuted(object p)
         {
-            bool data = await RefundViewModel.CreateRefundReason(RefundReason, RefundBuyDate, SelectedProductRef[0].Id);
+            bool data = await RefundViewModel.CreateRefundReason(RefundReason, DateOnly.FromDateTime(RefundBuyDate), SelectedProductRef[0].Id);
             if (data)
                 MessageBox.Show($"Возврат продукта выполнен");
             CurrentRefund = null;
@@ -422,7 +403,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
         private async void OnReturnCrackProductCommandExecuted(object p)
         {
-            bool data = await RefundViewModel.CreateRefundDefect(SelectedProductRef[0].Id);
+            bool data = await RefundViewModel.CreateRefundDefect(SelectedProductRef[0].Id, RefundReason);
             if (data)
                 MessageBox.Show($"Брак отмечен");
             CurrentRefund = null;
@@ -438,7 +419,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
         private async void OnDrawProductCommandExecuted(object p)
         {
-            bool data = await RefundViewModel.CreateDraw(SelectedProductRef[0].Id);
+            bool data = await RefundViewModel.CreateDraw(SelectedProductRef[0].Id, DateOnly.FromDateTime(RefundBuyDate));
             if (data)
                 MessageBox.Show($"Продукт разыгран");
             CurrentRefund = null;
@@ -450,17 +431,27 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private void OnClearSelectedProductCommandExecuted(object p)
         {
             SelectedProductRef = [];
+            RefundBuyDate = DateTime.Today;
+        }
+
+        private async void DataLoad(string search = "")
+        {
+            CollectionProducts = new(await ProductViewModel.GetProducts());
+            search = search.ToLower().Trim();
+            if (search != "")
+                CollectionProducts = new(CollectionProducts.Where(x => x.Brand.Contains(search) || x.Title.Contains(search) || x.Description.Contains(search)).ToList());
         }
 
         #endregion
         public CashRegisterViewModel()
         {
+            DataLoad();
             AddProductInBasketCommand = new RelayCommand(OnAddProductInBasketCommandExecuted, CanAddProductInBasketCommandExecute);
             IncreaseAmountProductBasketCommand = new RelayCommand(OnIncreaseAmountProductBasketCommandExecuted, CanIncreaseAmountProductBasketCommandExecute);
             DecreaseAmountProductBasketCommand = new RelayCommand(OnDecreaseAmountProductBasketCommandExecuted, CanDecreaseAmountProductBasketCommandExecute);
             RemoveProductInBasketCommand = new RelayCommand(OnRemoveProductInBasketCommandExecuted, CanRemoveProductInBasketCommandExecute);
             RemoveCurrentOrderCommand = new RelayCommand(OnRemoveCurrentOrderCommandExecuted, CanRemoveCurrentOrderCommandExecute);
-            RemoveCurrentCrackReturnCommand = new RelayCommand(OnRemoveCurrentCrackReturnCommandExecuted, CanRemoveCurrentCrackReturnCommandExecute);
+            RemoveCurrentRefundCommand = new RelayCommand(OnRemoveCurrentRefundCommandExecuted, CanRemoveCurrentRefundCommandExecute);
             SellOrderCommand = new RelayCommand(OnSellOrderCommandExecuted, CanSellOrderCommandExecute);
             ReturnProductCommand = new RelayCommand(OnReturnProductCommandExecuted, CanReturnProductCommandExecute);
             ReturnCrackProductCommand = new RelayCommand(OnReturnCrackProductCommandExecuted, CanReturnCrackProductCommandExecute);
