@@ -33,7 +33,8 @@ namespace Cashbox.MVVM.Views.Pages.Admin
                 return;
             }
             char number = Convert.ToChar(e.Text);
-
+            if (number == '0' && ((TextBox)sender).Text.Length == 0)
+                e.Handled = true;
             if (!Char.IsDigit(number))
             {
                 e.Handled = true;

@@ -4,14 +4,7 @@ using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using Cashbox.Service;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels
@@ -156,20 +149,8 @@ namespace Cashbox.MVVM.ViewModels
             CashBoxDataContext.Context.Users.Load();
             await Task.Delay(mainDelay);
 
-            try
-            {
-                SetStatus("Проверка интернет соединения", "loading", 8);
-                HttpClient client = new();
-                HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
-            }
-            catch (HttpRequestException)
-            {
-                MessageBox.Show("Нет интернет соединения \nПриложение может работать некорректно", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                await Task.Delay(secondDelay);
-            }
-
             await Task.Delay(mainDelay);
-            SetStatus("Запуск", "loading", 9);
+            SetStatus("Запуск", "loading", 8);
             await Task.Delay(mainDelay);
 
             return true;
@@ -209,11 +190,12 @@ namespace Cashbox.MVVM.ViewModels
         {
             CloseApplicationCommand = new RelayCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
             Title = "Загрузка приложения";
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 try
                 {
-                    if (!CheckApp(9).Result)
+                    bool result = await CheckApp(8);
+                    if (!result)
                         return;
                     NavigationService = navService;
                     NavigationService.NavigateTo<AuthViewModel>();

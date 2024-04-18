@@ -19,12 +19,15 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #region UserData
 
-        private int _pincode;
-        public int Pincode
+        private string _pincode;
+        public string Pincode
         {
             get => _pincode;
             set => Set(ref _pincode, value);
         }
+
+        public int PincodeInt => int.Parse(Pincode);
+        
 
         private string? _name;
         public string? Name
@@ -171,7 +174,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private async void OnCreateUserCommandExecuted(object p)
         {
             if (Pincode.ToString().Length != 6 || Name == null || Surname == null || Patronymic == null || Location == null || Phone == null || Role == null) return;
-            UserViewModel user = await UserViewModel.CreateUser(Pincode, Name, Surname, Patronymic, Location, Phone, Role);
+            UserViewModel user = await UserViewModel.CreateUser(PincodeInt, Name, Surname, Patronymic, Location, Phone, Role);
             if (user == null)
             {
                 MessageBox.Show("Не удалось создать пользователя с данным пинкодом", "Ошибка");

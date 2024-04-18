@@ -76,8 +76,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get
             {
-                if (_newCashInBox <= 1500) return _newCashInBox;
-                return MoneyBoxViewModel.GetMoney - 1500;
+                if (_cashInBox <= 1500) 
+                    return _newCashInBox;
+                return _cashInBox - 1500;
             }
             set => Set(ref _newCashInBox, value);
         }

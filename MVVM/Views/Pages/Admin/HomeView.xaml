@@ -22,7 +22,6 @@
                         </Grid>
                         <Grid Width="1060" Height="410" Background="Transparent">
                             <ScottPlot:WpfPlot x:Name="WpfPlot1"/>
-                            <Button Click="Button_Click" Width="50" HorizontalAlignment="Right" VerticalAlignment="Top" Height="50"/>
                         </Grid>
                     </StackPanel>
                 </Border>

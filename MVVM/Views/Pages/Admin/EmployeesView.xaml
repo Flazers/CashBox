@@ -67,14 +67,12 @@
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
                         <StackPanel Height="650" Margin="10 0">
-                            <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Name}" Tag="Имя" Margin="0 0 0 20"/>
                             <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
+                            <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Name}" Tag="Имя" Margin="0 0 0 20"/>
                             <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
                             <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Location}" Tag="Место жительства" Margin="0 0 0 20"/>
                             <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Phone}" Tag="Телефон" Margin="0 0 0 20"/>
-                            <ComboBox Tag="Роль" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionUserRoles}" DisplayMemberPath="Role1"
-                                      SelectedItem="{Binding SelectedUser.UserInfo.RoleVM}" SelectedValuePath="Role1" Margin="0 0 0 20"/>
-                            <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.Pin}" Tag="Пинкод" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
+                            <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.Pin}" Tag="Пинкод" x:Name="pin" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="10 40 10 0">
                         <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding ClosePanelEditUserCommand}" Width="230" Margin="0 0 20 0" Content="Закрыть"/>
@@ -136,8 +134,8 @@
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
                         <StackPanel Height="650" Margin="10 0">
-                            <TextBox Style="{StaticResource InputTB}" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
                             <TextBox Style="{StaticResource InputTB}" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
+                            <TextBox Style="{StaticResource InputTB}" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
                             <TextBox Style="{StaticResource InputTB}" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
                             <TextBox Style="{StaticResource InputTB}" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
                             <TextBox Style="{StaticResource InputTB}" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>

@@ -27,10 +27,12 @@ namespace Cashbox.MVVM.Views.Pages.Admin
         public HomeView()
         {
             InitializeComponent();
+            RefreshDataPlot();
         }
 
         public async void RefreshDataPlot()
         {
+            WpfPlot1.Plot.Clear();
             DateTime date = DateTime.Today;
             var startDate = new DateTime(date.Year, date.Month, 1);
             var endDate = startDate.AddMonths(1).AddDays(-1);
@@ -66,12 +68,6 @@ namespace Cashbox.MVVM.Views.Pages.Admin
             bars.ValueLabelStyle.FontSize = 14;
 
             WpfPlot1.Plot.Axes.Margins(bottom: 0);
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            WpfPlot1.Plot.Clear();
-            RefreshDataPlot();
             WpfPlot1.Refresh();
         }
     }
