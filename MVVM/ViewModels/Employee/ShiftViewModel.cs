@@ -55,6 +55,27 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _shiftVisibility, value);
         }
 
+        private Visibility _ordersListVisibility = Visibility.Visible;
+        public Visibility OrdersListVisibility
+        {
+            get => _ordersListVisibility;
+            set => Set(ref _ordersListVisibility, value);
+        }
+
+        private Visibility _checkListVisibility = Visibility.Visible;
+        public Visibility CheckListVisibility
+        {
+            get => _checkListVisibility;
+            set => Set(ref _checkListVisibility, value);
+        }
+
+        private Visibility _checkListOneObjVisibility = Visibility.Collapsed;
+        public Visibility CheckListOneObjVisibility
+        {
+            get => _checkListOneObjVisibility;
+            set => Set(ref _checkListOneObjVisibility, value);
+        }
+
         #endregion
 
         private double _startCash;
@@ -106,11 +127,25 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _autoShift, value);
         }
 
-        private ObservableCollection<OrderViewModel>? _collectionOrders;
-        public ObservableCollection<OrderViewModel>? CollectionOrders
+        private OrderViewModel? _selectedOrder;
+        public OrderViewModel? SelectedOrder
         {
-            get => _collectionOrders;
-            set => Set(ref _collectionOrders, value);
+            get => _selectedOrder;
+            set => Set(ref _selectedOrder, value);
+        }
+
+        private ObservableCollection<ProductViewModel> _productCollection = [];
+        public ObservableCollection<ProductViewModel> ProductCollection
+        {
+            get => _productCollection;
+            set => Set(ref _productCollection, value);
+        }
+
+        private ObservableCollection<OrderViewModel> _orderCollection;
+        public ObservableCollection<OrderViewModel> OrderCollection
+        {
+            get => _orderCollection;
+            set => Set(ref _orderCollection, value);
         }
 
         private TimeOnly? _startShiftTime;
@@ -138,10 +173,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         #region Command
 
         public RelayCommand StartShiftCommand { get; set; }
-        private bool CanStartShiftCommandExecute(object p)
-        {
-            return true;
-        }
+        private bool CanStartShiftCommandExecute(object p) => true;
         private async void OnStartShiftCommandExecuted(object p)
         {
             StartShiftTime = TimeOnly.FromDateTime(DateTime.Now);
@@ -166,7 +198,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             if (result == MessageBoxResult.No)
                 return;
             EndShiftTime = TimeOnly.FromDateTime(DateTime.Now);
-            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, double.Parse(CurrentCash));
+            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, double.Parse(CurrentCash), UserViewModel.GetCurrentUser().Id);
             AutoDailyReportViewModel adreport = await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
             StartShiftVisibility = Visibility.Collapsed;
             ProcessShiftVisibility = Visibility.Visible;
@@ -192,6 +224,34 @@ namespace Cashbox.MVVM.ViewModels.Employee
             CheckVisibility = Visibility.Collapsed;
         }
 
+        public RelayCommand GoBackOrderCommand { get; set; }
+        private bool CanGoBackOrderCommandExecute(object p) => true;
+        private void OnGoBackOrderCommandExecuted(object p)
+        {
+            SelectedOrder = null;
+            CheckListOneObjVisibility = Visibility.Collapsed;
+            CheckListVisibility = Visibility.Visible;
+        }
+
+        public RelayCommand SeeOrderListCommand { get; set; }
+        private bool CanSeeOrderListCommandExecute(object p) => true;
+        private void OnSeeOrderListCommandExecuted(object p)
+        {
+            if (p == null) return;
+            ProductCollection = [];
+            SelectedOrder = OrderCollection.FirstOrDefault(x => x.Id == (int)p)!;
+            foreach (OrderProduct item in SelectedOrder.OrderProducts)
+            {
+                ProductViewModel product = new(item.Product);
+                if (item.SellCost != product.SellCost)
+                    product.ReSellCost = item.SellCost;
+                product.AmountRes = item.Amount;
+                ProductCollection.Add(product);
+            }
+            CheckListVisibility = Visibility.Collapsed;
+            CheckListOneObjVisibility = Visibility.Visible;
+        }
+
         #endregion
 
         public override async void OnLoad()
@@ -200,18 +260,20 @@ namespace Cashbox.MVVM.ViewModels.Employee
             CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCost!);
             NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCost!);
             SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCost!);
-            CollectionOrders = new(await OrderViewModel.GetAllDayOrders(DateOnly.FromDateTime(DateTime.Today)));
-            if (DailyReport.CurrentShift != null)
-                StartCash = DailyReport.CurrentShift.CashOnStart;
+            OrderCollection = new(await OrderViewModel.GetAllDayOrders((DateOnly)DailyReportViewModel.CurrentShift.Data));
+            if (DailyReportViewModel.CurrentShift != null)
+                StartCash = DailyReportViewModel.CurrentShift.CashOnStart;
             else
                 StartCash = MoneyBoxViewModel.GetMoney;
             FullTransit = SendTransit + CardTransit + NalTransit;
             if (StartShiftVisibility == Visibility.Collapsed)
-                CollectionOrders = new(Order.GetAllDayOrders(dateOnly).Result);
+                OrderCollection = new(Order.GetAllDayOrders(dateOnly).Result);
         }
 
         public ShiftViewModel()
         {
+            SeeOrderListCommand = new RelayCommand(OnSeeOrderListCommandExecuted, CanSeeOrderListCommandExecute);
+            GoBackOrderCommand = new RelayCommand(OnGoBackOrderCommandExecuted, CanGoBackOrderCommandExecute);
             StartShiftCommand = new RelayCommand(OnStartShiftCommandExecuted, CanStartShiftCommandExecute);
             EndShiftCommand = new RelayCommand(OnEndShiftCommandExecuted, CanEndShiftCommandExecute);
             SeeCheckPanelCommand = new RelayCommand(OnSeeCheckPanelCommandExecuted, CanSeeCheckPanelCommandExecute);

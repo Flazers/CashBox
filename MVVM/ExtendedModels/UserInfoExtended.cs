@@ -16,7 +16,7 @@ namespace Cashbox.MVVM.Models
         {
             try
             {
-                UserInfo userInfo = new UserInfo()
+                UserInfo userInfo = new()
                 {
                     UserId = userId,
                     Name = name,
@@ -25,13 +25,18 @@ namespace Cashbox.MVVM.Models
                     Location = location,
                     Phone = phone,
                     RoleId = roleId,
-                    IsActive = true
+                    IsActive = true,
+                    Salary = 0
                 };
                 await CashBoxDataContext.Context.AddAsync(userInfo);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new UserInfoViewModel(userInfo);
             }
-            catch (Exception) { return null; }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return null!;
+            }
         }
 
         public static async Task<UserInfoViewModel> DeactivateUser(int userId)

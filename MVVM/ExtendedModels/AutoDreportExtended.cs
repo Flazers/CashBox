@@ -1,5 +1,6 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.ViewModels.Data;
+using System.Diagnostics;
 
 namespace Cashbox.MVVM.Models
 {
@@ -20,7 +21,7 @@ namespace Cashbox.MVVM.Models
                     FullTransit = OrderViewModel.GetSumInDay(dailyReport.Data),
                     Salary = setting.Salary,
                 };
-                double forfeit = OrderViewModel.GetSumMethodInDay(dailyReport.Data) - (double)dailyReport.Proceeds!;
+                double forfeit = OrderViewModel.GetSumMethodInDay(dailyReport.Data) + dailyReport.CashOnStart - (double)dailyReport.Proceeds!;
                 if (forfeit <= 0)
                     autoDreport.Forfeit = 0;
                 else
@@ -29,6 +30,8 @@ namespace Cashbox.MVVM.Models
                     autoDreport.Salary -= Convert.ToInt32(forfeit);
                 }
                 await CashBoxDataContext.Context.AutoDreports.AddAsync(autoDreport);
+                await MoneyBoxViewModel.UpdateMoney((double)dailyReport.Proceeds, 1);
+                dailyReport.UserInfoVM.Salary = autoDreport.Salary;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(autoDreport);
             }

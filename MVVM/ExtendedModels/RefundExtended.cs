@@ -48,7 +48,8 @@ namespace Cashbox.MVVM.Models
                 CurrentRefund.ProductId = productid;
                 CurrentRefund.IsPurchased = true;
                 CurrentRefund.IsSuccessRefund = false;
-                CurrentRefund = null;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                await CreateRefund();
                 await CreateRefundDefect(productid, reason);
                 return true;
             }
@@ -127,18 +128,18 @@ namespace Cashbox.MVVM.Models
                                                                         .ToListAsync();
 
         public static async Task<List<RefundViewModel>> GetRefundedDefect() => await CashBoxDataContext.Context.Refunds
-                                                                            .Select(s => new RefundViewModel(s))
                                                                             .Where(x => x.IsPurchased == false)
+                                                                            .Select(s => new RefundViewModel(s))
                                                                             .ToListAsync();
 
         public static async Task<List<RefundViewModel>> GetRefundedReason() => await CashBoxDataContext.Context.Refunds
-                                                                            .Select(s => new RefundViewModel(s))
                                                                             .Where(x => x.IsPurchased == true && x.BuyDate == null)
+                                                                            .Select(s => new RefundViewModel(s))
                                                                             .ToListAsync();
 
         public static async Task<List<RefundViewModel>> GetDraw() => await CashBoxDataContext.Context.Refunds
-                                                                    .Select(s => new RefundViewModel(s))
                                                                     .Where(x => x.IsPurchased == false && x.BuyDate != null)
+                                                                    .Select(s => new RefundViewModel(s))
                                                                     .ToListAsync();
     }
 }

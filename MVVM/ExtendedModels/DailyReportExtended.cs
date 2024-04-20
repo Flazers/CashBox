@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace Cashbox.MVVM.Models
 {
-    public partial class DailyReport
+    public partial class DailyReport : ViewModelBase
     {
         public DailyReport() { }
 
@@ -46,15 +46,13 @@ namespace Cashbox.MVVM.Models
             }
 
         }
-        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double Proceeds)
+        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double Proceeds, int userId)
         {
             try
             {
-                UserViewModel user = UserViewModel.GetCurrentUser();
-                DailyReport DR = CashBoxDataContext.Context.DailyReports.FirstOrDefault(x => x.Data == date && x.UserId == user.Id);
+                DailyReport DR = await CashBoxDataContext.Context.DailyReports.FirstOrDefaultAsync(x => x.Data == date && x.UserId == userId);
                 DR.CloseTime = time;
-                DR.Proceeds = Proceeds;
-                await MoneyBoxViewModel.UpdateMoney(Proceeds, 1);
+                DR.Proceeds = Proceeds - DR.CashOnStart;
                 return new(DR);
             }
             catch (Exception ex)
@@ -65,5 +63,6 @@ namespace Cashbox.MVVM.Models
         }
 
         public static async Task<List<DailyReportViewModel>> GetPeriodReports(DateOnly start, DateOnly end) => await CashBoxDataContext.Context.DailyReports.Where(x => x.Data >= start && x.Data <= end).Select(s => new DailyReportViewModel(s)).ToListAsync();
+        public static async Task<List<DailyReportViewModel>> GetNotCloseReports() => await CashBoxDataContext.Context.DailyReports.Where(x => x.CloseTime == null).Select(s => new DailyReportViewModel(s)).ToListAsync();
     }
 }

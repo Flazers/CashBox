@@ -15,7 +15,7 @@
     <StackPanel>
         <StackPanel Orientation="Horizontal">
             <StackPanel Margin="0 0 40 0" Width="1020">
-                <Border Style="{StaticResource PanelBorder}" Height="880">
+                <Border Style="{StaticResource PanelBorder}" Height="780">
                     <StackPanel>
                         <Grid Margin="0 -10 0 30" Height="80">
                             <DockPanel Margin="5 0" VerticalAlignment="Center">
@@ -33,7 +33,7 @@
                                 </Button>
                             </StackPanel>
                         </Grid>
-                        <ScrollViewer Height="660" Margin="10 0 10 10">
+                        <ScrollViewer Height="560" Margin="10 0 10 10">
                             <ItemsControl ItemsSource="{Binding DailyReportCollection}" d:ItemsSource="{d:SampleData ItemCount=2}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -44,13 +44,13 @@
                                                     <TextBlock Text="{Binding UserInfoVM.FullName}" Style="{StaticResource RegularText}"/>
                                                 </StackPanel>
                                                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal">
-                                                    <Border Width="40" VerticalAlignment="Top" Height="40" Margin="0 0 10 0" CornerRadius="20" Background="{StaticResource BasicGray}">
-                                                        <TextBlock Text="{Binding RefundCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}"/>
+                                                    <Border Width="30" VerticalAlignment="Top" Height="30" Margin="0 0 10 0" CornerRadius="20" Background="{StaticResource BasicGray}">
+                                                        <TextBlock Text="{Binding RefundCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}"/>
                                                     </Border>
-                                                    <Border Width="40" VerticalAlignment="Top" Height="40" Margin="0 0 10 0" CornerRadius="20" Background="{StaticResource BasicRed}">
-                                                        <TextBlock Text="{Binding CrackCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}"/>
+                                                    <Border Width="30" VerticalAlignment="Top" Height="30" Margin="0 0 10 0" CornerRadius="20" Background="{StaticResource BasicRed}">
+                                                        <TextBlock Text="{Binding CrackCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}"/>
                                                     </Border>
-                                                    <Border Width="40" VerticalAlignment="Top" Height="40" Margin="0 0 40 0" CornerRadius="20">
+                                                    <Border Width="30" VerticalAlignment="Top" Height="30" Margin="0 0 40 0" CornerRadius="20">
                                                         <Border.Background>
                                                             <LinearGradientBrush>
                                                                 <LinearGradientBrush.GradientStops>
@@ -60,11 +60,13 @@
                                                                 </LinearGradientBrush.GradientStops>
                                                             </LinearGradientBrush>
                                                         </Border.Background>
-                                                        <TextBlock Text="{Binding DrawCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Text="{Binding DrawCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextB}"/>
                                                     </Border>
-                                                    <Button Style="{StaticResource ButtonInPanelBase}" 
+                                                    <Button Style="{StaticResource ButtonInPanelBase}" Width="60"
                                                             Command="{Binding DataContext.SelectShiftCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
-                                                            CommandParameter="{Binding Id}" Content="Подробнее" HorizontalAlignment="Right"/>
+                                                            CommandParameter="{Binding Id}" HorizontalAlignment="Right">
+                                                        <Icon:PackIconMaterialDesign Kind="KeyboardArrowRight"/>
+                                                    </Button>
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
@@ -74,6 +76,16 @@
                         </ScrollViewer>
                     </StackPanel>
                 </Border>
+
+                <StackPanel Margin="0 40 0 0" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding SeeRefundsCommand}" Content="Отчеты" Width="300" Margin="0 0 40 0"/>
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding OpennedPanelCommand}" Width="400">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Ожидают подтверждения: "/>
+                            <TextBlock Text="{Binding UnSuccessRefundCollection.Count}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
             </StackPanel>
 
             <StackPanel Margin="0 0 40 0" Width="640">
@@ -84,9 +96,6 @@
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
                         <Grid Margin="10" Height="740">
-                            <StackPanel VerticalAlignment="Center" Visibility="{Binding NotUserSelectedPanel}">
-                                <TextBlock Text="Отчет не выбран" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </StackPanel>
                             <ScrollViewer>
                                 <ItemsControl d:ItemsSource="{d:SampleData ItemCount=3}">
                                     <ItemsControl.ItemTemplate>
@@ -111,7 +120,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PanelBorder}" Height="880">
+                <!--<Border Style="{StaticResource PanelBorder}" Visibility="{Binding OrderSelectedPanel}" Height="880">
                     <StackPanel>
                         <Grid Margin="0 -10 0 30" Height="80">
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -218,6 +227,47 @@
                                 </ItemsControl>
                             </ScrollViewer>
 
+                        </Grid>
+                    </StackPanel>
+                </Border>-->
+                <Border Style="{StaticResource PanelBorder}" Visibility="{Binding RefundSelectedPanel}" Height="880">
+                    <StackPanel>
+                        <Grid Margin="0 -10 0 30" Height="80">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Style="{DynamicResource TitleText}" HorizontalAlignment="Center" Foreground="{StaticResource TextW}" Text="Браки и розыгрыши"/>
+                                <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Center" Text="{Binding SelectedDReport.UserInfoVM.FullName}" Foreground="{StaticResource TextG}"/>
+                            </StackPanel>
+                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
+                        </Grid>
+                        <Grid Margin="10" Height="740">
+                            <ScrollViewer VerticalAlignment="Bottom" Height="740">
+                                <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding UnSuccessRefundCollection}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0 0 20 20" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
+                                                <Grid>
+                                                    <StackPanel>
+                                                        <TextBlock Style="{StaticResource TitleText}" Text="{Binding DailyReport.Data}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource TitleText}" Text="{Binding Product.Brand}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" Text="{Binding Product.Title}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource SmallText}" Text="{Binding Product.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" Text="{Binding Reason, StringFormat='\Причина: {0}'}" Width="350" TextWrapping="Wrap" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
+                                                    </StackPanel>
+                                                    <StackPanel>
+                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 10">
+                                                            <TextBlock Text="{Binding TypeRefund}" Margin="0 0 10 0" Style="{StaticResource RegularText}"/>
+                                                            <Button Style="{StaticResource RemoveIconButton}"/>
+                                                        </StackPanel>
+                                                        <TextBlock Text="{Binding Product.SellCost, StringFormat='\{0} ₽'}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 10" Style="{StaticResource RegularText}"/>
+                                                        <TextBlock Text="Подтвержден?" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 5" Style="{StaticResource RegularText}"/>
+                                                        <ToggleButton Style="{StaticResource ToggleSettings}" HorizontalAlignment="Right" IsChecked="{Binding IsSuccessRefund}"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
                         </Grid>
                     </StackPanel>
                 </Border>

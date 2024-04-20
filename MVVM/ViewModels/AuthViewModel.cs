@@ -1,13 +1,10 @@
-﻿using Cashbox.Core.Commands;
+﻿using Cashbox.Core;
+using Cashbox.Core.Commands;
+using Cashbox.MVVM.ViewModels.Admin;
+using Cashbox.MVVM.ViewModels.Data;
+using Cashbox.MVVM.ViewModels.Employee;
 using Cashbox.Service;
 using System.Windows;
-using System.ComponentModel.DataAnnotations;
-using Cashbox.Core;
-using Cashbox.MVVM.Models;
-using Cashbox.MVVM.ViewModels.Data;
-using System.Security;
-using Cashbox.MVVM.ViewModels.Admin;
-using Cashbox.MVVM.ViewModels.Employee;
 
 namespace Cashbox.MVVM.ViewModels
 {
@@ -53,7 +50,7 @@ namespace Cashbox.MVVM.ViewModels
 
 
         public RelayCommand EnterPinCommand { get; set; }
-        private bool CanEnterPinCommandExecute(object p) 
+        private bool CanEnterPinCommandExecute(object p)
         {
             if (StringPin.Length == 6)
                 return false;
@@ -78,13 +75,36 @@ namespace Cashbox.MVVM.ViewModels
             StringPin = StringPin.Remove(StringPin.Length - 1);
         }
 
-        
+
         public RelayCommand AuthByPinCommand { get; set; }
         private bool CanAuthByPinCommandExecute(object p) => true;
         private async void OnAuthByPinCommandExecuted(object p)
         {
             UserViewModel? user = await UserViewModel.GetUserByPin(Pin);
             if (user == null) { MessageBox.Show("Пользователь не найден.", "Ошибка"); return; }
+            List<DailyReportViewModel> list = await DailyReportViewModel.GetNotCloseReports();
+            if (list.Count != 0)
+            {
+                string ListNotClose = string.Empty;
+                int[] SuccessEnterId = [];
+                foreach (DailyReportViewModel report in list)
+                    ListNotClose += $"{report.UserInfoVM.FullName} ";
+                foreach (DailyReportViewModel report in list)
+                {
+                    if (report.UserId == user.Id)
+                        break;
+                    if (AppCommand.QuestionMessage($"Открыта смена у {ListNotClose}\nЗакрыть для продолжения работы?") != MessageBoxResult.Yes)
+                        return;
+                    double DayOrdersProccesedSum;
+                    List<OrderViewModel> DayOrdersProccesed = await OrderViewModel.GetDayOrdersToMethod((DateOnly)report.Data!, 2);
+                    if (DayOrdersProccesed.Count > 0)
+                        DayOrdersProccesedSum = (double)DayOrdersProccesed.Sum(x => x.SellCost)!;
+                    else
+                        DayOrdersProccesedSum = report.CashOnStart;
+                    DailyReportViewModel drvm = await DailyReportViewModel.EndShift((DateOnly)report.Data!, new(23, 59, 59), DayOrdersProccesedSum, report.UserId);
+                    await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
+                }
+            }
             switch (user.UserInfo?.Role.Id)
             {
                 case 1:

@@ -129,11 +129,11 @@
                             <TextBlock x:Name="on" Visibility="Collapsed" 
                                        Foreground="{TemplateBinding Foreground}" 
                                        Grid.Column="0" Margin="0 1 0 0" 
-                                       FontSize="12" Text="Вкл" VerticalAlignment="Center" 
+                                       FontSize="12" Text="+" VerticalAlignment="Center" 
                                        HorizontalAlignment="Center"/>
                             <TextBlock x:Name="off" Grid.Column="1" 
                                        Foreground="{TemplateBinding Foreground}" 
-                                       FontSize="12" Text="Выкл" Margin="0 1 0 0" 
+                                       FontSize="12" Text="-" Margin="0 1 0 0" 
                                        VerticalAlignment="Center" 
                                        HorizontalAlignment="Center"/>
                             <ContentPresenter Grid.Column="1" x:Name="contentPresenter"/>

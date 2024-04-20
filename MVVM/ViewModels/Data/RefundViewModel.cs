@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -28,10 +30,10 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public int Id => _refund.Id;
 
-        public int? ProductId 
+        public int? ProductId
         {
             get => _refund.ProductId;
-            set 
+            set
             {
                 _refund.ProductId = value;
                 OnPropertyChanged();
@@ -88,6 +90,30 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public string TypeRefund
+        {
+            get
+            {
+                if (_refund.IsPurchased == false && _refund.BuyDate == null)
+                    return "Брак";
+                else if (_refund.IsPurchased == false && _refund.BuyDate != null)
+                    return "Розыгрыш";
+                return "Возврат";
+            }
+        }
+
+        public SolidColorBrush BackGroundColor
+        {
+            get
+            {
+                if (TypeRefund == "Брак")
+                    return (SolidColorBrush)Application.Current.Resources["BasicRed"];
+                else if (TypeRefund == "Розыгрыш")
+                    return (SolidColorBrush)Application.Current.Resources["BasicCyan"];
+                return (SolidColorBrush)Application.Current.Resources["BasicW"];
+            }
+        }
+
         public virtual Product? Product 
         {
             get => _refund.Product;
@@ -98,6 +124,14 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public virtual DailyReport DailyReport { get; set; } = null!;
+        public virtual DailyReport DailyReport 
+        {
+            get => _refund.DailyReport;
+            set
+            {
+                _refund.DailyReport = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }

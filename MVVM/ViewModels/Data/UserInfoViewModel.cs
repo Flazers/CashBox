@@ -104,6 +104,16 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public double Salary
+        {
+            get => _userInfo.Salary;
+            set
+            {
+                _userInfo.Salary = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int RoleId
         {
             get => _userInfo.RoleId;

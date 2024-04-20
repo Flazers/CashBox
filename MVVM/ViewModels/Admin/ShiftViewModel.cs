@@ -17,15 +17,18 @@ namespace Cashbox.MVVM.ViewModels.Admin
     {
         #region Props
 
-        private Visibility _notUserSelectedPanel;
-        public Visibility NotUserSelectedPanel
+        private Visibility _orderSelectedPanel = Visibility.Collapsed;
+        public Visibility OrderSelectedPanel
         {
-            get 
-            {
-                if (SelectedOrder != null)
-                    return _notUserSelectedPanel = Visibility.Visible;
-                return _notUserSelectedPanel = Visibility.Collapsed;
-            }
+            get => _orderSelectedPanel;
+            set => Set(ref _orderSelectedPanel, value);
+        }
+
+        private Visibility _refundSelectedPanel = Visibility.Collapsed;
+        public Visibility RefundSelectedPanel
+        {
+            get => _refundSelectedPanel;
+            set => Set(ref _refundSelectedPanel, value);
         }
 
         private Visibility _refundListVisibilityPanel = Visibility.Collapsed;
@@ -89,6 +92,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get => _search;
             set => Set(ref _search, value);
+        }
+
+        private ObservableCollection<RefundViewModel> _unSuccessRefundCollection = [];
+        public ObservableCollection<RefundViewModel> UnSuccessRefundCollection
+        {
+            get => _unSuccessRefundCollection;
+            set => Set(ref _unSuccessRefundCollection, value);
         }
 
         private ObservableCollection<OrderViewModel> _selectedOrderList = [];
@@ -216,11 +226,30 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             if (p == null) return;
             SelectedDReport = DailyReportCollection.FirstOrDefault(x => x.Id == (int)p)!;
+            OrderSelectedPanel = Visibility.Visible;
+            RefundSelectedPanel = Visibility.Collapsed;
             SelectedOrderList = new(await OrderViewModel.GetAllDayOrders((DateOnly)SelectedDReport.Data!));
             DailyRefundCollection = new(await RefundViewModel.GetRefundedDailyProduct(SelectedDReport.Id));
             CheckListOneObjVisibility = Visibility.Collapsed;
             CheckListVisibility = Visibility.Visible;
         }
+
+        public RelayCommand SeeRefundsCommand { get; set; }
+        private bool CanSeeRefundsCommandExecute(object p) => true;
+        private void OnSeeRefundsCommandExecuted(object p)
+        {
+            OrderSelectedPanel = Visibility.Visible;
+            RefundSelectedPanel = Visibility.Collapsed;
+        }
+
+        public RelayCommand OpennedPanelCommand { get; set; }
+        private bool CanOpennedPanelCommandExecute(object p) => true;
+        private void OnOpennedPanelCommandExecuted(object p)
+        {
+            OrderSelectedPanel = Visibility.Collapsed;
+            RefundSelectedPanel = Visibility.Visible;
+        }
+
         #endregion
 
         public override async void OnLoad()
@@ -236,11 +265,15 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 DailyReportCollection = new(data.OrderByDescending(x => x.Data));
             else
                 DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.Contains(search.ToLower().Trim())).OrderByDescending(x => x.Data));
+            List<RefundViewModel> list = await RefundViewModel.GetRefundedAllProduct();
+            UnSuccessRefundCollection = new(list.Where(x => x.IsSuccessRefund == false && x.BuyDate == null).OrderByDescending(x => x.DailyReport.Data).ToList());
         }
 
         public ShiftViewModel()
         {
             Dataload();
+            OpennedPanelCommand = new RelayCommand(OnOpennedPanelCommandExecuted, CanOpennedPanelCommandExecute);
+            SeeRefundsCommand = new RelayCommand(OnSeeRefundsCommandExecuted, CanSeeRefundsCommandExecute);
             SearchDataCommand = new RelayCommand(OnSearchDataCommandExecuted, CanSearchDataCommandExecute);
             SeeOrderListCommand = new RelayCommand(OnSeeOrderListCommandExecuted, CanSeeOrderListCommandExecute);
             SelectShiftCommand = new RelayCommand(OnSelectShiftCommandExecuted, CanSelectShiftCommandExecute);

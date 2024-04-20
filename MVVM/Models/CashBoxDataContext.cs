@@ -318,6 +318,7 @@ public partial class CashBoxDataContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("surname");
+            entity.Property(e => e.Salary).HasColumnName("salary");
 
             entity.HasOne(d => d.Role).WithMany(p => p.UserInfos)
                 .HasForeignKey(d => d.RoleId)
