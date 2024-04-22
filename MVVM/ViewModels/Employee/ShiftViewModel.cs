@@ -141,7 +141,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _productCollection, value);
         }
 
-        private ObservableCollection<OrderViewModel> _orderCollection;
+        private ObservableCollection<OrderViewModel> _orderCollection = [];
         public ObservableCollection<OrderViewModel> OrderCollection
         {
             get => _orderCollection;
@@ -260,9 +260,11 @@ namespace Cashbox.MVVM.ViewModels.Employee
             CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCost!);
             NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCost!);
             SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCost!);
-            OrderCollection = new(await OrderViewModel.GetAllDayOrders((DateOnly)DailyReportViewModel.CurrentShift.Data));
             if (DailyReportViewModel.CurrentShift != null)
+            {
+                OrderCollection = new(await OrderViewModel.GetAllDayOrders((DateOnly)DailyReportViewModel.CurrentShift.Data));
                 StartCash = DailyReportViewModel.CurrentShift.CashOnStart;
+            }
             else
                 StartCash = MoneyBoxViewModel.GetMoney;
             FullTransit = SendTransit + CardTransit + NalTransit;

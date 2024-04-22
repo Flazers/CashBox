@@ -16,11 +16,9 @@ namespace Cashbox.MVVM.Models
             List<Role> roles = [];
             try
             {
-                Role SuperUser = new() { Id = 1, Role1 = "Админ+" };
-                Role adminRole = new() { Id = 2, Role1 = "Админ" };
-                Role EmployeeRole = new() { Id = 3, Role1 = "Сотрудник" };
+                Role SuperUser = new() { Id = 1, Role1 = "Админ" };
+                Role EmployeeRole = new() { Id = 2, Role1 = "Сотрудник" };
                 roles.Add(SuperUser);
-                roles.Add(adminRole);
                 roles.Add(EmployeeRole);
                 CashBoxDataContext.Context.Roles.AddRange(roles);
                 await CashBoxDataContext.Context.SaveChangesAsync();

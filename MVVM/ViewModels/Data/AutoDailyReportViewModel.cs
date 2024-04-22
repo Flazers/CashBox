@@ -65,6 +65,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public virtual DailyReport DailyReport { get; set; } = null!;
+        public virtual DailyReport DailyReport => _autoDreport.DailyReport;
+        public DailyReportViewModel DailyReportVM => new(_autoDreport.DailyReport);
     }
 }

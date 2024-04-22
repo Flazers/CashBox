@@ -25,7 +25,7 @@ namespace Cashbox.MVVM.Models
         public static double GetSumInDay(DateOnly? dateOnly) 
         {
             if (dateOnly == null)
-                return 404;
+                return 0;
             var data = GetAllDayOrders(dateOnly).Result;
             double sum = 0;
             foreach (var item in data)
@@ -36,7 +36,7 @@ namespace Cashbox.MVVM.Models
         public static double GetSumMethodInDay(DateOnly? dateOnly)
         {
             if (dateOnly == null)
-                return 404;
+                return 0;
             var data = GetDayOrdersToMethod(dateOnly, 2).Result;
             double sum = 0;
             foreach (var item in data)

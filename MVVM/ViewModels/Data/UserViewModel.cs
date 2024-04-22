@@ -13,7 +13,6 @@ namespace Cashbox.MVVM.ViewModels.Data
     public class UserViewModel(User user) : ViewModelBase
     {
         private readonly User _user = user;
-        public UserInfoViewModel UserInfo { get; private set; } = new UserInfoViewModel(user.UserInfo!);
 
         public static UserViewModel? GetCurrentUser() => User.CurrentUser;
         public static void LogOut() => User.LogOut();
@@ -44,5 +43,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public virtual ICollection<DailyReport> DailyReports => _user.DailyReports;
 
         public virtual ICollection<Order> Orders => _user.Orders;
+
+        public UserInfoViewModel UserInfo { get; private set; } = new(user.UserInfo!);
     }
 }

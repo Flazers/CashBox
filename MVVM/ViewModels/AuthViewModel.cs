@@ -93,6 +93,11 @@ namespace Cashbox.MVVM.ViewModels
                 {
                     if (report.UserId == user.Id)
                         break;
+                    if (user.UserInfo.RoleId == 2)
+                    {
+                        AppCommand.WarningMessage($"Открыта смена у {ListNotClose}");
+                        return;
+                    }
                     if (AppCommand.QuestionMessage($"Открыта смена у {ListNotClose}\nЗакрыть для продолжения работы?") != MessageBoxResult.Yes)
                         return;
                     double DayOrdersProccesedSum;
@@ -111,9 +116,6 @@ namespace Cashbox.MVVM.ViewModels
                     NavigationService?.NavigateTo<AMainViewModel>();
                     break;
                 case 2:
-                    NavigationService?.NavigateTo<AMainViewModel>();
-                    break;
-                case 3:
                     NavigationService?.NavigateTo<EMainViewModel>();
                     break;
             }

@@ -21,7 +21,7 @@ namespace Cashbox.MVVM.Models
                     FullTransit = OrderViewModel.GetSumInDay(dailyReport.Data),
                     Salary = setting.Salary,
                 };
-                double forfeit = OrderViewModel.GetSumMethodInDay(dailyReport.Data) + dailyReport.CashOnStart - (double)dailyReport.Proceeds!;
+                double forfeit = (double)autoDreport.AutoProceeds - (double)dailyReport.Proceeds!;
                 if (forfeit <= 0)
                     autoDreport.Forfeit = 0;
                 else

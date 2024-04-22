@@ -107,7 +107,7 @@
                                     <Icon:PackIconMaterial Kind="Account" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="Сотрудник" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding User.UserInfo.ShortName}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding AutoShift.DailyReportVM.UserInfoVM.ShortName}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                             <Grid Margin="0 10 0 0">
                                 <StackPanel Orientation="Horizontal">
