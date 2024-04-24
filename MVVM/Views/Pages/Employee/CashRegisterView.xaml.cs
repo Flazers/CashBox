@@ -24,5 +24,14 @@ namespace Cashbox.MVVM.Views.Pages.Employee
         {
             InitializeComponent();
         }
+        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            char number = Convert.ToChar(e.Text);
+
+            if (!Char.IsDigit(number))
+            {
+                e.Handled = true;
+            }
+        }
     }
 }

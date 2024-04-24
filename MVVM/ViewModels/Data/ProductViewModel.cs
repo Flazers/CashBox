@@ -81,6 +81,8 @@ namespace Cashbox.MVVM.ViewModels.Data
             get => _product.SellCost;
             set
             {
+                if (value < 0)
+                    value *= -1;
                 _product.SellCost = value;
                 OnPropertyChanged();
             }

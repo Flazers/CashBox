@@ -252,7 +252,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             {
                 ProductViewModel product = new(item.Product);
                 if (item.SellCost != product.SellCost)
-                    product.ReSellCost = item.SellCost;
+                    product.ReSellCost = item.SellCost.ToString();
                 product.AmountRes = item.Amount;
                 ProductCollection.Add(product);
             }
