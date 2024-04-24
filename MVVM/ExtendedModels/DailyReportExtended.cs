@@ -19,9 +19,9 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<DailyReportViewModel?> StartShift(DateOnly date, TimeOnly time)
         {
-            if (CashBoxDataContext.Context.DailyReports.FirstOrDefault(x => x.Data == date && x.UserId == UserViewModel.GetCurrentUser().Id && x.CloseTime != null) != null)
+            if (CashBoxDataContext.Context.DailyReports.FirstOrDefault(x => x.Data == date && x.CloseTime != null) != null)
             {
-                MessageBox.Show("Смена закрыта, открыть ее можно будет на следующий день", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Stop);
+                AppCommand.WarningMessage("Смена закрыта, открыть ее можно будет на следующий день");
                 return null;
             }
             try
@@ -46,6 +46,7 @@ namespace Cashbox.MVVM.Models
             }
 
         }
+
         public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double Proceeds, int userId)
         {
             try
@@ -63,6 +64,7 @@ namespace Cashbox.MVVM.Models
         }
 
         public static async Task<List<DailyReportViewModel>> GetPeriodReports(DateOnly start, DateOnly end) => await CashBoxDataContext.Context.DailyReports.Where(x => x.Data >= start && x.Data <= end).Select(s => new DailyReportViewModel(s)).ToListAsync();
+        public static async Task<DailyReportViewModel?> GetReport(DateOnly date) => new(await CashBoxDataContext.Context.DailyReports.FirstOrDefaultAsync(x => x.Data >= date));
         public static async Task<List<DailyReportViewModel>> GetNotCloseReports() => await CashBoxDataContext.Context.DailyReports.Where(x => x.CloseTime == null).Select(s => new DailyReportViewModel(s)).ToListAsync();
     }
 }

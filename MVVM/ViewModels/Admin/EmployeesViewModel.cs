@@ -177,11 +177,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
             UserViewModel user = await UserViewModel.CreateUser(PincodeInt, Name, Surname, Patronymic, Location, Phone, Role);
             if (user == null)
             {
-                MessageBox.Show("Не удалось создать пользователя с данным пинкодом", "Ошибка");
+                AppCommand.ErrorMessage("Не удалось создать пользователя с данным пинкодом");
                 return;
             }
-            CollectionUsers = new(UserViewModel.GetListUsers().Result);
-            MessageBox.Show("Пользователь создан", "Успех");
+            CollectionUsers = new(await UserViewModel.GetListUsers());
+            AppCommand.InfoMessage("Пользователь создан");
             SelectedUser = user;
             OnSeeUserInfoPanelVisibilityCommandExecuted(p);
         }
@@ -206,12 +206,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanRemoveEmployeeCommandExecute(object p) => true;
         private async void OnRemoveEmployeeCommandExecuted(object p) 
         {
-            MessageBoxResult result = MessageBox.Show($"Вы уверены, что хотите уволить сотрудника {SelectedUser.UserInfo.FullName}?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.No)
+            if (AppCommand.QuestionMessage("Вы уверены, что хотите уволить сотрудника {SelectedUser.UserInfo.FullName}?") == MessageBoxResult.No)
                 return;
             await UserInfoViewModel.DeactivateUser(SelectedUser.Id);
             CollectionUsers.Remove(SelectedUser);
-            MessageBox.Show("Успех");
+            AppCommand.InfoMessage("Пользователь уволен");
         }
         public RelayCommand OpenPanelEmployeeEditCommand { get; set; }
         private bool CanOpenPanelEmployeeEditCommandExecute(object p) => true;
@@ -236,10 +235,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
             UserViewModel userVM = await UserViewModel.EditUser(SelectedUser);
             if (userVM == null)
             {
-                MessageBox.Show("Ошибка при редактировании пользователя");
+                AppCommand.ErrorMessage("Ошибка при редактировании пользователя");
                 return;
             }
-            MessageBox.Show("Пользователь отредактирован", "Успех");
+            AppCommand.InfoMessage("Пользователь отредактирован");
             VisibilityEditUserPanel = Visibility.Collapsed;
             VisibilityUserInfoPanel = Visibility.Visible;
         }

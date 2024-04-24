@@ -65,11 +65,8 @@ namespace Cashbox.MVVM.Models
             {
                 foreach (ProductViewModel item in productVM)
                 {
-                    Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Brand == item.Brand && x.Title == item.Title);
-                    if (product == null)
-                        await NewProduct(item);
-                    else
-                        await UpdateProduct(item);
+                    Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == item.Id);
+                    await UpdateProduct(item);
                 }
                 return true;
             }
@@ -80,7 +77,25 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        private static async Task<ProductViewModel?> AvailableProduct(int id, bool Available)
+        private static async Task<bool> EditProduct(List<ProductViewModel> productVM)
+        {
+            try
+            {
+                foreach (ProductViewModel item in productVM)
+                {
+                    Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == item.Id);
+                    await UpdateProduct(item);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
+        }
+
+        private static async Task<ProductViewModel> AvailableProduct(int id, bool Available)
         {
             try
             {
@@ -102,6 +117,7 @@ namespace Cashbox.MVVM.Models
         public static async Task<ProductViewModel?> CreateProducts(ProductViewModel? productVM) => await NewProduct(productVM);
         public static async Task<ProductViewModel?> UpdateProducts(ProductViewModel? productVM) => await UpdateProduct(productVM);
         public static async Task<ProductViewModel?> AvailableProducts(int id, bool Available) => await AvailableProduct(id, Available);
-        public static async Task<bool> ImportProductVM(List<ProductViewModel?> productVM) => await ImportProduct(productVM);
+        public static async Task<bool> ImportProductVM(List<ProductViewModel> productVM) => await ImportProduct(productVM);
+        public static async Task<bool> EditProductVM(List<ProductViewModel> productVM) => await EditProduct(productVM);
     }
 }

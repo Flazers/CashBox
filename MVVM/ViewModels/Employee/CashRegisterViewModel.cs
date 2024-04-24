@@ -201,8 +201,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             OrderProductViewModel AddedProduct = OrderProductsBasket.FirstOrDefault(x => x.ProductId == (int)p);
             if (AddedProduct == null)
                 return;
-            MessageBoxResult result = MessageBox.Show("Убрать товар из заказа?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
+            if (AppCommand.QuestionMessage("Убрать товар из заказа?") == MessageBoxResult.Yes)
                 OrderProductsBasket.Remove(AddedProduct);
         }
 
@@ -351,28 +350,24 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private bool CanSellOrderCommandExecute(object p) => true;
         private async void OnSellOrderCommandExecuted(object p)
         {
-            MessageBoxResult result;
-            switch (int.Parse(p.ToString()!))
+            int method = int.Parse(p.ToString()!);
+            switch (method)
             {
                 case 1:
-                    result = MessageBox.Show("Оплата картой", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (result == MessageBoxResult.Yes)
-                        if (await OrderViewModel.SellOrder(1, TotalCost, 0, [.. OrderProductsBasket]))
-                            MessageBox.Show("Успех");
+                    if (AppCommand.QuestionMessage("Оплата картой?") != MessageBoxResult.Yes)
+                        return;
                     break;
                 case 2:
-                    result = MessageBox.Show("Оплата наличными", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (result == MessageBoxResult.Yes)
-                        if (await OrderViewModel.SellOrder(2, TotalCost, 0, [.. OrderProductsBasket]))
-                            MessageBox.Show("Успех");
+                    if (AppCommand.QuestionMessage("Оплата наличными?") != MessageBoxResult.Yes)
+                        return;
                     break;
                 case 3:
-                    result = MessageBox.Show("Оплата переводом", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (result == MessageBoxResult.Yes)
-                        if (await OrderViewModel.SellOrder(3, TotalCost, 0, [.. OrderProductsBasket]))
-                            MessageBox.Show("Успех");
+                    if (AppCommand.QuestionMessage("Оплата переводом?") != MessageBoxResult.Yes)
+                        return;
                     break;
             }
+            if (!await OrderViewModel.SellOrder(method, TotalCost, 0, [.. OrderProductsBasket]))
+                return;
             CollectionProducts = new(await ProductViewModel.GetProducts());
             OnOpenMenuPanelCommandExecuted(p);
         }
@@ -386,9 +381,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
         private async void OnReturnProductCommandExecuted(object p)
         {
-            bool data = await RefundViewModel.CreateRefundReason(RefundReason, DateOnly.FromDateTime(RefundBuyDate), SelectedProductRef[0].Id);
-            if (data)
-                MessageBox.Show($"Возврат продукта выполнен");
+            if (await RefundViewModel.CreateRefundReason(RefundReason, DateOnly.FromDateTime(RefundBuyDate), SelectedProductRef[0].Id))
+                AppCommand.InfoMessage("Возврат продукта выполнен");
             CurrentRefund = null;
             OnOpenMenuPanelCommandExecuted(p);
         }
@@ -403,9 +397,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
         private async void OnReturnCrackProductCommandExecuted(object p)
         {
-            bool data = await RefundViewModel.CreateRefundDefect(SelectedProductRef[0].Id, RefundReason);
-            if (data)
-                MessageBox.Show($"Брак отмечен");
+            if (await RefundViewModel.CreateRefundDefect(SelectedProductRef[0].Id, RefundReason))
+                AppCommand.InfoMessage("Брак отмечен");
             CurrentRefund = null;
             OnOpenMenuPanelCommandExecuted(p);
         }
@@ -419,9 +412,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
         private async void OnDrawProductCommandExecuted(object p)
         {
-            bool data = await RefundViewModel.CreateDraw(SelectedProductRef[0].Id, DateOnly.FromDateTime(RefundBuyDate));
-            if (data)
-                MessageBox.Show($"Продукт разыгран");
+            if (await RefundViewModel.CreateDraw(SelectedProductRef[0].Id, DateOnly.FromDateTime(RefundBuyDate)))
+                AppCommand.InfoMessage("Продукт разыгран");
             CurrentRefund = null;
             OnOpenMenuPanelCommandExecuted(p);
         }

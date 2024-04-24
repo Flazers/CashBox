@@ -93,8 +93,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             double temp = NewCashInBox;
             await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 1);
-            MessageBox.Show($"{temp} ₽ внесено в кассу", "Успех");
-            NewCashInBox = 0;
+            AppCommand.InfoMessage($"{temp} ₽ внесено в кассу");
+            NewCashInBox -= temp;
             CashInBox = MoneyBoxViewModel.GetMoney;
         }
 
@@ -109,8 +109,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             double temp = NewCashInBox;
             await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 2);
-            MessageBox.Show($"{temp} ₽ вычтено из кассы", "Успех");
-            NewCashInBox = 0;
+            AppCommand.InfoMessage($"{temp} ₽ вычтено из кассы");
+            NewCashInBox -= temp;
             CashInBox = MoneyBoxViewModel.GetMoney;
         }
 

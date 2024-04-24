@@ -101,12 +101,10 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        public static async Task<bool> SuccessRefund(int productid, bool success)
+        public static async Task<bool> SuccessRefund()
         {
             try
             {
-                CurrentRefund = await CashBoxDataContext.Context.Refunds.FirstOrDefaultAsync(x => x.ProductId == productid);
-                CurrentRefund.IsSuccessRefund = success;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }

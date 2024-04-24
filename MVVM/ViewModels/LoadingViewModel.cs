@@ -107,7 +107,7 @@ namespace Cashbox.MVVM.ViewModels
                 SetStatus("Создаю администратора по умолчанию", "loading", 4);
                 await UserViewModel.CreateUser(111111, "Name", "Surname", "Patronymic", "location", "phone", (await RoleViewModel.GetRoles())[0]);
                 await Task.Delay(secondDelay);
-                MessageBox.Show("Пин-Код: 111111 \nЕго можно изменить позже во вкладке пользователи.", "Данные администратора");
+                AppCommand.InfoMessage("Пин-Код: 111111 \nЕго можно изменить позже во вкладке пользователи.", "Данные администратора");
             }
             await Task.Delay(mainDelay);
 
@@ -126,7 +126,7 @@ namespace Cashbox.MVVM.ViewModels
                 await AppSettingsViewModel.CreateSetting();
                 await MoneyBoxViewModel.CreateBox();
                 await Task.Delay(secondDelay);
-                MessageBox.Show("Зарплата за выход: 1000 ₽ \nДенег в кассе: 0 \nЭти данные можно изменить позже в настройках приложения.", "Данные приложения");
+                AppCommand.InfoMessage("Зарплата за выход: 1000 ₽ \nДенег в кассе: 0 \nЭти данные можно изменить позже в настройках приложения.", "Данные приложения");
             }
             await Task.Delay(mainDelay);
 

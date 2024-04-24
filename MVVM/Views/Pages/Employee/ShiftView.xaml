@@ -107,7 +107,7 @@
                                     <Icon:PackIconMaterial Kind="Account" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="Сотрудник" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding AutoShift.DailyReportVM.UserInfoVM.ShortName}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding DailyReport.UserInfoVM.ShortName}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                             <Grid Margin="0 10 0 0">
                                 <StackPanel Orientation="Horizontal">
@@ -126,7 +126,7 @@
                                     <Icon:PackIconMaterial Kind="Account" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="Сотрудник" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding User.UserInfo.ShortName}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding DailyReport.UserInfoVM.ShortName}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                             <Grid Margin="0 10 0 0">
                                 <StackPanel Orientation="Horizontal">
@@ -166,7 +166,7 @@
                 </StackPanel>
             </Border>
             
-            <Border Style="{StaticResource PanelBorder}" HorizontalAlignment="Right" Visibility="{Binding CheckVisibility}" Height="880" Width="600">
+            <!--<Border Style="{StaticResource PanelBorder}" HorizontalAlignment="Right" Visibility="{Binding CheckVisibility}" Height="880" Width="600">
                 <StackPanel>
                     <Grid Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -251,7 +251,7 @@
                         </StackPanel>
                     </Grid>
                 </StackPanel>
-            </Border>
+            </Border>-->
 
         </Grid>
         

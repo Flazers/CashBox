@@ -127,6 +127,13 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _autoShift, value);
         }
 
+        private DailyReportViewModel? _dailyReport;
+        public DailyReportViewModel? DailyReport
+        {
+            get => _dailyReport;
+            set => Set(ref _dailyReport, value);
+        }
+
         private OrderViewModel? _selectedOrder;
         public OrderViewModel? SelectedOrder
         {
@@ -182,7 +189,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             ProcessShiftVisibility = Visibility.Visible;
             ProcessDoShiftVisibility = Visibility.Visible;
             EndShiftVisibility = Visibility.Collapsed;
-            MessageBox.Show($"Смена {drvm.Id} открыта", "Уведомление", MessageBoxButton.OK);
+            AppCommand.InfoMessage($"Смена {drvm.Id} открыта");
         }
 
         public RelayCommand EndShiftCommand { get; set; }
@@ -191,21 +198,22 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             if (string.IsNullOrEmpty(CurrentCash))
             {
-                MessageBox.Show("Пересчитайте деньги в кассе и введите значение в поле \"Денег в кассе\"", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
+                AppCommand.WarningMessage("Пересчитайте деньги в кассе и введите значение в поле \"Денег в кассе\"");
                 return;
             }
-            MessageBoxResult result = MessageBox.Show("После закрытия смены, новую можно открыть только на следующий день. \nВы уверены, что хотите ее закрыть?", "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.No)
-                return;
-            EndShiftTime = TimeOnly.FromDateTime(DateTime.Now);
-            DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, double.Parse(CurrentCash), UserViewModel.GetCurrentUser().Id);
-            AutoDailyReportViewModel adreport = await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
-            StartShiftVisibility = Visibility.Collapsed;
-            ProcessShiftVisibility = Visibility.Visible;
-            ProcessDoShiftVisibility = Visibility.Collapsed;
-            EndShiftVisibility = Visibility.Visible;
-            AutoShift = adreport;
-            MessageBox.Show($"Смена {drvm.Id} закрыта", "Уведомление", MessageBoxButton.OK);
+            if (AppCommand.QuestionMessage("После закрытия смены, новую можно открыть только на следующий день. \nВы уверены, что хотите ее закрыть?") == MessageBoxResult.Yes)
+            {
+                EndShiftTime = TimeOnly.FromDateTime(DateTime.Now);
+                DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, double.Parse(CurrentCash), UserViewModel.GetCurrentUser().Id);
+                AutoDailyReportViewModel adreport = await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
+                StartShiftVisibility = Visibility.Collapsed;
+                ProcessShiftVisibility = Visibility.Visible;
+                ProcessDoShiftVisibility = Visibility.Collapsed;
+                EndShiftVisibility = Visibility.Visible;
+                AutoShift = adreport;
+                AppCommand.InfoMessage($"Смена {drvm.Id} закрыта");
+            }
+
         }
 
         public RelayCommand SeeCheckPanelCommand { get; set; }
@@ -280,18 +288,18 @@ namespace Cashbox.MVVM.ViewModels.Employee
             EndShiftCommand = new RelayCommand(OnEndShiftCommandExecuted, CanEndShiftCommandExecute);
             SeeCheckPanelCommand = new RelayCommand(OnSeeCheckPanelCommandExecuted, CanSeeCheckPanelCommandExecute);
             SeeShiftPanelCommand = new RelayCommand(OnSeeShiftPanelCommandExecuted, CanSeeShiftPanelCommandExecute);
-            DailyReport CurrentShift = DailyReportViewModel.CurrentShift;
-            if (CurrentShift != null)
+            DailyReport = new(DailyReportViewModel.CurrentShift);
+            if (DailyReport != null)
             {
-                StartShiftTime = CurrentShift.OpenTime;
+                StartShiftTime = DailyReport.OpenTime;
                 StartShiftVisibility = Visibility.Collapsed;
                 ProcessShiftVisibility = Visibility.Visible;
-                if (CurrentShift.CloseTime != null)
+                if (DailyReport.CloseTime != null)
                 {
-                    EndShiftTime = CurrentShift.CloseTime;
+                    EndShiftTime = DailyReport.CloseTime;
                     ProcessDoShiftVisibility = Visibility.Collapsed;
                     EndShiftVisibility = Visibility.Visible;
-                    AutoShift = new(CurrentShift.AutoDreport);
+                    AutoShift = new(DailyReport.AutoDreport!);
                 }
                 else
                 {

@@ -122,7 +122,7 @@
                             <ItemsControl ItemsSource="{Binding OrderProductsBasket}" d:ItemsSource="{d:SampleData ItemCount=4}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Height="100" Margin="0 0 20 20"
+                                        <Border Height="120" Margin="0 0 20 20"
                                                     Background="{StaticResource PanelW}" Padding="10" 
                                                     CornerRadius="5">
                                             <DockPanel>
@@ -130,14 +130,13 @@
                                                     <DockPanel>
                                                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding ProductVM.Brand}" Foreground="{StaticResource TextB}"/>
                                                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding ProductVM.Title}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding ProductVM.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding ProductVM.Description}" Foreground="{StaticResource TextG}"/>
                                                     </DockPanel>
                                                 </StackPanel>
                                                 <Grid DockPanel.Dock="Right" HorizontalAlignment="Right">
-                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
-                                                        <TextBox Style="{StaticResource TbPlaceholderTag}" FontSize="18" Text="{Binding ProductVM.SellCost}" Foreground="{StaticResource TextB}" Height="40"/>
-                                                        <TextBlock Text=" ₽" VerticalAlignment="Center" Style="{StaticResource RegularText}"/>
-                                                    </StackPanel>
+                                                    <TextBlock Style="{StaticResource RegularText}" VerticalAlignment="Top" HorizontalAlignment="Right" Text="{Binding ProductVM.SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                    
+                                                    <TextBox VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 0 10" Style="{StaticResource TbPlaceholderTag}" FontSize="16" Text="{Binding ProductVM.ReSellCost}" Tag="Другая цена"/>
 
                                                     <Border Width="160" Height="30" HorizontalAlignment="Right" VerticalAlignment="Bottom" CornerRadius="5">
                                                         <StackPanel Orientation="Horizontal">
@@ -166,7 +165,7 @@
                 </StackPanel>
             </Border>
 
-            <Border Visibility="{Binding SellPanelVisibility}" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
+            <!--<Border Visibility="{Binding SellPanelVisibility}" HorizontalAlignment="Right" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -228,11 +227,11 @@
                     </Grid>
 
                 </StackPanel>
-            </Border>
+            </Border>-->
             
             <!--Продажа-->
             
-            <!--Возврат-->
+            <!--Возврат--><!--
             <Border HorizontalAlignment="Right" Visibility="{Binding ReturnPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
@@ -287,9 +286,9 @@
 
                 </StackPanel>
             </Border>
-            <!--Возврат-->
+            --><!--Возврат-->
 
-            <!--Брак-->
+            <!--Брак--><!--
             <Border HorizontalAlignment="Right" Visibility="{Binding CrackPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
@@ -340,9 +339,9 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-            <!--Брак-->
+            --><!--Брак-->
 
-            <!--Розыгрыш-->
+            <!--Розыгрыш--><!--
             <Border HorizontalAlignment="Right" Visibility="{Binding DrawPanelVisibility}" Style="{StaticResource PanelBorder}" Height="880" Width="600">
                 <StackPanel>
                     <Grid VerticalAlignment="Top" Margin="0 -10 0 30" Height="80">
@@ -392,7 +391,7 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-            <!--Розыгрыш-->
+            --><!--Розыгрыш-->
         </Grid>
 
     </StackPanel>

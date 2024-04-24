@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 
 namespace Cashbox.MVVM.ViewModels.Admin
 {
@@ -29,6 +30,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get => _refundSelectedPanel;
             set => Set(ref _refundSelectedPanel, value);
+        }
+
+        private Visibility _refundSuccessSelectedPanel = Visibility.Collapsed;
+        public Visibility RefundSuccessSelectedPanel
+        {
+            get => _refundSuccessSelectedPanel;
+            set => Set(ref _refundSuccessSelectedPanel, value);
         }
 
         private Visibility _refundListVisibilityPanel = Visibility.Collapsed;
@@ -99,6 +107,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get => _unSuccessRefundCollection;
             set => Set(ref _unSuccessRefundCollection, value);
+        }
+
+        private ObservableCollection<RefundViewModel> _successRefundCollection = [];
+        public ObservableCollection<RefundViewModel> SuccessRefundCollection
+        {
+            get => _successRefundCollection;
+            set => Set(ref _successRefundCollection, value);
         }
 
         private ObservableCollection<OrderViewModel> _selectedOrderList = [];
@@ -228,6 +243,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             SelectedDReport = DailyReportCollection.FirstOrDefault(x => x.Id == (int)p)!;
             OrderSelectedPanel = Visibility.Visible;
             RefundSelectedPanel = Visibility.Collapsed;
+            RefundSuccessSelectedPanel = Visibility.Collapsed;
             SelectedOrderList = new(await OrderViewModel.GetAllDayOrders((DateOnly)SelectedDReport.Data!));
             DailyRefundCollection = new(await RefundViewModel.GetRefundedDailyProduct(SelectedDReport.Id));
             CheckListOneObjVisibility = Visibility.Collapsed;
@@ -240,14 +256,38 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             OrderSelectedPanel = Visibility.Visible;
             RefundSelectedPanel = Visibility.Collapsed;
+            RefundSuccessSelectedPanel = Visibility.Collapsed;
         }
 
-        public RelayCommand OpennedPanelCommand { get; set; }
-        private bool CanOpennedPanelCommandExecute(object p) => true;
-        private void OnOpennedPanelCommandExecuted(object p)
+        public RelayCommand OpenUnRefundCommand { get; set; }
+        private bool CanOpenUnRefundCommandExecute(object p) => true;
+        private void OnOpenUnRefundCommandExecuted(object p)
         {
             OrderSelectedPanel = Visibility.Collapsed;
             RefundSelectedPanel = Visibility.Visible;
+            RefundSuccessSelectedPanel = Visibility.Collapsed;
+        }
+
+        public RelayCommand OpenRefundCommand { get; set; }
+        private bool CanOpenRefundCommandExecute(object p) => true;
+        private void OnOpenRefundCommandExecuted(object p)
+        {
+            OrderSelectedPanel = Visibility.Collapsed;
+            RefundSelectedPanel = Visibility.Collapsed;
+            RefundSuccessSelectedPanel = Visibility.Visible;
+        }
+
+        public RelayCommand ChangeRefundSuccessCommand { get; set; }
+        private bool CanChangeRefundSuccessCommandExecute(object p) => true;
+        private async void OnChangeRefundSuccessCommandExecuted(object p)
+        {
+            if (!await RefundViewModel.SuccessRefund())
+            {
+                AppCommand.ErrorMessage("Не удалось подтвердить возврат");
+                return;
+            }
+            AppCommand.InfoMessage("Успех");
+            UpdateRefund();
         }
 
         #endregion
@@ -265,19 +305,28 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 DailyReportCollection = new(data.OrderByDescending(x => x.Data));
             else
                 DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.Contains(search.ToLower().Trim())).OrderByDescending(x => x.Data));
+        }
+
+        public async void UpdateRefund()
+        {
             List<RefundViewModel> list = await RefundViewModel.GetRefundedAllProduct();
             UnSuccessRefundCollection = new(list.Where(x => x.IsSuccessRefund == false && x.BuyDate == null).OrderByDescending(x => x.DailyReport.Data).ToList());
+            SuccessRefundCollection = new(list.Where(x => x.IsSuccessRefund == true && x.BuyDate == null).OrderByDescending(x => x.DailyReport.Data).ToList());
         }
+
 
         public ShiftViewModel()
         {
             Dataload();
-            OpennedPanelCommand = new RelayCommand(OnOpennedPanelCommandExecuted, CanOpennedPanelCommandExecute);
+            UpdateRefund();
+            OpenUnRefundCommand = new RelayCommand(OnOpenUnRefundCommandExecuted, CanOpenUnRefundCommandExecute);
+            OpenRefundCommand = new RelayCommand(OnOpenRefundCommandExecuted, CanOpenRefundCommandExecute);
             SeeRefundsCommand = new RelayCommand(OnSeeRefundsCommandExecuted, CanSeeRefundsCommandExecute);
             SearchDataCommand = new RelayCommand(OnSearchDataCommandExecuted, CanSearchDataCommandExecute);
             SeeOrderListCommand = new RelayCommand(OnSeeOrderListCommandExecuted, CanSeeOrderListCommandExecute);
             SelectShiftCommand = new RelayCommand(OnSelectShiftCommandExecuted, CanSelectShiftCommandExecute);
             GoBackOrderCommand = new RelayCommand(OnGoBackOrderCommandExecuted, CanGoBackOrderCommandExecute);
+            ChangeRefundSuccessCommand = new RelayCommand(OnChangeRefundSuccessCommandExecuted, CanChangeRefundSuccessCommandExecute);
         }
     }
 }

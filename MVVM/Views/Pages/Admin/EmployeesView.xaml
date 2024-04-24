@@ -112,14 +112,9 @@
                                     <TextBlock Height="30" Style="{StaticResource RegularText}" Text="Место жительства:" Foreground="{StaticResource TextW}"/>
                                     <TextBlock Style="{StaticResource RegularText}" Text="{Binding SelectedUser.UserInfo.Location}" TextWrapping="Wrap" Height="60" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <Grid Height="40">
-                                    <TextBlock Style="{StaticResource RegularText}" Text="Зарплата:" Foreground="{StaticResource TextW}"/>
-                                    <TextBlock Style="{StaticResource RegularText}" Text="{Binding SelectedUser.UserInfo.Salary, StringFormat='\ {0} ₽'}" HorizontalAlignment="Right" Foreground="{StaticResource TextW}"/>
-                                </Grid>
 
                             </StackPanel>
                             <WrapPanel Visibility="{Binding UserSelectedPanel}" VerticalAlignment="Bottom">
-                                <Button Style="{StaticResource ButtonInPanelCyan}" Command="{Binding OpenPanelEmployeeEditCommand}" Margin="0 0 20 20" Content="Выдать зарплату"/>
                                 <Button Style="{StaticResource ButtonInPanelGray}" Command="{Binding OpenPanelEmployeeEditCommand}" Width="260" Margin="0 0 20 0" Content="Редактировать"/>
                                 <Button Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveEmployeeCommand}" Width="200" Content="Уволить"/>
                             </WrapPanel>

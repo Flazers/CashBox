@@ -75,7 +75,7 @@ namespace Cashbox.MVVM.Models
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppCommand.ErrorMessage(ex.Message);
                 return false;
             }
         }

@@ -26,6 +26,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<List<RefundViewModel>> GetRefundedDailyProduct(int DRid) => await Refund.GetRefundedDailyProduct(DRid);
         public static async Task<List<RefundViewModel>> GetRefundedDefect() => await Refund.GetRefundedDefect();
         public static async Task<List<RefundViewModel>> GetRefundedReason() => await Refund.GetRefundedReason();
+        public static async Task<bool> SuccessRefund() => await Refund.SuccessRefund();
         public static async Task<List<RefundViewModel>> GetDraw() => await Refund.GetDraw();
 
         public int Id => _refund.Id;

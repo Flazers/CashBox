@@ -1,7 +1,6 @@
 ﻿using Aspose.Cells;
 using Cashbox.Core;
 using Cashbox.Core.Commands;
-using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using ExcelDataReader;
 using Microsoft.Win32;
@@ -127,7 +126,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (data != null)
             {
                 UpdateCategory();
-                MessageBox.Show("Категория удалена", "Успех");
+                AppCommand.InfoMessage("Категория удалена");
             }
 
         }
@@ -148,7 +147,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (data != null)
             {
                 Update();
-                MessageBox.Show("Товар удален", "Успех");
+                AppCommand.InfoMessage("Товар удален");
             }
         }
 
@@ -159,6 +158,74 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 return;
             if (SelectedProductCategory.Category != "Все категории")
                 CollectionProducts = new(CollectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
+        }
+
+        public RelayCommand EditProductDataCommand { get; set; }
+        private bool CanEditProductDataCommandExecute(object p) => true;
+        private async void OnEditProductDataCommandExecuted(object p)
+        {
+            List<ProductViewModel> products = await ProductViewModel.GetProducts(false);
+            OpenFileDialog openFileDialog = new() { Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*", RestoreDirectory = true };
+            bool? resultOpen = openFileDialog.ShowDialog();
+            if (resultOpen == true)
+            {
+                try
+                {
+                    IExcelDataReader edr;
+                    using FileStream stream = File.Open(openFileDialog.FileName, FileMode.Open, FileAccess.Read);
+                    using IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
+                    string? extension = openFileDialog.FileName[openFileDialog.FileName.LastIndexOf('.')..];
+
+                    if (extension == ".xlsx")
+                        edr = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                    else if (extension == ".xls")
+                        edr = ExcelReaderFactory.CreateBinaryReader(stream);
+                    else
+                    {
+                        AppCommand.WarningMessage("Данные должны быть в формате xlsx или xls");
+                        return;
+                    }
+
+                    do
+                    {
+                        if (reader.Name == "Evaluation Warning")
+                            break;
+                        ProductCategoryViewModel category = CollectionProductCategories.FirstOrDefault(x => x.Category == reader.Name);
+                        category ??= await ProductCategoryViewModel.CreateProductCategory(reader.Name);
+                        reader.Read();
+                        while (reader.Read())
+                        {
+                            ProductViewModel readedproduct = new(new());
+                            if (string.IsNullOrEmpty(reader.GetDouble(0).ToString()))
+                                readedproduct = products.FirstOrDefault(x => x.Id == int.Parse(reader.GetDouble(0).ToString()));
+                            if (readedproduct != null)
+                            {
+                                readedproduct.ArticulCode = reader.GetString(1);
+                                readedproduct.Brand = reader.GetString(2);
+                                readedproduct.Title = reader.GetString(3);
+                                readedproduct.Description = reader.GetString(4);
+                                readedproduct.SellCost = reader.GetDouble(5);
+                                readedproduct.CategoryId = category.Id;
+                                readedproduct.AmountRes = Convert.ToInt16(reader.GetDouble(6));
+                                double boolval = reader.GetDouble(7);
+                                if (boolval == 1) readedproduct.IsAvailable = true;
+                                else readedproduct.IsAvailable = false;
+                                if (reader.GetValue(1) == null) readedproduct.ArticulCode = string.Empty;
+                                else readedproduct.ArticulCode = (reader.GetDouble(0)).ToString();
+                            }
+                        }
+                    } while (reader.NextResult());
+                    edr.Close();
+                    await ProductViewModel.EditProduct(products);
+                    UpdateCategory();
+                    Update();
+                }
+                catch (IOException)
+                {
+                    AppCommand.ErrorMessage("Процесс используется другим приложением (Возможно файл открыт).");
+                    return;
+                }
+            }
         }
 
         public RelayCommand ImportProductDataCommand { get; set; }
@@ -183,7 +250,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         edr = ExcelReaderFactory.CreateBinaryReader(stream);
                     else
                     {
-                        MessageBox.Show("Данные должны быть в формате xlsx или xls");
+                        AppCommand.WarningMessage("Данные должны быть в формате xlsx или xls");
                         return;
                     }
 
@@ -194,45 +261,35 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         ProductCategoryViewModel category = CollectionProductCategories.FirstOrDefault(x => x.Category == reader.Name);
                         category ??= await ProductCategoryViewModel.CreateProductCategory(reader.Name);
                         reader.Read();
+                        int addedcount = 0;
+                        int editedcount = 0;
                         while (reader.Read())
                         {
-                            //ProductViewModel readedproduct = new(new());
-                            //if (string.IsNullOrEmpty(reader.GetDouble(0).ToString()))
-                            //    readedproduct = products.FirstOrDefault(x => x.Id == int.Parse(reader.GetDouble(0).ToString()));
-                            //if (readedproduct != null)
-                            //{
-                            //    readedproduct.ArticulCode = reader.GetString(1);
-                            //    readedproduct.Brand = reader.GetString(2);
-                            //    readedproduct.Title = reader.GetString(3);
-                            //    readedproduct.Description = reader.GetString(4);
-                            //    readedproduct.SellCost = reader.GetDouble(5);
-                            //    readedproduct.CategoryId = category.Id;
-                            //    double boolval = reader.GetDouble(7);
-                            //    if (boolval == 1) readedproduct.IsAvailable = true;
-                            //    else readedproduct.IsAvailable = false;
-                            //    if (reader.GetValue(1) == null) readedproduct.ArticulCode = string.Empty;
-                            //    else readedproduct.ArticulCode = (reader.GetDouble(0)).ToString();
-                            //    readedproduct.AmountRes = Convert.ToInt16(reader.GetDouble(6));
-                            //}
-                            Product product = new()
-                            {
-                                Brand = reader.GetString(2),
-                                Title = reader.GetString(3),
-                                Description = reader.GetString(4),
-                                SellCost = reader.GetDouble(5),
-                                CategoryId = category.Id,
-                            };
-                            double boolval = reader.GetDouble(7);
-                            if (boolval == 1) product.IsAvailable = true;
-                            else product.IsAvailable = false;
+                            double boolval;
+                            ProductViewModel product = new(new());
+                            if (string.IsNullOrEmpty(reader.GetDouble(0).ToString()))
+                                product = products.FirstOrDefault(x => x.Id == int.Parse(reader.GetDouble(0).ToString()));
+                            if (product != null) editedcount++;
+                            else addedcount++;
+
                             if (reader.GetValue(1) == null) product.ArticulCode = string.Empty;
                             else product.ArticulCode = (reader.GetDouble(1)).ToString();
-                            ProductViewModel newprod = new(product)
-                            {
-                                AmountRes = Convert.ToInt16(reader.GetDouble(6))
-                            };
-                            products.Add(newprod);
+
+                            product.Brand = reader.GetString(2);
+                            product.Title = reader.GetString(3);
+                            product.Description = reader.GetString(4);
+                            product.SellCost = reader.GetDouble(5);
+                            product.AmountRes = Convert.ToInt16(reader.GetDouble(6));
+                            product.CategoryId = category.Id;
+
+                            boolval = reader.GetDouble(7);
+                            if (boolval == 1) product.IsAvailable = true;
+                            else product.IsAvailable = false;
+
+
+                            products.Add(product);
                         }
+                        AppCommand.InfoMessage($"Категория \"{reader.Name}\" \nДобавлено новых товаров: \"{addedcount}\" \nОтредактировано товаров: \"{addedcount}\"");
                     } while (reader.NextResult());
                     edr.Close();
                     await ProductViewModel.ImportProduct(products);
@@ -241,10 +298,42 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 }
                 catch (IOException)
                 {
-                    AppCommand.ErrorMessage("Процесс используется другим приложением (Возможно файл открыт).");
+                    AppCommand.WarningMessage("Процесс используется другим приложением (Возможно файл открыт).");
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    AppCommand.ErrorMessage(ex.Message);
                     return;
                 }
             }
+        }
+
+        public void SetRowStyle(Workbook wb, int i, int cell, Aspose.Cells.Style style)
+        {
+            wb.Worksheets[i].Cells[$"A{cell}"].SetStyle(style);
+            wb.Worksheets[i].Cells[$"B{cell}"].SetStyle(style);
+            wb.Worksheets[i].Cells[$"C{cell}"].SetStyle(style);
+            wb.Worksheets[i].Cells[$"D{cell}"].SetStyle(style);
+            wb.Worksheets[i].Cells[$"E{cell}"].SetStyle(style);
+            wb.Worksheets[i].Cells[$"F{cell}"].SetStyle(style);
+            wb.Worksheets[i].Cells[$"G{cell}"].SetStyle(style);
+            wb.Worksheets[i].Cells[$"H{cell}"].SetStyle(style);
+        }
+
+        public void AddProductRow(Workbook wb, int i, int cell, ProductViewModel product)
+        {
+            wb.Worksheets[i].Cells[$"A{cell}"].PutValue(product.Id);
+            wb.Worksheets[i].Cells[$"B{cell}"].PutValue(product.ArticulCode);
+            wb.Worksheets[i].Cells[$"C{cell}"].PutValue(product.Brand);
+            wb.Worksheets[i].Cells[$"D{cell}"].PutValue(product.Title);
+            wb.Worksheets[i].Cells[$"E{cell}"].PutValue(product.Description);
+            wb.Worksheets[i].Cells[$"F{cell}"].PutValue(product.SellCost);
+            wb.Worksheets[i].Cells[$"G{cell}"].PutValue(product.Stock.Amount);
+            if (product.IsAvailable)
+                wb.Worksheets[i].Cells[$"H{cell}"].PutValue(1);
+            else
+                wb.Worksheets[i].Cells[$"H{cell}"].PutValue(0);
         }
 
         public RelayCommand ExportProductDataCommand { get; set; }
@@ -253,7 +342,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             SaveFileDialog sfd = new()
             {
-                Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*"
+                Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
+                FileName = "ExportedProductData"
             };
             sfd.ShowDialog();
 
@@ -277,32 +367,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             styleHeader.VerticalAlignment = TextAlignmentType.Center;
             styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
 
-            void AddProductRow(Workbook wb, int i, int cell, ProductViewModel product)
-            {
-                wb.Worksheets[i].Cells[$"A{cell}"].PutValue(product.Id);
-                wb.Worksheets[i].Cells[$"B{cell}"].PutValue(product.ArticulCode);
-                wb.Worksheets[i].Cells[$"C{cell}"].PutValue(product.Brand);
-                wb.Worksheets[i].Cells[$"D{cell}"].PutValue(product.Title);
-                wb.Worksheets[i].Cells[$"E{cell}"].PutValue(product.Description);
-                wb.Worksheets[i].Cells[$"F{cell}"].PutValue(product.SellCost);
-                wb.Worksheets[i].Cells[$"G{cell}"].PutValue(product.Stock.Amount);
-                if (product.IsAvailable)
-                    wb.Worksheets[i].Cells[$"H{cell}"].PutValue(1);
-                else
-                    wb.Worksheets[i].Cells[$"H{cell}"].PutValue(0);
-            }
-
-            void SetRowStyle(Workbook wb, int i, int cell, Aspose.Cells.Style style)
-            {
-                wb.Worksheets[i].Cells[$"A{cell}"].SetStyle(style);
-                wb.Worksheets[i].Cells[$"B{cell}"].SetStyle(style);
-                wb.Worksheets[i].Cells[$"C{cell}"].SetStyle(style);
-                wb.Worksheets[i].Cells[$"D{cell}"].SetStyle(style);
-                wb.Worksheets[i].Cells[$"E{cell}"].SetStyle(style);
-                wb.Worksheets[i].Cells[$"F{cell}"].SetStyle(style);
-                wb.Worksheets[i].Cells[$"G{cell}"].SetStyle(style);
-                wb.Worksheets[i].Cells[$"H{cell}"].SetStyle(style);
-            }
 
             void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
             {
@@ -330,11 +394,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     SetRowHeader(wb, i, 6, "Колличество", 14);
                     SetRowHeader(wb, i, 7, "В продаже / Снят с продаж", 26);
 
-
                     wb.Worksheets[i].Cells.SetRowHeight(0, 30);
                     SetRowStyle(wb, i, 1, styleHeader);
                 }
-
 
                 for (int i = 0; i < category.Count; i++)
                 {
@@ -348,15 +410,79 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         position++;
                     }
                 }
-                
-                if (sfd.FileName[^1] == 'x')
-                    wb.Save(sfd.FileName);
-                else
-                    wb.Save(sfd.FileName);
 
-                MessageBox.Show("Готово");
+                wb.Save(sfd.FileName);
+                AppCommand.InfoMessage("Готово");
             }
         }
+
+        public RelayCommand FileForImportCommand { get; set; }
+        private bool CanFileForImportCommandExecute(object p) => true;
+        private void OnFileForImportCommandExecuted(object p)
+        {
+            SaveFileDialog sfd = new()
+            {
+                Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
+                FileName = "ExampleProductData"
+            };
+            sfd.ShowDialog();
+
+            CellsFactory cellsFactory = new();
+            Aspose.Cells.Style style = cellsFactory.CreateStyle();
+            style.Borders.SetStyle(CellBorderType.Thin);
+            style.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
+            style.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
+            style.Borders.SetColor(Color.Black);
+
+            CellsFactory cellsHeader = new();
+            Aspose.Cells.Style styleHeader = cellsHeader.CreateStyle();
+            styleHeader.Borders.SetStyle(CellBorderType.Thin);
+            styleHeader.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
+            styleHeader.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
+            styleHeader.Borders.SetColor(Color.Black);
+            styleHeader.HorizontalAlignment = TextAlignmentType.Center;
+            styleHeader.VerticalAlignment = TextAlignmentType.Center;
+            styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
+
+            void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
+            {
+                Worksheet sheet = wb.Worksheets[i];
+                sheet.Cells[0, cell].PutValue(title);
+                sheet.Cells.SetColumnWidth(cell, width);
+            }
+
+            if (sfd.FileName != string.Empty)
+            {
+                Workbook wb = new();
+
+                wb.Worksheets[0].Name = "Категория";
+                SetRowHeader(wb, 0, 0, "id*", 10);
+                SetRowHeader(wb, 0, 1, "Артикул*", 10);
+                SetRowHeader(wb, 0, 2, "Производитель", 17);
+                SetRowHeader(wb, 0, 3, "Название", 27);
+                SetRowHeader(wb, 0, 4, "Описание", 17);
+                SetRowHeader(wb, 0, 5, "Продажа", 10);
+                SetRowHeader(wb, 0, 6, "Колличество", 14);
+                SetRowHeader(wb, 0, 7, "В продаже / Снят с продаж", 26);
+                wb.Worksheets[0].Cells.SetRowHeight(0, 30);
+                SetRowStyle(wb, 0, 1, styleHeader);
+
+                wb.Worksheets[0].Cells[$"A2"].PutValue(1);
+                wb.Worksheets[0].Cells[$"B2"].PutValue("ES2134");
+                wb.Worksheets[0].Cells[$"C2"].PutValue("Хаски");
+                wb.Worksheets[0].Cells[$"D2"].PutValue("Киви яблоко");
+                wb.Worksheets[0].Cells[$"E2"].PutValue("20 mg strong");
+                wb.Worksheets[0].Cells[$"F2"].PutValue("450");
+                wb.Worksheets[0].Cells[$"G2"].PutValue(10);
+                wb.Worksheets[0].Cells[$"H2"].PutValue(1);
+
+                wb.Save(sfd.FileName);
+
+                AppCommand.InfoMessage("Шаблон готов");
+                File.OpenRead(sfd.FileName);
+            }
+        }
+
         #endregion
 
         private async void UpdateCategory()
@@ -379,6 +505,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             GetAllProductCommand = new RelayCommand(OnGetAllProductCommandExecuted, CanGetAllProductCommandExecute);
             ImportProductDataCommand = new RelayCommand(OnImportProductDataCommandExecuted, CanImportProductDataCommandExecute);
             ExportProductDataCommand = new RelayCommand(OnExportProductDataCommandExecuted, CanExportProductDataCommandExecute);
+            EditProductDataCommand = new RelayCommand(OnEditProductDataCommandExecuted, CanEditProductDataCommandExecute);
+            FileForImportCommand = new RelayCommand(OnFileForImportCommandExecuted, CanFileForImportCommandExecute);
         }
     }
 }

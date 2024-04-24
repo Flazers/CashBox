@@ -81,7 +81,7 @@ namespace Cashbox.MVVM.ViewModels
         private async void OnAuthByPinCommandExecuted(object p)
         {
             UserViewModel? user = await UserViewModel.GetUserByPin(Pin);
-            if (user == null) { MessageBox.Show("Пользователь не найден.", "Ошибка"); return; }
+            if (user == null) { AppCommand.WarningMessage("Пользователь не найден."); return; }
             List<DailyReportViewModel> list = await DailyReportViewModel.GetNotCloseReports();
             if (list.Count != 0)
             {

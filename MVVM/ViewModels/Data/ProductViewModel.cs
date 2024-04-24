@@ -21,7 +21,8 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<ProductViewModel?> UpdateProduct(ProductViewModel? productVM) => await Product.UpdateProducts(productVM);
         public static async Task<ProductViewModel?> RemoveProduct(int id) => await Product.AvailableProducts(id, false);
         public static async Task<ProductViewModel?> UnRemoveProduct(int id) => await Product.AvailableProducts(id, true);
-        public static async Task<bool> ImportProduct(List<ProductViewModel?> productVM) => await Product.ImportProductVM(productVM);
+        public static async Task<bool> ImportProduct(List<ProductViewModel> productVM) => await Product.ImportProductVM(productVM);
+        public static async Task<bool> EditProduct(List<ProductViewModel> productVM) => await Product.EditProductVM(productVM);
 
         public int Id => _product.Id;
 
@@ -85,12 +86,12 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double ReSellCost { get; set; }
+        public string ReSellCost { get; set; } = string.Empty;
         public Visibility ReSellCostVisibility
         {
             get
             {
-                if (ReSellCost != 0)
+                if (ReSellCost != string.Empty)
                     return Visibility.Visible;
                 return Visibility.Collapsed;
             }

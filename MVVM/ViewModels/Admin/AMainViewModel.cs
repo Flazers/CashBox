@@ -70,8 +70,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanLogOutCommandExecute(object p) => true;
         private void OnLogOutCommandExecuted(object p)
         {
-            MessageBoxResult res = MessageBox.Show("Вы уверены, что хотите выйти?", "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (res == MessageBoxResult.No) return;
+            if (AppCommand.QuestionMessage("Вы уверены, что хотите выйти?") == MessageBoxResult.No) return;
             UserViewModel.LogOut();
             NavigationService?.NavigateTo<AuthViewModel>();
         }

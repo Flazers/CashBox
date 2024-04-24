@@ -15,6 +15,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<DailyReportViewModel?> StartShift(DateOnly date, TimeOnly time) => await DailyReport.StartShift(date, time);
         public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double processed, int userId) => await DailyReport.EndShift(date, time, processed, userId);
         public static async Task<List<DailyReportViewModel>> GetPeriodReports(DateOnly startDate, DateOnly endDate) => await DailyReport.GetPeriodReports(startDate, endDate);
+        public static async Task<DailyReportViewModel?> GetReport(DateOnly date) => await DailyReport.GetReport(date);
         public static async Task<List<DailyReportViewModel>> GetNotCloseReports() => await DailyReport.GetNotCloseReports();
 
 

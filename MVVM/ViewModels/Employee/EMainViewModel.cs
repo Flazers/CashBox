@@ -32,7 +32,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             {
                 if (value == true && User.DailyReports.FirstOrDefault(x => x.Data == DateOnly.FromDateTime(DateTime.Today) && x.CloseTime == null) == null)
                 {
-                    MessageBox.Show("Смена не открыта", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    AppCommand.WarningMessage("Смена не открыта");
                     return;
                 }
                 _isCashRegisterView = value;
@@ -58,10 +58,11 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private bool CanLogOutCommandExecute(object p) => true;
         private void OnLogOutCommandExecuted(object p)
         {
-            MessageBoxResult res = MessageBox.Show("Вы уверены, что хотите выйти?", "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (res == MessageBoxResult.No) return;
-            UserViewModel.LogOut();
-            NavigationService?.NavigateTo<AuthViewModel>();
+            if (AppCommand.QuestionMessage("Вы уверены, что хотите выйти?") == MessageBoxResult.Yes)
+            {
+                UserViewModel.LogOut();
+                NavigationService?.NavigateTo<AuthViewModel>();
+            }
         }
 
         #endregion

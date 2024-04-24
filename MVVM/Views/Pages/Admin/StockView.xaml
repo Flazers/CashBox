@@ -102,9 +102,9 @@
                 </Border>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding ImportProductDataCommand}" Width="260" Margin="0 0 40 0" Content="Приход товаров"/>
-                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding ewdirt}" Width="300" Margin="0 0 40 0" Content="Редактирование товаров"/>
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding EditProductDataCommand}" Width="300" Margin="0 0 40 0" Content="Редактирование товаров"/>
                     <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding ExportProductDataCommand}" Width="260" Margin="0 0 40 0" Content="Экспорт товаров"/>
-                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding edirt}" Width="240" Content="Шаблон"/>
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding FileForImportCommand}" Width="240" Content="Шаблон"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
