@@ -22,7 +22,7 @@ namespace Cashbox.MVVM.Models
             private set {
                 _currentUser = value;
                 if (value != null)
-                    if (_currentUser?.UserInfo.Role.Id != 3)
+                    if (_currentUser?.UserInfo.Role.Id != 2)
                         SetAuth();
             }
         }

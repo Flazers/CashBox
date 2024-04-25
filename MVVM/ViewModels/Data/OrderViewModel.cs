@@ -19,9 +19,11 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<List<OrderViewModel>> GetDayOrdersToMethod(DateOnly dateOnly, int method) => await Order.GetDayOrdersToMethod(dateOnly, method);
         public static async Task<List<OrderViewModel>> GetAllDayOrders(DateOnly dateOnly) => await Order.GetAllDayOrders(dateOnly);
         public static async Task<List<OrderViewModel>> GetSellDetail(DateOnly StartData, DateOnly EndData) => await Order.GetSellDetail(StartData, EndData);
-        public static double GetSumInDay(DateOnly? dateOnly) => Order.GetSumInDay(dateOnly);
+        public static async Task<double> GetSumInDay(DateOnly? dateOnly) => await Order.GetSumInDay(dateOnly);
         public static double GetSumMethodInDay(DateOnly? dateOnly) => Order.GetSumMethodInDay(dateOnly);
-        
+        public static bool RemoveNullReferenceOrder() => Order.RemoveNullReferenceOrder();
+
+
         public int Id => _order.Id;
 
         public DateTime? SellDatetime 

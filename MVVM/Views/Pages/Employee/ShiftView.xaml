@@ -166,7 +166,7 @@
                 </StackPanel>
             </Border>
             
-            <!--<Border Style="{StaticResource PanelBorder}" HorizontalAlignment="Right" Visibility="{Binding CheckVisibility}" Height="880" Width="600">
+            <Border Style="{StaticResource PanelBorder}" HorizontalAlignment="Right" Visibility="{Binding CheckVisibility}" Height="880" Width="600">
                 <StackPanel>
                     <Grid Margin="0 -10 0 30" Height="80">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -251,7 +251,7 @@
                         </StackPanel>
                     </Grid>
                 </StackPanel>
-            </Border>-->
+            </Border>
 
         </Grid>
         

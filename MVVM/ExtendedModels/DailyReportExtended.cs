@@ -10,11 +10,18 @@ namespace Cashbox.MVVM.Models
     {
         public DailyReport() { }
 
-        private static DailyReport? _currentShift = CashBoxDataContext.Context.DailyReports.FirstOrDefault(x => x.Data == DateOnly.FromDateTime(DateTime.Today) && x.UserId == UserViewModel.GetCurrentUser().Id);
-        public static DailyReport? CurrentShift 
-        { 
-            get => _currentShift;
-            set => _currentShift = value;
+        private static DailyReportViewModel? _currentShift = null;
+        public static DailyReportViewModel? CurrentShift
+        {
+            get
+            {
+                DailyReport dr = CashBoxDataContext.Context.DailyReports.FirstOrDefault(x => x.Data == DateOnly.FromDateTime(DateTime.Today) && x.UserId == UserViewModel.GetCurrentUser().Id);
+                CurrentShift = null;
+                if (dr != null)
+                    CurrentShift = new(dr);
+                return _currentShift;
+            }
+            private set => _currentShift = value;
         }
 
         public static async Task<DailyReportViewModel?> StartShift(DateOnly date, TimeOnly time)
@@ -36,7 +43,7 @@ namespace Cashbox.MVVM.Models
                 };
                 CashBoxDataContext.Context.Add(dailyReport);
                 await CashBoxDataContext.Context.SaveChangesAsync();
-                CurrentShift = CashBoxDataContext.Context.DailyReports.FirstOrDefault(x => x.Data == date && x.UserId == UserViewModel.GetCurrentUser().Id);
+                CurrentShift = new(dailyReport);
                 return new DailyReportViewModel(dailyReport);
             }
             catch (Exception ex)

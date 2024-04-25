@@ -83,33 +83,49 @@ namespace Cashbox.MVVM.ViewModels
             UserViewModel? user = await UserViewModel.GetUserByPin(Pin);
             if (user == null) { AppCommand.WarningMessage("Пользователь не найден."); return; }
             List<DailyReportViewModel> list = await DailyReportViewModel.GetNotCloseReports();
+            
             if (list.Count != 0)
             {
                 string ListNotClose = string.Empty;
                 int[] SuccessEnterId = [];
-                foreach (DailyReportViewModel report in list)
-                    ListNotClose += $"{report.UserInfoVM.FullName} ";
-                foreach (DailyReportViewModel report in list)
+
+                async void closereport(DailyReportViewModel report)
                 {
-                    if (report.UserId == user.Id)
-                        break;
-                    if (user.UserInfo.RoleId == 2)
-                    {
-                        AppCommand.WarningMessage($"Открыта смена у {ListNotClose}");
-                        return;
-                    }
-                    if (AppCommand.QuestionMessage($"Открыта смена у {ListNotClose}\nЗакрыть для продолжения работы?") != MessageBoxResult.Yes)
-                        return;
                     double DayOrdersProccesedSum;
                     List<OrderViewModel> DayOrdersProccesed = await OrderViewModel.GetDayOrdersToMethod((DateOnly)report.Data!, 2);
                     if (DayOrdersProccesed.Count > 0)
-                        DayOrdersProccesedSum = (double)DayOrdersProccesed.Sum(x => x.SellCost)!;
+                        DayOrdersProccesedSum = (double)DayOrdersProccesed.Sum(x => x.SellCost)! + report.CashOnStart;
                     else
                         DayOrdersProccesedSum = report.CashOnStart;
                     DailyReportViewModel drvm = await DailyReportViewModel.EndShift((DateOnly)report.Data!, new(23, 59, 59), DayOrdersProccesedSum, report.UserId);
                     await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
                 }
+
+                foreach (DailyReportViewModel report in list)
+                    ListNotClose += $"{report.UserInfoVM.FullName} ";
+                foreach (DailyReportViewModel report in list)
+                {
+                    if (report.UserId == user.Id)
+                    {
+                        if (report.Data == DateOnly.FromDateTime(DateTime.Today))
+                            break;
+                        if (AppCommand.QuestionMessage($"У вас не закрыта предыдущая смена.\nЗакрыть для продолжения работы?") == MessageBoxResult.Yes)
+                        {
+                            closereport(report);
+                            break;
+                        }
+                    }
+                    if (user.UserInfo.RoleId == 2)
+                    {
+                        AppCommand.WarningMessage($"Открыта смена у {ListNotClose}");
+                        return;
+                    }
+                    if (AppCommand.QuestionMessage($"Открыта смена у {ListNotClose}\nЗакрыть для продолжения работы?") == MessageBoxResult.Yes)
+                        closereport(report);
+                }
             }
+            if (!OrderViewModel.RemoveNullReferenceOrder())
+                return;
             switch (user.UserInfo?.Role.Id)
             {
                 case 1:

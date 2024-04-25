@@ -268,10 +268,11 @@ namespace Cashbox.MVVM.ViewModels.Employee
             CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCost!);
             NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCost!);
             SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCost!);
-            if (DailyReportViewModel.CurrentShift != null)
+            DailyReportViewModel drvm = DailyReportViewModel.GetCurrentShift();
+            if (drvm != null)
             {
-                OrderCollection = new(await OrderViewModel.GetAllDayOrders((DateOnly)DailyReportViewModel.CurrentShift.Data));
-                StartCash = DailyReportViewModel.CurrentShift.CashOnStart;
+                OrderCollection = new(await OrderViewModel.GetAllDayOrders((DateOnly)drvm.Data));
+                StartCash = drvm.CashOnStart;
             }
             else
                 StartCash = MoneyBoxViewModel.GetMoney;
@@ -288,7 +289,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             EndShiftCommand = new RelayCommand(OnEndShiftCommandExecuted, CanEndShiftCommandExecute);
             SeeCheckPanelCommand = new RelayCommand(OnSeeCheckPanelCommandExecuted, CanSeeCheckPanelCommandExecute);
             SeeShiftPanelCommand = new RelayCommand(OnSeeShiftPanelCommandExecuted, CanSeeShiftPanelCommandExecute);
-            DailyReport = new(DailyReportViewModel.CurrentShift);
+            DailyReport = DailyReportViewModel.GetCurrentShift();
             if (DailyReport != null)
             {
                 StartShiftTime = DailyReport.OpenTime;

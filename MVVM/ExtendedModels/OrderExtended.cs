@@ -22,11 +22,11 @@ namespace Cashbox.MVVM.Models
             set => _orderComposition = value;
         }
 
-        public static double GetSumInDay(DateOnly? dateOnly) 
+        public static async Task<double> GetSumInDay(DateOnly? dateOnly) 
         {
             if (dateOnly == null)
                 return 0;
-            var data = GetAllDayOrders(dateOnly).Result;
+            var data = await GetAllDayOrders(dateOnly);
             double sum = 0;
             foreach (var item in data)
                 sum += (double)item.SellCost!;
@@ -44,6 +44,20 @@ namespace Cashbox.MVVM.Models
             return sum;
         }
 
+        public static bool RemoveNullReferenceOrder()
+        {
+            try
+            {
+                CashBoxDataContext.Context.RemoveRange(CashBoxDataContext.Context.Orders.Where(x => x.PaymentMethodId == null));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
+        }
+
         public static async Task<List<OrderViewModel>> GetSellDetail (DateOnly StartData, DateOnly EndData) => await CashBoxDataContext.Context.Orders.Where(x => DateOnly.FromDateTime((DateTime)x.SellDatetime!) >= StartData && DateOnly.FromDateTime((DateTime)x.SellDatetime!) <= EndData).Select(s => new OrderViewModel(s)).ToListAsync();
         
 
@@ -52,7 +66,7 @@ namespace Cashbox.MVVM.Models
             OrderComposition = new()
             {
                 UserId = UserViewModel.GetCurrentUser().Id,
-                DailyReportId = DailyReportViewModel.CurrentShift.Id,
+                DailyReportId = DailyReportViewModel.GetCurrentShift().Id,
                 SellDatetime = DateTime.Now,
             };
             CashBoxDataContext.Context.Add(OrderComposition);
@@ -91,7 +105,7 @@ namespace Cashbox.MVVM.Models
         }
 
         public static async Task<List<OrderViewModel>> GetDayOrdersToMethod(DateOnly? dateOnly, int method) => await CashBoxDataContext.Context.Orders.Where(x => x.PaymentMethodId == method && DateOnly.FromDateTime((DateTime)x.SellDatetime!) == dateOnly).Select(s => new OrderViewModel(s)).ToListAsync();
-        public static async Task<List<OrderViewModel>> GetAllDayOrders(DateOnly? dateOnly) => await CashBoxDataContext.Context.Orders.Where(x => DateOnly.FromDateTime((DateTime)x.SellDatetime!) == dateOnly).Select(s => new OrderViewModel(s)).ToListAsync();
+        public static async Task<List<OrderViewModel>> GetAllDayOrders(DateOnly? dateOnly) => await CashBoxDataContext.Context.Orders.Where(x => DateOnly.FromDateTime((DateTime)x.SellDatetime!) == dateOnly && x.PaymentMethod != null).Select(s => new OrderViewModel(s)).ToListAsync();
         public static async Task<List<ProductCategoryViewModel>> GetProductCategories() => await CashBoxDataContext.Context.ProductCategories.Select(s => new ProductCategoryViewModel(s)).ToListAsync();
     }
 }

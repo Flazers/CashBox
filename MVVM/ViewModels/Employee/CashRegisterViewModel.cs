@@ -114,7 +114,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private double _totalCost;
         public double TotalCost
         {
-            get => _totalCost;
+            get => _totalCost - (_totalCost / 100 * DiscountOrderCost);
             set => Set(ref _totalCost, value);
         }
 
@@ -143,7 +143,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             get
             {
-                DailyReport CurrentShift = DailyReportViewModel.CurrentShift;
+                DailyReportViewModel CurrentShift = DailyReportViewModel.GetCurrentShift();
                 if (CurrentShift == null)
                     return "нет";
                 return $"{CurrentShift.Data} в {CurrentShift.OpenTime}";

@@ -16,7 +16,7 @@ namespace Cashbox.MVVM.Models
             {
                 IsPurchased = false,
                 IsSuccessRefund = false,
-                DailyReportId = DailyReportViewModel.CurrentShift.Id,
+                DailyReportId = DailyReportViewModel.GetCurrentShift().Id,
             };
             CashBoxDataContext.Context.Refunds.Add(refund);
             await CashBoxDataContext.Context.SaveChangesAsync();

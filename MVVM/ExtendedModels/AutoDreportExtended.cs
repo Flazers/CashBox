@@ -16,11 +16,15 @@ namespace Cashbox.MVVM.Models
                 AutoDreport autoDreport = new()
                 {
                     DailyReportId = dailyReport.Id,
-                    AutoProceeds = OrderViewModel.GetDayOrdersToMethod((DateOnly)dailyReport.Data!, 2).Result.Sum(x => (double)x.SellCost!),
+                    AutoProceeds = 0,
                     Award = 0,
-                    FullTransit = OrderViewModel.GetSumInDay(dailyReport.Data),
+                    FullTransit = 0,
                     Salary = setting.Salary,
                 };
+                List<OrderViewModel> AutoPro = await OrderViewModel.GetDayOrdersToMethod((DateOnly)dailyReport.Data!, 2);
+                if (AutoPro.Count != 0)
+                    autoDreport.AutoProceeds = AutoPro.Sum(x => (double)x.SellCost!);
+                autoDreport.FullTransit = await OrderViewModel.GetSumInDay(dailyReport.Data);
                 double forfeit = (double)autoDreport.AutoProceeds - (double)dailyReport.Proceeds!;
                 if (forfeit <= 0)
                     autoDreport.Forfeit = 0;
