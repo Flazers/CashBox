@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -83,6 +85,18 @@ namespace Cashbox.MVVM.ViewModels.Data
             {
                 _order.Discount = value;
                 OnPropertyChanged();
+            }
+        }
+
+        public SolidColorBrush? BackGroundColor
+        {
+            get
+            {
+                if (_order.Discount != 0)
+                    return (SolidColorBrush)Application.Current.Resources["BasicCyan"];
+                if (_order.OrderProducts!.Where(x => x.SellCost != x.Product.SellCost).Count() > 0)
+                    return (SolidColorBrush)Application.Current.Resources["BasicRed"];
+                return (SolidColorBrush)Application.Current.Resources["BasicW"];
             }
         }
 

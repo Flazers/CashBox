@@ -1,9 +1,11 @@
-﻿using Cashbox.Core;
+﻿using Aspose.Cells.Charts;
+using Cashbox.Core;
 using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Identity.Client.NativeInterop;
 using Microsoft.VisualBasic;
+using ScottPlot.Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -52,7 +54,7 @@ namespace Cashbox.MVVM.Models
                 product.Brand = productVM.Brand;
                 product.CategoryId = productVM.CategoryId;
                 product.SellCost = productVM.SellCost;
-                product.Stock!.Amount = productVM.AmountRes;
+                product.Stock!.Amount += productVM.AmountRes;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(product);
             }
@@ -65,8 +67,11 @@ namespace Cashbox.MVVM.Models
             {
                 foreach (ProductViewModel item in productVM)
                 {
-                    Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == item.Id);
-                    await UpdateProduct(item);
+                    Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Brand == item.Brand && x.Title == item.Title && x.Description == item.Description);
+                    if (product != null)
+                        await UpdateProduct(item);
+                    else
+                        await NewProduct(item);
                 }
                 return true;
             }
@@ -114,6 +119,7 @@ namespace Cashbox.MVVM.Models
             else
                 return await CashBoxDataContext.Context.Products.Select(s => new ProductViewModel(s)).ToListAsync();
         }
+
         public static async Task<ProductViewModel?> CreateProducts(ProductViewModel? productVM) => await NewProduct(productVM);
         public static async Task<ProductViewModel?> UpdateProducts(ProductViewModel? productVM) => await UpdateProduct(productVM);
         public static async Task<ProductViewModel?> AvailableProducts(int id, bool Available) => await AvailableProduct(id, Available);

@@ -251,7 +251,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
 
         public RelayCommand SeeRefundsCommand { get; set; }
-        private bool CanSeeRefundsCommandExecute(object p) => true;
+        private bool CanSeeRefundsCommandExecute(object p) 
+        {
+            if (SelectedDReport == null) 
+                return false;
+            return true;
+        }
         private void OnSeeRefundsCommandExecuted(object p)
         {
             OrderSelectedPanel = Visibility.Visible;
@@ -304,7 +309,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (search == "")
                 DailyReportCollection = new(data.OrderByDescending(x => x.Data));
             else
-                DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.Contains(search.ToLower().Trim())).OrderByDescending(x => x.Data));
+                DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.ToLower().Trim().Contains(search.ToLower().Trim())).OrderByDescending(x => x.Data));
         }
 
         public async void UpdateRefund()

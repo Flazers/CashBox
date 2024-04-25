@@ -153,7 +153,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public async void Update()
         {
-            CollectionProducts = new(await ProductViewModel.GetProducts(IsShowAllProduct));
+            var list = await ProductViewModel.GetProducts(IsShowAllProduct);
+            CollectionProducts = new(list.OrderBy(x => x.Stock.Amount));
             if (SelectedProductCategory == null)
                 return;
             if (SelectedProductCategory.Category != "Все категории")
@@ -232,7 +233,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanImportProductDataCommandExecute(object p) => true;
         private async void OnImportProductDataCommandExecuted(object p)
         {
-            List<ProductViewModel> products = await ProductViewModel.GetProducts(false);
+            List<ProductViewModel> products = await ProductViewModel.GetProducts(true);
             OpenFileDialog openFileDialog = new() { Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*", RestoreDirectory = true };
             bool? resultOpen = openFileDialog.ShowDialog();
             if (resultOpen == true)
@@ -263,33 +264,75 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         reader.Read();
                         int addedcount = 0;
                         int editedcount = 0;
+                        int line = 2;
                         while (reader.Read())
                         {
-                            double boolval;
-                            ProductViewModel product = new(new());
-                            if (string.IsNullOrEmpty(reader.GetDouble(0).ToString()))
-                                product = products.FirstOrDefault(x => x.Id == int.Parse(reader.GetDouble(0).ToString()));
-                            if (product != null) editedcount++;
-                            else addedcount++;
+                            try
+                            {
+                                string error = string.Empty;
+                                string articule = reader.GetString(1);
+                                string brand = reader.GetString(2);
+                                if (string.IsNullOrEmpty(brand))
+                                    error += "Производитель, ";
+                                string title = reader.GetString(3);
+                                if (string.IsNullOrEmpty(title))
+                                    error += "Название, ";
+                                string description = reader.GetString(4);
+                                if (string.IsNullOrEmpty(description))
+                                    error += "Описание, ";
+                                if (error.Length > 30)
+                                    continue;
+                                if (!double.TryParse(reader.GetDouble(5).ToString(), out double sellcost))
+                                    error += "Продажа, ";
+                                if (!int.TryParse(reader.GetDouble(6).ToString(), out int amount))
+                                    error += "Колличество, ";
+                                double IsAvailable = reader.GetDouble(7);
 
-                            if (reader.GetValue(1) == null) product.ArticulCode = string.Empty;
-                            else product.ArticulCode = (reader.GetDouble(1)).ToString();
-
-                            product.Brand = reader.GetString(2);
-                            product.Title = reader.GetString(3);
-                            product.Description = reader.GetString(4);
-                            product.SellCost = reader.GetDouble(5);
-                            product.AmountRes = Convert.ToInt16(reader.GetDouble(6));
-                            product.CategoryId = category.Id;
-
-                            boolval = reader.GetDouble(7);
-                            if (boolval == 1) product.IsAvailable = true;
-                            else product.IsAvailable = false;
+                                if (!string.IsNullOrEmpty(error))
+                                {
+                                    AppCommand.ErrorMessage($"Ошибка в категории{reader.Name}, строка {line}, полe(-ях): {error}");
+                                    return;
+                                }
 
 
-                            products.Add(product);
+                                ProductViewModel product = products.FirstOrDefault(x => x.Brand == brand && x.Title == title && x.Description == description);
+                                if (product != null)
+                                {
+                                    product.SellCost = sellcost;
+                                    product.AmountRes += amount;
+                                    editedcount++;
+                                }
+                                else
+                                {
+                                    product = new(
+                                        new()
+                                        {
+                                            Brand = brand,
+                                            Title = title,
+                                            Description = description,
+                                            SellCost = sellcost,
+                                            CategoryId = category.Id,
+                                        })
+                                    { AmountRes = amount };
+
+                                    if (articule == null) product.ArticulCode = string.Empty;
+                                    else product.ArticulCode = articule;
+
+                                    if (IsAvailable == 1) product.IsAvailable = true;
+                                    else product.IsAvailable = false;
+
+                                    products.Add(product);
+                                    addedcount++;
+                                }
+                                line++;
+                            }
+                            catch (NullReferenceException ex)
+                            {
+                                AppCommand.ErrorMessage(ex.Message);
+                                continue;
+                            }
                         }
-                        AppCommand.InfoMessage($"Категория \"{reader.Name}\" \nДобавлено новых товаров: \"{addedcount}\" \nОтредактировано товаров: \"{addedcount}\"");
+                        AppCommand.InfoMessage($"Категория \"{reader.Name}\" \nДобавлено новых товаров: {addedcount} \nОтредактировано товаров: {editedcount}");
                     } while (reader.NextResult());
                     edr.Close();
                     await ProductViewModel.ImportProduct(products);

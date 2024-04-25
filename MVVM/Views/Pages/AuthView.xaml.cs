@@ -1,4 +1,6 @@
-﻿using Cashbox.MVVM.ViewModels;
+﻿using Cashbox.Core;
+using Cashbox.MVVM.Models;
+using Cashbox.MVVM.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

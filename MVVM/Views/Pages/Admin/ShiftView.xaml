@@ -147,7 +147,7 @@
                                     <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding SelectedOrderList}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Padding="10" Background="{StaticResource BasicW}" CornerRadius="10" Margin="0 0 20 20">
+                                                <Border Padding="10" Background="{Binding BackGroundColor}" CornerRadius="10" Margin="0 0 20 20">
                                                     <Grid>
                                                         <StackPanel Height="60">
                                                             <TextBlock Height="30" Margin="0 0 0 5" Text="{Binding Id, StringFormat='\Чек №{0}'}" Style="{StaticResource TitleText}"/>

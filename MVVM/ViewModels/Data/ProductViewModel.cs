@@ -117,7 +117,7 @@ namespace Cashbox.MVVM.ViewModels.Data
                     return (SolidColorBrush)Application.Current.Resources["DisabledRed"];
                 if (IsAvailable)
                     return (SolidColorBrush)Application.Current.Resources["BasicW"];
-                return (SolidColorBrush)Application.Current.Resources["PressedW"];
+                return (SolidColorBrush)Application.Current.Resources["HoverW"];
             }
         }
 
