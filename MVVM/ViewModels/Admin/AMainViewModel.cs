@@ -1,13 +1,7 @@
 ﻿using Cashbox.Core;
 using Cashbox.Core.Commands;
-using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using Cashbox.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels.Admin
@@ -70,8 +64,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanLogOutCommandExecute(object p) => true;
         private void OnLogOutCommandExecuted(object p)
         {
-            MessageBoxResult res = MessageBox.Show("Вы уверены, что хотите выйти?", "Предупреждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (res == MessageBoxResult.No) return;
+            if (AppCommand.QuestionMessage("Вы уверены, что хотите выйти?") == MessageBoxResult.No) return;
             UserViewModel.LogOut();
             NavigationService?.NavigateTo<AuthViewModel>();
         }

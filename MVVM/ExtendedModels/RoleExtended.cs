@@ -1,10 +1,5 @@
 ﻿using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.Models
 {
@@ -16,11 +11,9 @@ namespace Cashbox.MVVM.Models
             List<Role> roles = [];
             try
             {
-                Role SuperUser = new() { Id = 1, Role1 = "Админ+" };
-                Role adminRole = new() { Id = 2, Role1 = "Админ" };
-                Role EmployeeRole = new() { Id = 3, Role1 = "Сотрудник" };
+                Role SuperUser = new() { Id = 1, Role1 = "Админ" };
+                Role EmployeeRole = new() { Id = 2, Role1 = "Сотрудник" };
                 roles.Add(SuperUser);
-                roles.Add(adminRole);
                 roles.Add(EmployeeRole);
                 CashBoxDataContext.Context.Roles.AddRange(roles);
                 await CashBoxDataContext.Context.SaveChangesAsync();
@@ -38,7 +31,7 @@ namespace Cashbox.MVVM.Models
                 roles = await CreateBaseRoles();
             else
                 roles = await CashBoxDataContext.Context.Roles.Select(s => new RoleViewModel(s)).ToListAsync();
-            
+
             return roles;
         }
 

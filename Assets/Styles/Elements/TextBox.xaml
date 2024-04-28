@@ -137,7 +137,7 @@
     <Style x:Key="Search" TargetType="{x:Type TextBox}">
         <Setter Property="Background" Value="{DynamicResource PanelW}"/>
         <Setter Property="Foreground" Value="{DynamicResource TextB}"/>
-        <Setter Property="MinHeight" Value="30"/>
+        <Setter Property="MinHeight" Value="40"/>
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="FontFamily" Value="Montserrat"/>
         <Setter Property="BorderThickness" Value="0"/>

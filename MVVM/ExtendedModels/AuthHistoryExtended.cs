@@ -1,13 +1,7 @@
 ﻿using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.Models
 {
@@ -62,6 +56,6 @@ namespace Cashbox.MVVM.Models
         }
 
         public async static Task<List<AuthHistoryViewModel>> GetHistories() => await CashBoxDataContext.Context.AuthHistories.Select(s => new AuthHistoryViewModel(s)).ToListAsync();
-        
+
     }
 }

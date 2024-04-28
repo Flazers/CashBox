@@ -4,14 +4,7 @@ using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using Cashbox.Service;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels
@@ -80,7 +73,7 @@ namespace Cashbox.MVVM.ViewModels
         {
             MaxProgress = maxProg;
             int mainDelay = 100;
-            int secondDelay = 500;
+            int secondDelay = 300;
 
             SetStatus("Поиск базы данных...", "loading", 1);
             if (CashBoxDataContext.Context.Database.EnsureCreated())
@@ -114,7 +107,7 @@ namespace Cashbox.MVVM.ViewModels
                 SetStatus("Создаю администратора по умолчанию", "loading", 4);
                 await UserViewModel.CreateUser(111111, "Name", "Surname", "Patronymic", "location", "phone", (await RoleViewModel.GetRoles())[0]);
                 await Task.Delay(secondDelay);
-                MessageBox.Show("Пин-Код: 111111 \nЕго можно изменить позже во вкладке пользователи.", "Данные администратора");
+                AppCommand.InfoMessage("Пин-Код: 111111 \nЕго можно изменить позже во вкладке пользователи.", "Данные администратора");
             }
             await Task.Delay(mainDelay);
 
@@ -133,40 +126,31 @@ namespace Cashbox.MVVM.ViewModels
                 await AppSettingsViewModel.CreateSetting();
                 await MoneyBoxViewModel.CreateBox();
                 await Task.Delay(secondDelay);
-                MessageBox.Show("Зарплата за выход: 1000 ₽ \nДенег в кассе: 0 \nЭти данные можно изменить позже в настройках приложения.", "Данные приложения");
+                AppCommand.InfoMessage("Зарплата за выход: 1000 ₽ \nДенег в кассе: 0 \nЭти данные можно изменить позже в настройках приложения.", "Данные приложения");
             }
             await Task.Delay(mainDelay);
 
             SetStatus("Загрузка базы данных в локальный кэш", "loading", 7);
-            CashBoxDataContext.Context.Roles.Load();
-            CashBoxDataContext.Context.UserInfos.Load();
-            CashBoxDataContext.Context.Users.Load();
+            CashBoxDataContext.Context.AppSettings.Load();
             CashBoxDataContext.Context.AuthHistories.Load();
             CashBoxDataContext.Context.AutoDreports.Load();
+            CashBoxDataContext.Context.ComingProducts.Load();
             CashBoxDataContext.Context.DailyReports.Load();
+            CashBoxDataContext.Context.MoneyBoxes.Load();
             CashBoxDataContext.Context.Orders.Load();
             CashBoxDataContext.Context.OrderProducts.Load();
             CashBoxDataContext.Context.PaymentMethods.Load();
+            CashBoxDataContext.Context.Products.Load();
+            CashBoxDataContext.Context.ProductCategories.Load();
             CashBoxDataContext.Context.Refunds.Load();
+            CashBoxDataContext.Context.Roles.Load();
             CashBoxDataContext.Context.Stocks.Load();
-            CashBoxDataContext.Context.AppSettings.Load();
-            CashBoxDataContext.Context.MoneyBoxes.Load();
+            CashBoxDataContext.Context.UserInfos.Load();
+            CashBoxDataContext.Context.Users.Load();
             await Task.Delay(mainDelay);
 
-            try
-            {
-                SetStatus("Проверка интернет соединения", "loading", 8);
-                HttpClient client = new();
-                HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
-            }
-            catch (HttpRequestException)
-            {
-                MessageBox.Show("Нет интернет соединения \nНекоторые функции могут быть недоступны", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                await Task.Delay(secondDelay);
-            }
-
             await Task.Delay(mainDelay);
-            SetStatus("Запуск", "loading", 9);
+            SetStatus("Запуск", "loading", 8);
             await Task.Delay(mainDelay);
 
             return true;
@@ -206,11 +190,12 @@ namespace Cashbox.MVVM.ViewModels
         {
             CloseApplicationCommand = new RelayCommand(OnCloseApplicationCommandExecuted, CanCloseApplicationCommandExecute);
             Title = "Загрузка приложения";
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 try
                 {
-                    if (!CheckApp(9).Result)
+                    bool result = await CheckApp(8);
+                    if (!result)
                         return;
                     NavigationService = navService;
                     NavigationService.NavigateTo<AuthViewModel>();
@@ -219,6 +204,11 @@ namespace Cashbox.MVVM.ViewModels
                 {
                     SetStatus("База данных не найдена", "error");
                     return;
+                }
+                catch (Exception ex)
+                {
+                    AppCommand.ErrorMessage($"{ex.InnerException} \n{ex.Message} \n{ex.Source} \n{ex.HResult} \n{ex.Data}");
+                    SetStatus("Критическая ошибка", "error");
                 }
             });
         }

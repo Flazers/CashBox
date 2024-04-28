@@ -2,7 +2,6 @@
 using Cashbox.Core.Commands;
 using Cashbox.MVVM.ViewModels.Data;
 using System.Collections.ObjectModel;
-using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels.Admin
 {
@@ -25,8 +24,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _details, value);
         }
 
-        private List<AuthHistoryViewModel>? _authHistory;
-        public List<AuthHistoryViewModel>? AuthHistory
+        private ObservableCollection<AuthHistoryViewModel>? _authHistory;
+        public ObservableCollection<AuthHistoryViewModel>? AuthHistory
         {
             get => _authHistory;
             set => Set(ref _authHistory, value);
@@ -36,7 +35,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public DateTime EndDate
         {
             get => _endDate;
-            set 
+            set
             {
                 if (value < StartDate)
                 {
@@ -76,8 +75,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get
             {
-                if (_newCashInBox <= 1500) return _newCashInBox;
-                return MoneyBoxViewModel.GetMoney - 1500;
+                if (_cashInBox <= 1500)
+                    return _newCashInBox;
+                return _cashInBox - 1500;
             }
             set => Set(ref _newCashInBox, value);
         }
@@ -92,8 +92,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             double temp = NewCashInBox;
             await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 1);
-            MessageBox.Show($"{temp} ₽ внесено в кассу", "Успех");
-            NewCashInBox = 0;
+            AppCommand.InfoMessage($"{temp} ₽ внесено в кассу");
+            NewCashInBox -= temp;
             CashInBox = MoneyBoxViewModel.GetMoney;
         }
 
@@ -108,8 +108,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             double temp = NewCashInBox;
             await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 2);
-            MessageBox.Show($"{temp} ₽ вычтено из кассы", "Успех");
-            NewCashInBox = 0;
+            AppCommand.InfoMessage($"{temp} ₽ вычтено из кассы");
+            NewCashInBox -= temp;
             CashInBox = MoneyBoxViewModel.GetMoney;
         }
 
@@ -139,7 +139,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public override async void OnLoad()
         {
             //var data = Order.GetSellDetail(DateOnly.Parse("2.04.2024"), DateOnly.Parse("5.04.2024"));
-            AuthHistory = AuthHistoryViewModel.GetAuthHistories().Result.TakeLast(3).OrderByDescending(x => x.Datetime).ToList();
+            AuthHistory = new(await AuthHistoryViewModel.GetAuthHistories());
+            AuthHistory = new(AuthHistory.TakeLast(3).OrderByDescending(x => x.Datetime).ToList());
+
         }
 
         public HomeViewModel()

@@ -1,11 +1,5 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -20,11 +14,12 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public int Id => _productCategory.Id;
 
-        public string Category 
+        public string Category
         {
             get => _productCategory.Category;
-            set { 
-                _productCategory.Category = value; 
+            set
+            {
+                _productCategory.Category = value;
                 OnPropertyChanged();
             }
         }

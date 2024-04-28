@@ -1,13 +1,10 @@
-﻿using Cashbox.Core.Commands;
+﻿using Cashbox.Core;
+using Cashbox.Core.Commands;
+using Cashbox.MVVM.ViewModels.Admin;
+using Cashbox.MVVM.ViewModels.Data;
+using Cashbox.MVVM.ViewModels.Employee;
 using Cashbox.Service;
 using System.Windows;
-using System.ComponentModel.DataAnnotations;
-using Cashbox.Core;
-using Cashbox.MVVM.Models;
-using Cashbox.MVVM.ViewModels.Data;
-using System.Security;
-using Cashbox.MVVM.ViewModels.Admin;
-using Cashbox.MVVM.ViewModels.Employee;
 
 namespace Cashbox.MVVM.ViewModels
 {
@@ -53,7 +50,7 @@ namespace Cashbox.MVVM.ViewModels
 
 
         public RelayCommand EnterPinCommand { get; set; }
-        private bool CanEnterPinCommandExecute(object p) 
+        private bool CanEnterPinCommandExecute(object p)
         {
             if (StringPin.Length == 6)
                 return false;
@@ -78,22 +75,63 @@ namespace Cashbox.MVVM.ViewModels
             StringPin = StringPin.Remove(StringPin.Length - 1);
         }
 
-        
+
         public RelayCommand AuthByPinCommand { get; set; }
         private bool CanAuthByPinCommandExecute(object p) => true;
         private async void OnAuthByPinCommandExecuted(object p)
         {
             UserViewModel? user = await UserViewModel.GetUserByPin(Pin);
-            if (user == null) { MessageBox.Show("Пользователь не найден.", "Ошибка"); return; }
+            if (user == null) { AppCommand.WarningMessage("Пользователь не найден."); return; }
+            List<DailyReportViewModel> list = await DailyReportViewModel.GetNotCloseReports();
+
+            if (list.Count != 0)
+            {
+                string ListNotClose = string.Empty;
+                int[] SuccessEnterId = [];
+
+                async void closereport(DailyReportViewModel report)
+                {
+                    double DayOrdersProccesedSum;
+                    List<OrderViewModel> DayOrdersProccesed = await OrderViewModel.GetDayOrdersToMethod((DateOnly)report.Data!, 2);
+                    if (DayOrdersProccesed.Count > 0)
+                        DayOrdersProccesedSum = (double)DayOrdersProccesed.Sum(x => x.SellCost)! + report.CashOnStart;
+                    else
+                        DayOrdersProccesedSum = report.CashOnStart;
+                    DailyReportViewModel drvm = await DailyReportViewModel.EndShift((DateOnly)report.Data!, new(23, 59, 59), DayOrdersProccesedSum, report.UserId);
+                    await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
+                }
+
+                foreach (DailyReportViewModel report in list)
+                    ListNotClose += $"{report.UserInfoVM.FullName} ";
+                foreach (DailyReportViewModel report in list)
+                {
+                    if (report.UserId == user.Id)
+                    {
+                        if (report.Data == DateOnly.FromDateTime(DateTime.Today))
+                            break;
+                        if (AppCommand.QuestionMessage($"У вас не закрыта предыдущая смена.\nЗакрыть для продолжения работы?") == MessageBoxResult.Yes)
+                        {
+                            closereport(report);
+                            break;
+                        }
+                    }
+                    if (user.UserInfo.RoleId == 2)
+                    {
+                        AppCommand.WarningMessage($"Открыта смена у {ListNotClose}");
+                        return;
+                    }
+                    if (AppCommand.QuestionMessage($"Открыта смена у {ListNotClose}\nЗакрыть для продолжения работы?") == MessageBoxResult.Yes)
+                        closereport(report);
+                }
+            }
+            if (!OrderViewModel.RemoveNullReferenceOrder())
+                return;
             switch (user.UserInfo?.Role.Id)
             {
                 case 1:
                     NavigationService?.NavigateTo<AMainViewModel>();
                     break;
                 case 2:
-                    NavigationService?.NavigateTo<AMainViewModel>();
-                    break;
-                case 3:
                     NavigationService?.NavigateTo<EMainViewModel>();
                     break;
             }

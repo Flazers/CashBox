@@ -1,10 +1,5 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -17,11 +12,11 @@ namespace Cashbox.MVVM.ViewModels.Data
         public async static Task<bool> UpdateMoney(double money, int operation = 0) => await MoneyBox.UpdateMoney(money, operation);
         public int Id => _moneyBox.Id;
 
-        public double Money 
-        { 
+        public double Money
+        {
             get => _moneyBox.Money;
-            set 
-            { 
+            set
+            {
                 _moneyBox.Money = value;
                 OnPropertyChanged();
             }

@@ -1,10 +1,5 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.ViewModels.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.Models
 {
@@ -16,7 +11,7 @@ namespace Cashbox.MVVM.Models
         {
             try
             {
-                UserInfo userInfo = new UserInfo()
+                UserInfo userInfo = new()
                 {
                     UserId = userId,
                     Name = name,
@@ -25,13 +20,18 @@ namespace Cashbox.MVVM.Models
                     Location = location,
                     Phone = phone,
                     RoleId = roleId,
-                    IsActive = true
+                    IsActive = true,
+                    Salary = 0
                 };
                 await CashBoxDataContext.Context.AddAsync(userInfo);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new UserInfoViewModel(userInfo);
             }
-            catch (Exception) { return null; }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return null!;
+            }
         }
 
         public static async Task<UserInfoViewModel> DeactivateUser(int userId)

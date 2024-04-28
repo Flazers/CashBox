@@ -1,10 +1,7 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -19,12 +16,14 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<List<OrderViewModel>> GetDayOrdersToMethod(DateOnly dateOnly, int method) => await Order.GetDayOrdersToMethod(dateOnly, method);
         public static async Task<List<OrderViewModel>> GetAllDayOrders(DateOnly dateOnly) => await Order.GetAllDayOrders(dateOnly);
         public static async Task<List<OrderViewModel>> GetSellDetail(DateOnly StartData, DateOnly EndData) => await Order.GetSellDetail(StartData, EndData);
-        public static double GetSumInDay(DateOnly? dateOnly) => Order.GetSumInDay(dateOnly);
+        public static async Task<double> GetSumInDay(DateOnly? dateOnly) => await Order.GetSumInDay(dateOnly);
         public static double GetSumMethodInDay(DateOnly? dateOnly) => Order.GetSumMethodInDay(dateOnly);
-        
+        public static bool RemoveNullReferenceOrder() => Order.RemoveNullReferenceOrder();
+
+
         public int Id => _order.Id;
 
-        public DateTime? SellDatetime 
+        public DateTime? SellDatetime
         {
             get => _order.SellDatetime;
             set
@@ -84,9 +83,29 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public SolidColorBrush? BackGroundColor
+        {
+            get
+            {
+                if (_order.Discount != 0)
+                    return (SolidColorBrush)Application.Current.Resources["BasicCyan"];
+                if (_order.OrderProducts!.Where(x => x.SellCost != x.Product.SellCost).Count() > 0)
+                    return (SolidColorBrush)Application.Current.Resources["BasicRed"];
+                return (SolidColorBrush)Application.Current.Resources["BasicW"];
+            }
+        }
+
         public virtual ICollection<OrderProduct> OrderProducts => _order.OrderProducts!;
 
-        public virtual PaymentMethod PaymentMethod { get; set; } = null!;
+        public virtual PaymentMethod PaymentMethod
+        {
+            get => _order.PaymentMethod!;
+            set
+            {
+                _order.PaymentMethod = value;
+                OnPropertyChanged();
+            }
+        }
 
         public virtual DailyReport DailyReport { get; set; } = null!;
 

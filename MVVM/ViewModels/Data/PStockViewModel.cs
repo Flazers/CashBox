@@ -1,9 +1,4 @@
 ﻿using Cashbox.MVVM.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -12,7 +7,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         private readonly Stock _stock = stock;
 
         public static async Task<PStockViewModel?> GetProductStock(int product_id) => await Stock.GetProductAmount(product_id);
-        public static async Task<PStockViewModel?> CreateProductStock(int product_id, int Amount) => await Stock.CreateProductStock(product_id,Amount);
+        public static async Task<PStockViewModel?> CreateProductStock(int product_id, int Amount) => await Stock.CreateProductStock(product_id, Amount);
         public static async Task<PStockViewModel?> UpdateProductStock(int product_id, int Amount) => await Stock.UpdateProductAmount(product_id, Amount);
 
         public int ProductId => _stock.ProductId;

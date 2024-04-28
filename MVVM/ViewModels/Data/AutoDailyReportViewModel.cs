@@ -1,10 +1,5 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -65,6 +60,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public virtual DailyReport DailyReport { get; set; } = null!;
+        public virtual DailyReport DailyReport => _autoDreport.DailyReport;
+        public DailyReportViewModel DailyReportVM => new(_autoDreport.DailyReport);
     }
 }

@@ -1,16 +1,12 @@
-﻿using Cashbox.Service;
-using Cashbox.Views.Windows;
-using Microsoft.Extensions.DependencyInjection;
-using System.Windows;
+﻿using Cashbox.Core;
 using Cashbox.MVVM.ViewModels;
-using Cashbox.Core;
-using Cashbox.MVVM.Models;
-using Microsoft.EntityFrameworkCore;
-using Cashbox.MVVM.ViewModels.Data;
-using System.Data;
 using Cashbox.MVVM.ViewModels.Admin;
 using Cashbox.MVVM.ViewModels.Employee;
+using Cashbox.Service;
+using Cashbox.Views.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text;
+using System.Windows;
 
 namespace Cashbox
 {

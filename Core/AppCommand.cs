@@ -1,13 +1,5 @@
-﻿using Cashbox;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Cashbox.Core
@@ -51,8 +43,8 @@ namespace Cashbox.Core
 
         public static void ErrorMessage(string message, string caption = "Ошибка") => MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
         public static void WarningMessage(string message, string caption = "Предупреждение") => MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Warning);
-        public static void SuccessMessage(string message, string caption = "Успех") => MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
-        public static void QuestionMessage(string message, string caption = "Подтверждение") => MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Question);
+        public static void InfoMessage(string message, string caption = "Информация") => MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+        public static MessageBoxResult QuestionMessage(string message, string caption = "Подтверждение") => MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
 
     }
 }

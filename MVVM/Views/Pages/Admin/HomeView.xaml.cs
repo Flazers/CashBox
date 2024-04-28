@@ -1,21 +1,5 @@
 ﻿using Cashbox.MVVM.ViewModels.Data;
-using ScottPlot;
-using ScottPlot.Plottables;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Cashbox.MVVM.Views.Pages.Admin
 {
@@ -27,10 +11,12 @@ namespace Cashbox.MVVM.Views.Pages.Admin
         public HomeView()
         {
             InitializeComponent();
+            RefreshDataPlot();
         }
 
         public async void RefreshDataPlot()
         {
+            WpfPlot1.Plot.Clear();
             DateTime date = DateTime.Today;
             var startDate = new DateTime(date.Year, date.Month, 1);
             var endDate = startDate.AddMonths(1).AddDays(-1);
@@ -51,13 +37,13 @@ namespace Cashbox.MVVM.Views.Pages.Admin
             List<DailyReportViewModel> data = await DailyReportViewModel.GetPeriodReports(DateOnly.FromDateTime(startDate), DateOnly.FromDateTime(endDate));
             foreach (var item in data)
             {
-                yMoney[item.Data!.Value.Day - 1] = item.AutoDreportVM.FullTransit!.Value - item.CashOnStart;
+                yMoney[item.Data!.Value.Day - 1] = item.AutoDreportVM.FullTransit!.Value;
             }
 
             var bars = WpfPlot1.Plot.Add.Bars(xDays, yMoney);
 
-            foreach (var bar in bars.Bars) 
-            { 
+            foreach (var bar in bars.Bars)
+            {
                 bar.Label = bar.Value.ToString();
             }
 
@@ -66,12 +52,6 @@ namespace Cashbox.MVVM.Views.Pages.Admin
             bars.ValueLabelStyle.FontSize = 14;
 
             WpfPlot1.Plot.Axes.Margins(bottom: 0);
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            WpfPlot1.Plot.Clear();
-            RefreshDataPlot();
             WpfPlot1.Refresh();
         }
     }

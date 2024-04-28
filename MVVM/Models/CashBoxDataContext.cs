@@ -4,8 +4,8 @@ namespace Cashbox.MVVM.Models;
 
 public partial class CashBoxDataContext : DbContext
 {
-    public CashBoxDataContext() {}
-    public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options) : base(options) {}
+    public CashBoxDataContext() { }
+    public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options) : base(options) { }
 
     private static CashBoxDataContext? _context;
     public static CashBoxDataContext Context => _context ??= new CashBoxDataContext();
@@ -44,7 +44,8 @@ public partial class CashBoxDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\source\\repos\\CashBox\\MVVM\\Models\\Data.db");
+        optionsBuilder.UseSqlite("Data Source=Data.db");
+        //optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\source\\repos\\CashBox\\MVVM\\Models\\Data.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -178,6 +179,7 @@ public partial class CashBoxDataContext : DbContext
         modelBuilder.Entity<ComingProduct>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BuyCost).HasColumnName("buy_cost");
             entity.Property(e => e.CommingDatetime)
                 .HasColumnType("datetime")
                 .HasColumnName("comming_dt");
@@ -248,6 +250,10 @@ public partial class CashBoxDataContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Refund_Product");
+            entity.HasOne(d => d.DailyReport).WithMany(p => p.Refunds)
+                .HasForeignKey(d => d.DailyReportId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Refunds_DailyReport");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -313,6 +319,7 @@ public partial class CashBoxDataContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("surname");
+            entity.Property(e => e.Salary).HasColumnName("salary");
 
             entity.HasOne(d => d.Role).WithMany(p => p.UserInfos)
                 .HasForeignKey(d => d.RoleId)
