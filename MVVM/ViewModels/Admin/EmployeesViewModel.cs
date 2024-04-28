@@ -206,11 +206,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanRemoveEmployeeCommandExecute(object p) => true;
         private async void OnRemoveEmployeeCommandExecuted(object p) 
         {
-            if (AppCommand.QuestionMessage("Вы уверены, что хотите уволить сотрудника {SelectedUser.UserInfo.FullName}?") == MessageBoxResult.No)
-                return;
-            await UserInfoViewModel.DeactivateUser(SelectedUser.Id);
-            CollectionUsers.Remove(SelectedUser);
-            AppCommand.InfoMessage("Пользователь уволен");
+            if (AppCommand.QuestionMessage($"Вы уверены, что хотите уволить сотрудника {SelectedUser.UserInfo.FullName}?") == MessageBoxResult.Yes)
+            {
+                await UserInfoViewModel.DeactivateUser(SelectedUser.Id);
+                CollectionUsers.Remove(SelectedUser);
+                AppCommand.InfoMessage("Пользователь уволен");
+            }
         }
         public RelayCommand OpenPanelEmployeeEditCommand { get; set; }
         private bool CanOpenPanelEmployeeEditCommandExecute(object p) => true;

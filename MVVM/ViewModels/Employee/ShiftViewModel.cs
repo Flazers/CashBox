@@ -300,7 +300,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
                     EndShiftTime = DailyReport.CloseTime;
                     ProcessDoShiftVisibility = Visibility.Collapsed;
                     EndShiftVisibility = Visibility.Visible;
-                    AutoShift = new(DailyReport.AutoDreport!);
+                    AutoShift = DailyReport.AutoDreportVM!;
                 }
                 else
                 {

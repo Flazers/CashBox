@@ -16,13 +16,13 @@
         <StackPanel Orientation="Horizontal">
 
             <StackPanel Margin="0 0 40 0" Width="480">
-                <Border Style="{StaticResource PanelBorder}" Height="560" Margin="0 0 0 40">
+                <Border Style="{StaticResource PanelBorder}" Height="460" Margin="0 0 0 40">
                     <DockPanel LastChildFill="True">
                         <Grid DockPanel.Dock="Top" Margin="0 -10 0 30" Height="80">
                             <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Категории"/>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
-                        <ScrollViewer DockPanel.Dock="Top" Height="430" Margin="10 0 10 10">
+                        <ScrollViewer DockPanel.Dock="Top" Height="330" Margin="10 0 10 10">
                             <ListBox ItemContainerStyle="{StaticResource LBItemContainerStyle}" HorizontalContentAlignment="Stretch" SelectedItem="{Binding SelectedProductCategory}" Width="400" HorizontalAlignment="Left" 
                                      Background="Transparent" d:ItemsSource="{d:SampleData ItemCount=10}" ItemsSource="{Binding CollectionProductCategories}">
                                 <ItemsControl.ItemTemplate>
@@ -39,16 +39,32 @@
                 <Border Style="{StaticResource PanelBorder}" Height="280">
                     <StackPanel>
                         <Grid Margin="0 -10 0 30" Height="80">
-                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Удаление категории"/>
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Приходы"/>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
-                        <StackPanel Margin="10 0 10 10">
-                            <ComboBox Tag="Куда перемещать товары" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionProductCategories}" DisplayMemberPath="Category" SelectedValuePath="Category" 
-                                      SelectedItem="{Binding ProductData.CategoryVM, Mode=TwoWay}" Margin="0 0 0 20"/>
-                            <Button HorizontalAlignment="Stretch" Command="{Binding RemoveCategoryCommand}" Style="{StaticResource ButtonInPanelRed}" Content="Удалить категорию"/>
-                        </StackPanel>
+                        <ScrollViewer Margin="10 0 10 10" Height="150">
+                            <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Height="30" Padding="3" Background="{StaticResource PanelW}" CornerRadius="10" Margin="0 0 20 15">
+                                            <Grid>
+                                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding CommingDatetime}" Foreground="{StaticResource TextB}" Style="{StaticResource SmallText}"/>
+                                                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding BuyCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}" Style="{StaticResource SmallText}"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
                     </StackPanel>
                 </Border>
+
+                <StackPanel Orientation="Horizontal" Margin="0 40 0 0">
+                    <Border Style="{StaticResource PanelBorder}" Width="240" Margin="0 0 40 0" Height="60">
+                        <TextBox Style="{StaticResource TbPlaceholderTag}" Tag="Цена" Text=""/>
+                    </Border>
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding ImportProductDataCommand}" Width="200"  Content="Новый приход"/>
+                </StackPanel>
             </StackPanel>
 
             <StackPanel Width="1180">
@@ -79,9 +95,9 @@
                                             <Border Padding="20" Width="340" Height="190" Background="{Binding BackGroundColor}" CornerRadius="20" Margin="10">
                                                 <Grid>
                                                     <StackPanel>
-                                                        <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" ScrollViewer.CanContentScroll="True"/>
-                                                        <TextBlock Style="{StaticResource RegularText}" Text="{Binding Title}" ScrollViewer.CanContentScroll="True"/>
-                                                        <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}" ScrollViewer.CanContentScroll="True"/>
+                                                        <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" TextWrapping="Wrap"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" Text="{Binding Title}" TextWrapping="Wrap"/>
+                                                        <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}" />
                                                     </StackPanel>
                                                     <StackPanel VerticalAlignment="Bottom">
                                                         <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Right" Text="{Binding SellCost, StringFormat='Цена: \{0} ₽'}" Foreground="{StaticResource TextB}"/>
@@ -101,10 +117,9 @@
                     </DockPanel>
                 </Border>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding ImportProductDataCommand}" Width="260" Margin="0 0 40 0" Content="Приход товаров"/>
-                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding EditProductDataCommand}" Width="300" Margin="0 0 40 0" Content="Редактирование товаров"/>
-                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding ExportProductDataCommand}" Width="260" Margin="0 0 40 0" Content="Экспорт товаров"/>
-                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding FileForImportCommand}" Width="240" Content="Шаблон"/>
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding EditProductDataCommand}" Width="370" Margin="0 0 40 0" Content="Редактирование товаров"/>
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding ExportProductDataCommand}" Width="370" Margin="0 0 40 0" Content="Экспорт товаров"/>
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding FileForImportCommand}" Width="360" Content="Скачать шаблон"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

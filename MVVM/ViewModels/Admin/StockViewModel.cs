@@ -194,30 +194,65 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         ProductCategoryViewModel category = CollectionProductCategories.FirstOrDefault(x => x.Category == reader.Name);
                         category ??= await ProductCategoryViewModel.CreateProductCategory(reader.Name);
                         reader.Read();
+                        int line = 2;
                         while (reader.Read())
                         {
+                            string error = string.Empty;
+                            string id = reader.GetValue(0).ToString();
+                            if (string.IsNullOrEmpty(id))
+                                error += "id, ";
+                            string articule = reader.GetString(1);
+                            string brand = reader.GetString(2);
+                            if (string.IsNullOrEmpty(brand))
+                                error += "Производитель, ";
+                            string title = reader.GetString(3);
+                            if (string.IsNullOrEmpty(title))
+                                error += "Название, ";
+                            string description = reader.GetString(4);
+                            if (string.IsNullOrEmpty(description))
+                                error += "Описание, ";
+                            if (error.Length > 30)
+                                continue;
+                            if (!double.TryParse(reader.GetValue(5).ToString(), out double sellcost))
+                                error += "Продажа, ";
+                            if (!int.TryParse(reader.GetValue(6).ToString(), out int amount))
+                                error += "Колличество, ";
+                            if (!double.TryParse(reader.GetValue(7).ToString(), out double IsAvailable) || IsAvailable < 0 || IsAvailable > 1)
+                                error += "В продаже / Снят с продаж, ";
+
+                            if (!string.IsNullOrEmpty(error))
+                            {
+                                AppCommand.ErrorMessage($"Ошибка в категории{reader.Name}, строка {line}, полe(-ях): {error}");
+                                return;
+                            }
+
                             ProductViewModel readedproduct = new(new());
-                            if (string.IsNullOrEmpty(reader.GetDouble(0).ToString()))
-                                readedproduct = products.FirstOrDefault(x => x.Id == int.Parse(reader.GetDouble(0).ToString()));
+                            if (string.IsNullOrEmpty(id))
+                            {
+                                AppCommand.WarningMessage($"Не найден товар из строки {line}.");
+                                continue;
+                            }
+                                
+                            readedproduct = products.FirstOrDefault(x => x.Id == int.Parse(id));
                             if (readedproduct != null)
                             {
-                                readedproduct.ArticulCode = reader.GetString(1);
-                                readedproduct.Brand = reader.GetString(2);
-                                readedproduct.Title = reader.GetString(3);
-                                readedproduct.Description = reader.GetString(4);
-                                readedproduct.SellCost = reader.GetDouble(5);
+                                readedproduct.Brand = brand;
+                                readedproduct.Title = title;
+                                readedproduct.Description = description;
+                                readedproduct.SellCost = sellcost;
                                 readedproduct.CategoryId = category.Id;
-                                readedproduct.AmountRes = Convert.ToInt16(reader.GetDouble(6));
-                                double boolval = reader.GetDouble(7);
-                                if (boolval == 1) readedproduct.IsAvailable = true;
+                                readedproduct.AmountRes = amount;
+                                if (IsAvailable == 1) readedproduct.IsAvailable = true;
                                 else readedproduct.IsAvailable = false;
-                                if (reader.GetValue(1) == null) readedproduct.ArticulCode = string.Empty;
-                                else readedproduct.ArticulCode = (reader.GetDouble(0)).ToString();
+                                if (articule == null) readedproduct.ArticulCode = string.Empty;
+                                else readedproduct.ArticulCode = articule;
                             }
+                            line++;
                         }
                     } while (reader.NextResult());
                     edr.Close();
-                    await ProductViewModel.EditProduct(products);
+                    if (await ProductViewModel.EditProduct(products))
+                        AppCommand.InfoMessage("Товары отредактированы");
                     UpdateCategory();
                     Update();
                 }
@@ -282,11 +317,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
                                     error += "Описание, ";
                                 if (error.Length > 30)
                                     continue;
-                                if (!double.TryParse(reader.GetDouble(5).ToString(), out double sellcost))
+                                if (!double.TryParse(reader.GetValue(5).ToString(), out double sellcost))
                                     error += "Продажа, ";
-                                if (!int.TryParse(reader.GetDouble(6).ToString(), out int amount))
+                                if (!int.TryParse(reader.GetValue(6).ToString(), out int amount))
                                     error += "Колличество, ";
-                                double IsAvailable = reader.GetDouble(7);
+                                if (!double.TryParse(reader.GetValue(7).ToString(), out double IsAvailable) || IsAvailable < 0 || IsAvailable > 1)
+                                    error += "В продаже / Снят с продаж, ";
 
                                 if (!string.IsNullOrEmpty(error))
                                 {

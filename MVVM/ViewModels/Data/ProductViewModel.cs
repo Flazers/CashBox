@@ -1,24 +1,16 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
-    public class ProductViewModel : ViewModelBase
+    public class ProductViewModel(Product product) : ViewModelBase
     {
-        private readonly Product _product;
-        public ProductViewModel(Product product)
-        {
-            _product = product;
-        }
+        private readonly Product _product = product;
 
         public static async Task<List<ProductViewModel>> GetProducts(bool ShowNoAvailable = false) => await Product.GetProducts(ShowNoAvailable);
         public static async Task<ProductViewModel?> CreateProduct(ProductViewModel? productVM) => await Product.CreateProducts(productVM);
-        public static async Task<ProductViewModel?> UpdateProduct(ProductViewModel? productVM) => await Product.UpdateProducts(productVM);
         public static async Task<ProductViewModel?> RemoveProduct(int id) => await Product.AvailableProducts(id, false);
         public static async Task<ProductViewModel?> UnRemoveProduct(int id) => await Product.AvailableProducts(id, true);
         public static async Task<bool> ImportProduct(List<ProductViewModel> productVM) => await Product.ImportProductVM(productVM);

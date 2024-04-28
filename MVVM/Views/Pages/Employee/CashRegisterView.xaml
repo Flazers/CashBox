@@ -21,7 +21,7 @@
         </Border>
 
         <Grid Margin="0 40 0 0">
-            <Border HorizontalAlignment="Left" Style="{StaticResource PanelBorder}" Height="880" Width="870">
+            <Border HorizontalAlignment="Left" Style="{StaticResource PanelBorder}" Height="880" Width="1060">
                 <StackPanel>
                     <Grid Margin="0 -10 0 30" Height="80">
                         <TextBlock Style="{DynamicResource TitleText}" Margin="5 0 0 0" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Товары"/>
@@ -43,15 +43,15 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Padding="20" Width="250" Height="200" Background="{StaticResource BasicW}" CornerRadius="20" Margin="10">
+                                    <Border Padding="20" Width="310" Height="220" Background="{StaticResource BasicW}" CornerRadius="20" Margin="10">
                                         <Grid>
                                             <StackPanel>
-                                                <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" ScrollViewer.CanContentScroll="True"/>
-                                                <TextBlock Style="{StaticResource RegularText}" Text="{Binding Title}" ScrollViewer.CanContentScroll="True"/>
-                                                <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}" ScrollViewer.CanContentScroll="True"/>
+                                                <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" TextWrapping="Wrap"/>
+                                                <TextBlock Style="{StaticResource RegularText}" Text="{Binding Title}" TextWrapping="Wrap"/>
+                                                <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}"/>
                                             </StackPanel>
                                             <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0 100 0 0">
-                                                <StackPanel Height="50" Width="160">
+                                                <StackPanel Height="50" Width="220">
                                                     <TextBlock Text="{Binding SellCost, StringFormat='{}{0} ₽'}" Style="{StaticResource TitleText}"/>
                                                     <TextBlock Text="{Binding Stock.Amount, StringFormat='{} {0} шт.'}" Style="{StaticResource SmallText}"/>
                                                 </StackPanel>
@@ -122,18 +122,18 @@
                             <ItemsControl ItemsSource="{Binding OrderProductsBasket}" d:ItemsSource="{d:SampleData ItemCount=4}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Height="120" Margin="0 0 20 20"
+                                        <Border Margin="0 0 20 20"
                                                     Background="{StaticResource PanelW}" Padding="10" 
                                                     CornerRadius="5">
-                                            <DockPanel>
-                                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                                            <Grid>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                                     <DockPanel>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding ProductVM.Brand}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding ProductVM.Title}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding ProductVM.Description}" Foreground="{StaticResource TextG}"/>
+                                                        <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Style="{StaticResource TitleText}" Text="{Binding ProductVM.Brand}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Width="340" Style="{StaticResource RegularText}" Text="{Binding ProductVM.Title}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Style="{StaticResource SmallText}" Text="{Binding ProductVM.Description}" Foreground="{StaticResource TextG}"/>
                                                     </DockPanel>
                                                 </StackPanel>
-                                                <Grid DockPanel.Dock="Right" HorizontalAlignment="Right">
+                                                <Grid Height="110" HorizontalAlignment="Right">
                                                     <TextBlock Style="{StaticResource RegularText}" VerticalAlignment="Top" HorizontalAlignment="Right" Text="{Binding ProductVM.SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
 
                                                     <StackPanel VerticalAlignment="Center" Margin="0 0 0 10" HorizontalAlignment="Right" Orientation="Horizontal">
@@ -154,7 +154,7 @@
                                                         </StackPanel>
                                                     </Border>
                                                 </Grid>
-                                            </DockPanel>
+                                            </Grid>
                                         </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

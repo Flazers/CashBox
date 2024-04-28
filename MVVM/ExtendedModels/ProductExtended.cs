@@ -1,25 +1,13 @@
-﻿using Aspose.Cells.Charts;
-using Cashbox.Core;
+﻿using Cashbox.Core;
 using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Identity.Client.NativeInterop;
-using Microsoft.VisualBasic;
-using ScottPlot.Statistics;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Cashbox.MVVM.Models
 {
     public partial class Product
     {
         public Product() { }
+
         private static async Task<ProductViewModel?> NewProduct(ProductViewModel? productVM)
         {
             try
@@ -42,7 +30,15 @@ namespace Cashbox.MVVM.Models
             catch (Exception) { return null; }
         }
 
-        private static async Task<ProductViewModel?> UpdateProduct(ProductViewModel? productVM)
+        public static async Task<List<ProductViewModel>> GetProducts(bool NoAvailable)
+        {
+            if (!NoAvailable)
+                return await CashBoxDataContext.Context.Products.Where(x => x.IsAvailable == true).Select(s => new ProductViewModel(s)).ToListAsync();
+            else
+                return await CashBoxDataContext.Context.Products.Select(s => new ProductViewModel(s)).ToListAsync();
+        }
+
+        private static async Task<ProductViewModel?> UpdateProduct(ProductViewModel? productVM, bool SetOrPlus)
         {
             try
             {
@@ -54,7 +50,10 @@ namespace Cashbox.MVVM.Models
                 product.Brand = productVM.Brand;
                 product.CategoryId = productVM.CategoryId;
                 product.SellCost = productVM.SellCost;
-                product.Stock!.Amount += productVM.AmountRes;
+                if (SetOrPlus)
+                    product.Stock!.Amount = productVM.AmountRes;
+                else
+                    product.Stock!.Amount += productVM.AmountRes;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(product);
             }
@@ -69,7 +68,7 @@ namespace Cashbox.MVVM.Models
                 {
                     Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Brand == item.Brand && x.Title == item.Title && x.Description == item.Description);
                     if (product != null)
-                        await UpdateProduct(item);
+                        await UpdateProduct(item, false);
                     else
                         await NewProduct(item);
                 }
@@ -89,7 +88,7 @@ namespace Cashbox.MVVM.Models
                 foreach (ProductViewModel item in productVM)
                 {
                     Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == item.Id);
-                    await UpdateProduct(item);
+                    await UpdateProduct(item, true);
                 }
                 return true;
             }
@@ -113,15 +112,8 @@ namespace Cashbox.MVVM.Models
             catch (Exception) { return null; }
         }
 
-        public static async Task<List<ProductViewModel>> GetProducts(bool NoAvailable) {
-            if (!NoAvailable)
-                return await CashBoxDataContext.Context.Products.Where(x => x.IsAvailable == true).Select(s => new ProductViewModel(s)).ToListAsync();
-            else
-                return await CashBoxDataContext.Context.Products.Select(s => new ProductViewModel(s)).ToListAsync();
-        }
 
         public static async Task<ProductViewModel?> CreateProducts(ProductViewModel? productVM) => await NewProduct(productVM);
-        public static async Task<ProductViewModel?> UpdateProducts(ProductViewModel? productVM) => await UpdateProduct(productVM);
         public static async Task<ProductViewModel?> AvailableProducts(int id, bool Available) => await AvailableProduct(id, Available);
         public static async Task<bool> ImportProductVM(List<ProductViewModel> productVM) => await ImportProduct(productVM);
         public static async Task<bool> EditProductVM(List<ProductViewModel> productVM) => await EditProduct(productVM);

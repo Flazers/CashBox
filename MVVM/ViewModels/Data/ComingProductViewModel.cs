@@ -12,6 +12,8 @@ namespace Cashbox.MVVM.ViewModels.Data
     {
         private readonly ComingProduct _comingProduct = comingProduct;
 
+        public static async Task<bool> NewComing(double BuyCost) => await ComingProduct.NewComing(BuyCost);
+        public static async Task<List<ComingProductViewModel>> GetComing() => await ComingProduct.GetComing();
 
         public int Id => _comingProduct.Id;
         public int UserId => _comingProduct.UserId;

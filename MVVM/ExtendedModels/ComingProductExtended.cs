@@ -1,5 +1,6 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.ViewModels.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cashbox.MVVM.Models
 {
@@ -7,18 +8,17 @@ namespace Cashbox.MVVM.Models
     {
         public ComingProduct() { }
 
-        private static AppSettings _settings = CashBoxDataContext.Context.AppSettings.FirstOrDefault(x => x.Id == 1)!;
-        public static AppSettings Settings => _settings;
-
-        private static async Task<bool> CreateSettings()
+        private static async Task<bool> CreateNewComing(double BuyCost)
         {
             try
             {
-                AppSettings appsetting = new()
+                ComingProduct comingProduct = new()
                 {
-                    Salary = 1000,
+                    CommingDatetime = DateTime.Now,
+                    UserId = UserViewModel.GetCurrentUser().Id,
+                    BuyCost = BuyCost,
                 };
-                CashBoxDataContext.Context.AppSettings.Add(appsetting);
+                CashBoxDataContext.Context.ComingProducts.Add(comingProduct);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }
@@ -29,24 +29,7 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        private static async Task<bool> EditSettings(int salary, int award)
-        {
-            try
-            {
-                AppSettings appsetting = CashBoxDataContext.Context.AppSettings.FirstOrDefault(x => x.Id == 1)!;
-                if (salary != 0)
-                    appsetting.Salary = salary;
-                await CashBoxDataContext.Context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                AppCommand.ErrorMessage(ex.Message);
-                return false;
-            }
-        }
-
-        public static async Task<bool> CreateSetting() => await CreateSettings();
-        public static async Task<bool> EditSetting(int salary, int award) => await EditSettings(salary, award);
+        public static async Task<bool> NewComing(double BuyCost) => await CreateNewComing(BuyCost);
+        public static async Task<List<ComingProductViewModel>> GetComing() => await CashBoxDataContext.Context.ComingProducts.Select(s => new ComingProductViewModel(s)).ToListAsync();
     }
 }

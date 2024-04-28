@@ -58,7 +58,10 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        public static async Task<List<OrderViewModel>> GetSellDetail (DateOnly StartData, DateOnly EndData) => await CashBoxDataContext.Context.Orders.Where(x => DateOnly.FromDateTime((DateTime)x.SellDatetime!) >= StartData && DateOnly.FromDateTime((DateTime)x.SellDatetime!) <= EndData).Select(s => new OrderViewModel(s)).ToListAsync();
+        public static async Task<List<OrderViewModel>> GetSellDetail (DateOnly StartData, DateOnly EndData) => await CashBoxDataContext.Context.Orders
+            .Where(x => DateOnly.FromDateTime((DateTime)x.SellDatetime!) >= StartData 
+            && DateOnly.FromDateTime((DateTime)x.SellDatetime!) <= EndData)
+            .Select(s => new OrderViewModel(s)).ToListAsync();
         
 
         public static async Task<OrderViewModel> CreateOrder()
