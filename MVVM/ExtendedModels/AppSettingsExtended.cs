@@ -1,5 +1,4 @@
 ﻿using Cashbox.Core;
-using Cashbox.MVVM.ViewModels.Data;
 
 namespace Cashbox.MVVM.Models
 {

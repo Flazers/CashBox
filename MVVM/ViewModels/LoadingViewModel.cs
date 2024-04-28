@@ -205,6 +205,11 @@ namespace Cashbox.MVVM.ViewModels
                     SetStatus("База данных не найдена", "error");
                     return;
                 }
+                catch (Exception ex)
+                {
+                    AppCommand.ErrorMessage($"{ex.InnerException} \n{ex.Message} \n{ex.Source} \n{ex.HResult} \n{ex.Data}");
+                    SetStatus("Критическая ошибка", "error");
+                }
             });
         }
     }

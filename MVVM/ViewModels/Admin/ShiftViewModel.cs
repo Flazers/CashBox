@@ -2,15 +2,8 @@
 using Cashbox.Core.Commands;
 using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 
 namespace Cashbox.MVVM.ViewModels.Admin
 {
@@ -57,7 +50,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public bool CheckBool
         {
             get => _checkBool;
-            set 
+            set
             {
                 _checkBool = value;
                 OrdersListVisibility = Visibility.Collapsed;
@@ -85,7 +78,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public Visibility CheckListVisibility
         {
             get => _checkListVisibility;
-            set => Set(ref  _checkListVisibility, value);
+            set => Set(ref _checkListVisibility, value);
         }
 
         private Visibility _checkListOneObjVisibility = Visibility.Collapsed;
@@ -251,9 +244,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
 
         public RelayCommand SeeRefundsCommand { get; set; }
-        private bool CanSeeRefundsCommandExecute(object p) 
+        private bool CanSeeRefundsCommandExecute(object p)
         {
-            if (SelectedDReport == null) 
+            if (SelectedDReport == null)
                 return false;
             return true;
         }

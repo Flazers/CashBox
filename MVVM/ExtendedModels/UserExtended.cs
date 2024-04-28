@@ -1,13 +1,6 @@
-﻿using BCrypt.Net;
-using Cashbox.Core;
-using Cashbox.MVVM.Models;
+﻿using Cashbox.Core;
 using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.Models
 {
@@ -19,7 +12,8 @@ namespace Cashbox.MVVM.Models
         public static UserViewModel? CurrentUser
         {
             get => _currentUser;
-            private set {
+            private set
+            {
                 _currentUser = value;
                 if (value != null)
                     if (_currentUser?.UserInfo.Role.Id != 2)
@@ -56,7 +50,7 @@ namespace Cashbox.MVVM.Models
                 userVM.SetUserInfo(userinfoVM);
                 return userVM;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 AppCommand.ErrorMessage(ex.Message);
                 return null;

@@ -1,19 +1,12 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Shell;
 
 namespace Cashbox.MVVM.Models
 {
     public partial class Order
     {
-        private Order() {}
+        private Order() { }
 
         private static Order? _orderComposition;
         public static Order? OrderComposition
@@ -22,7 +15,7 @@ namespace Cashbox.MVVM.Models
             set => _orderComposition = value;
         }
 
-        public static async Task<double> GetSumInDay(DateOnly? dateOnly) 
+        public static async Task<double> GetSumInDay(DateOnly? dateOnly)
         {
             if (dateOnly == null)
                 return 0;
@@ -58,11 +51,11 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        public static async Task<List<OrderViewModel>> GetSellDetail (DateOnly StartData, DateOnly EndData) => await CashBoxDataContext.Context.Orders
-            .Where(x => DateOnly.FromDateTime((DateTime)x.SellDatetime!) >= StartData 
+        public static async Task<List<OrderViewModel>> GetSellDetail(DateOnly StartData, DateOnly EndData) => await CashBoxDataContext.Context.Orders
+            .Where(x => DateOnly.FromDateTime((DateTime)x.SellDatetime!) >= StartData
             && DateOnly.FromDateTime((DateTime)x.SellDatetime!) <= EndData)
             .Select(s => new OrderViewModel(s)).ToListAsync();
-        
+
 
         public static async Task<OrderViewModel> CreateOrder()
         {

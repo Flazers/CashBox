@@ -1,13 +1,7 @@
 ﻿using Cashbox.Core;
 using Cashbox.Core.Commands;
 using Cashbox.MVVM.ViewModels.Data;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels.Admin
@@ -27,7 +21,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
 
         public int PincodeInt => int.Parse(Pincode);
-        
+
 
         private string? _name;
         public string? Name
@@ -142,7 +136,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 _selectedUser = value;
                 NotUserSelectedPanel = Visibility.Visible;
                 UserSelectedPanel = Visibility.Collapsed;
-                
+
                 if (value != null)
                 {
                     NotUserSelectedPanel = Visibility.Collapsed;
@@ -204,7 +198,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public RelayCommand RemoveEmployeeCommand { get; set; }
         private bool CanRemoveEmployeeCommandExecute(object p) => true;
-        private async void OnRemoveEmployeeCommandExecuted(object p) 
+        private async void OnRemoveEmployeeCommandExecuted(object p)
         {
             if (AppCommand.QuestionMessage($"Вы уверены, что хотите уволить сотрудника {SelectedUser.UserInfo.FullName}?") == MessageBoxResult.Yes)
             {

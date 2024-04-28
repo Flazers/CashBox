@@ -1,10 +1,5 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -21,7 +16,7 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public int Id => _dailyReport.Id;
 
-        public DateOnly? Data 
+        public DateOnly? Data
         {
             get => _dailyReport.Data;
             set
@@ -32,8 +27,8 @@ namespace Cashbox.MVVM.ViewModels.Data
         }
 
         public string? DataString => ((DateOnly)Data!).ToString("dd/MM/yyyy");
-        
-        public TimeOnly? OpenTime 
+
+        public TimeOnly? OpenTime
         {
             get => _dailyReport.OpenTime;
             set
@@ -43,7 +38,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public TimeOnly? CloseTime 
+        public TimeOnly? CloseTime
         {
             get => _dailyReport.CloseTime;
             set
@@ -53,7 +48,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public int UserId 
+        public int UserId
         {
             get => _dailyReport.UserId;
             set
@@ -63,7 +58,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double? Proceeds 
+        public double? Proceeds
         {
             get => _dailyReport.Proceeds;
             set
@@ -83,7 +78,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public int RefundCount => _dailyReport.Refunds.Where(x => x.IsPurchased == true).Count(); 
+        public int RefundCount => _dailyReport.Refunds.Where(x => x.IsPurchased == true).Count();
         public int CrackCount => _dailyReport.Refunds.Where(x => x.IsPurchased == false && x.BuyDate == null).Count();
         public int DrawCount => _dailyReport.Refunds.Where(x => x.IsPurchased == false && x.BuyDate != null).Count();
 

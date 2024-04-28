@@ -83,7 +83,7 @@ namespace Cashbox.MVVM.ViewModels
             UserViewModel? user = await UserViewModel.GetUserByPin(Pin);
             if (user == null) { AppCommand.WarningMessage("Пользователь не найден."); return; }
             List<DailyReportViewModel> list = await DailyReportViewModel.GetNotCloseReports();
-            
+
             if (list.Count != 0)
             {
                 string ListNotClose = string.Empty;

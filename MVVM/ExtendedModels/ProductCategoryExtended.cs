@@ -1,12 +1,5 @@
-﻿using Cashbox.MVVM.Models;
-using Cashbox.MVVM.ViewModels.Data;
+﻿using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Cashbox.MVVM.Models
 {
@@ -17,7 +10,7 @@ namespace Cashbox.MVVM.Models
         {
             try
             {
-                ProductCategory productCategory = new() { Category = category};
+                ProductCategory productCategory = new() { Category = category };
                 CashBoxDataContext.Context.ProductCategories.Add(productCategory);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(productCategory);

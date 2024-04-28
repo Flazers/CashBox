@@ -74,10 +74,10 @@ namespace Cashbox.MVVM.Models
                 }
                 return true;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 AppCommand.ErrorMessage(ex.Message);
-                return false; 
+                return false;
             }
         }
 

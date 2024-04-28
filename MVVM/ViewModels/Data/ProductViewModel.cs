@@ -105,7 +105,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         {
             get
             {
-                if (_product.Stock.Amount == 0) 
+                if (_product.Stock.Amount == 0)
                     return (SolidColorBrush)Application.Current.Resources["DisabledRed"];
                 if (IsAvailable)
                     return (SolidColorBrush)Application.Current.Resources["BasicW"];

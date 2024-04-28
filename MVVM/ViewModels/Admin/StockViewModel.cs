@@ -232,7 +232,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                                 AppCommand.WarningMessage($"Не найден товар из строки {line}.");
                                 continue;
                             }
-                                
+
                             readedproduct = products.FirstOrDefault(x => x.Id == int.Parse(id));
                             if (readedproduct != null)
                             {

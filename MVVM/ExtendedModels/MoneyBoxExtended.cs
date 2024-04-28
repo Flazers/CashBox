@@ -1,11 +1,5 @@
 ﻿using Cashbox.Core;
-using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.Models
 {
@@ -18,7 +12,7 @@ namespace Cashbox.MVVM.Models
         {
             try
             {
-                MoneyBox moneyBox = new() { Id = 1, Money = 0};
+                MoneyBox moneyBox = new() { Id = 1, Money = 0 };
                 CashBoxDataContext.Context.Add(moneyBox);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
@@ -55,7 +49,7 @@ namespace Cashbox.MVVM.Models
                 AppCommand.ErrorMessage(ex.Message);
                 return false;
             }
-            
+
         }
 
         public static double GetMoney => CashBoxDataContext.Context.MoneyBoxes.FirstOrDefault(x => x.Id == 1).Money;

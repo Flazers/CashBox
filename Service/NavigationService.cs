@@ -1,7 +1,6 @@
 ﻿
 using Cashbox.Core;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace Cashbox.Service
 {

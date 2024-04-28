@@ -1,10 +1,5 @@
 ﻿using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.Models
 {
@@ -21,7 +16,7 @@ namespace Cashbox.MVVM.Models
 
         public static async void AddProduct(List<OrderProductViewModel> orderProducts)
         {
-            foreach (var item in orderProducts) 
+            foreach (var item in orderProducts)
             {
                 OrderProducts.Add(new()
                 {

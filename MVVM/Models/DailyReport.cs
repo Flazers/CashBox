@@ -1,6 +1,4 @@
-﻿using Cashbox.MVVM.ViewModels.Data;
-
-namespace Cashbox.MVVM.Models;
+﻿namespace Cashbox.MVVM.Models;
 
 public partial class DailyReport
 {

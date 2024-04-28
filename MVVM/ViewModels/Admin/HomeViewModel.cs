@@ -2,7 +2,6 @@
 using Cashbox.Core.Commands;
 using Cashbox.MVVM.ViewModels.Data;
 using System.Collections.ObjectModel;
-using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels.Admin
 {
@@ -36,7 +35,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public DateTime EndDate
         {
             get => _endDate;
-            set 
+            set
             {
                 if (value < StartDate)
                 {
@@ -76,7 +75,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get
             {
-                if (_cashInBox <= 1500) 
+                if (_cashInBox <= 1500)
                     return _newCashInBox;
                 return _cashInBox - 1500;
             }

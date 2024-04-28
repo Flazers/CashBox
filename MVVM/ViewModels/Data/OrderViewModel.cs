@@ -1,10 +1,5 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -28,7 +23,7 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public int Id => _order.Id;
 
-        public DateTime? SellDatetime 
+        public DateTime? SellDatetime
         {
             get => _order.SellDatetime;
             set
@@ -105,8 +100,8 @@ namespace Cashbox.MVVM.ViewModels.Data
         public virtual PaymentMethod PaymentMethod
         {
             get => _order.PaymentMethod!;
-            set 
-            { 
+            set
+            {
                 _order.PaymentMethod = value;
                 OnPropertyChanged();
             }

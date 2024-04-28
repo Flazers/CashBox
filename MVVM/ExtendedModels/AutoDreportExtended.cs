@@ -1,6 +1,5 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.ViewModels.Data;
-using System.Diagnostics;
 
 namespace Cashbox.MVVM.Models
 {

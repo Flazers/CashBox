@@ -1,13 +1,7 @@
 ﻿using Cashbox.Core;
 using Cashbox.Core.Commands;
-using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using Cashbox.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels.Admin

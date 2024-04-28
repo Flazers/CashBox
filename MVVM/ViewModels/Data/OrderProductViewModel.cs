@@ -1,10 +1,5 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -61,12 +56,12 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public virtual Order Order { get; set; } = null!;
 
-        public virtual Product Product 
+        public virtual Product Product
         {
             get => _orderProduct.Product;
-            set 
-            { 
-                _orderProduct.Product = value; 
+            set
+            {
+                _orderProduct.Product = value;
                 OnPropertyChanged();
             }
         }

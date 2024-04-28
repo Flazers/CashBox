@@ -1,10 +1,5 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -20,7 +15,8 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public static async Task<UserInfoViewModel> DeactivateUser(int userId) => await UserInfo.DeactivateUser(userId);
 
-        public void SetFullName() { 
+        public void SetFullName()
+        {
             FullName = $"{_userInfo.Surname} {_userInfo.Name} {_userInfo.Patronymic}";
             ShortName = $"{_userInfo.Surname} {_userInfo.Name[0]}. {_userInfo.Patronymic[0]}.";
         }
@@ -119,7 +115,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             get => _userInfo.RoleId;
             set
             {
-                _userInfo.RoleId = value; 
+                _userInfo.RoleId = value;
                 OnPropertyChanged();
             }
         }

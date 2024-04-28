@@ -1,8 +1,6 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using System.Windows;
 
 namespace Cashbox.MVVM.Models
 {

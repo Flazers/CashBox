@@ -58,7 +58,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
 
         private ObservableCollection<ProductViewModel> _collectionProducts = [];
-        public ObservableCollection<ProductViewModel> CollectionProducts 
+        public ObservableCollection<ProductViewModel> CollectionProducts
         {
             get => _collectionProducts;
             set => Set(ref _collectionProducts, value);
@@ -93,7 +93,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         public int DiscountOrderCost
         {
             get => _discountOrderCost;
-            set 
+            set
             {
                 if (value < 0)
                     value = 0;

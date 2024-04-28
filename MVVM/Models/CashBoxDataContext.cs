@@ -4,8 +4,8 @@ namespace Cashbox.MVVM.Models;
 
 public partial class CashBoxDataContext : DbContext
 {
-    public CashBoxDataContext() {}
-    public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options) : base(options) {}
+    public CashBoxDataContext() { }
+    public CashBoxDataContext(DbContextOptions<CashBoxDataContext> options) : base(options) { }
 
     private static CashBoxDataContext? _context;
     public static CashBoxDataContext Context => _context ??= new CashBoxDataContext();
@@ -44,7 +44,8 @@ public partial class CashBoxDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\source\\repos\\CashBox\\MVVM\\Models\\Data.db");
+        optionsBuilder.UseSqlite("Data Source=Data.db");
+        //optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\source\\repos\\CashBox\\MVVM\\Models\\Data.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

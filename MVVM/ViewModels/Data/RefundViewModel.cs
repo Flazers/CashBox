@@ -1,13 +1,6 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Cashbox.MVVM.ViewModels.Data
@@ -115,7 +108,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public virtual Product? Product 
+        public virtual Product? Product
         {
             get => _refund.Product;
             private set
@@ -125,7 +118,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public virtual DailyReport DailyReport 
+        public virtual DailyReport DailyReport
         {
             get => _refund.DailyReport;
             set
