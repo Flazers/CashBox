@@ -13,7 +13,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #region UserData
 
-        private string _pincode;
+        private string _pincode = string.Empty;
         public string Pincode
         {
             get => _pincode;
@@ -227,6 +227,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanEditUserCommandExecute(object p) => true;
         private async void OnEditUserCommandExecuted(object p)
         {
+            if (SelectedUser == null)
+                return;
             UserViewModel userVM = await UserViewModel.EditUser(SelectedUser);
             if (userVM == null)
             {

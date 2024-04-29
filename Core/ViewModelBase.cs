@@ -29,6 +29,6 @@ namespace Cashbox.Core
         }
 
         public virtual void Clear() { }
-        public virtual async void OnLoad() { }
+        public virtual void OnLoad() {  }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Cashbox.MVVM.ViewModels.Data;
+﻿using Cashbox.Core;
+using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cashbox.MVVM.Models
@@ -34,17 +35,25 @@ namespace Cashbox.MVVM.Models
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(productCategory);
             }
-            catch (Exception) { return null; }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return null!;
+            }
         }
 
-        public static async Task<ProductCategoryViewModel> NewExample(string category)
+        public static ProductCategoryViewModel NewExample(string category)
         {
             try
             {
                 ProductCategory productCategory = new() { Category = category };
                 return new(productCategory);
             }
-            catch (Exception) { return null!; }
+            catch (Exception ex) 
+            { 
+                AppCommand.ErrorMessage(ex.Message);
+                return null!; 
+            }
         }
         public static async Task<List<ProductCategoryViewModel>> GetProductCategories() => await CashBoxDataContext.Context.ProductCategories.Select(s => new ProductCategoryViewModel(s)).ToListAsync();
         public static async Task<ProductCategoryViewModel?> CreateProductCategories(string category) => await NewProductCategory(category);

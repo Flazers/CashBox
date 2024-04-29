@@ -8,7 +8,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         private readonly ProductCategory _productCategory = productCategory;
 
         public static async Task<List<ProductCategoryViewModel>> GetProductCategory() => await ProductCategory.GetProductCategories();
-        public static async Task<ProductCategoryViewModel> NewExample(string category) => await ProductCategory.NewExample(category);
+        public static ProductCategoryViewModel NewExample(string category) => ProductCategory.NewExample(category);
         public static async Task<ProductCategoryViewModel?> CreateProductCategory(string category) => await ProductCategory.CreateProductCategories(category);
         public static async Task<ProductCategoryViewModel?> RemoveProductCategory(int id_category, int prodRect) => await ProductCategory.RemoveProductCategories(id_category, prodRect);
 

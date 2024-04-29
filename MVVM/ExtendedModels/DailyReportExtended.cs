@@ -69,7 +69,7 @@ namespace Cashbox.MVVM.Models
         }
 
         public static async Task<List<DailyReportViewModel>> GetPeriodReports(DateOnly start, DateOnly end) => await CashBoxDataContext.Context.DailyReports.Where(x => x.Data >= start && x.Data <= end).Select(s => new DailyReportViewModel(s)).ToListAsync();
-        public static async Task<DailyReportViewModel?> GetReport(DateOnly date) => new(await CashBoxDataContext.Context.DailyReports.FirstOrDefaultAsync(x => x.Data >= date));
+        public static async Task<DailyReportViewModel?> GetReport(DateOnly date) => new(await CashBoxDataContext.Context.DailyReports.FirstAsync(x => x.Data >= date));
         public static async Task<List<DailyReportViewModel>> GetNotCloseReports() => await CashBoxDataContext.Context.DailyReports.Where(x => x.CloseTime == null).Select(s => new DailyReportViewModel(s)).ToListAsync();
     }
 }
