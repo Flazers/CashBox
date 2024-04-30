@@ -38,7 +38,7 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border Height="40" Padding="5" Background="{StaticResource PanelW}" CornerRadius="10" Margin="0 0 0 15">
-                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Datetime}" Foreground="{StaticResource TextB}" Style="{StaticResource RegularText}"/>
+                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding DataString}" Foreground="{StaticResource TextB}" Style="{StaticResource RegularText}"/>
                                             </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -55,7 +55,7 @@
                                     <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                                 </Grid>
                                 <StackPanel Margin="10 0 10 10">
-                                    <TextBox Style="{StaticResource AuthTB}" Text="{Binding NewCashInBox}" Tag="Деньги (Выручка / Произвольное значеие)"/>
+                                    <TextBox Style="{StaticResource AuthTB}" Text="{Binding NewCashInBox}" PreviewTextInput="TextBox_PreviewTextInput" Tag="Деньги (Выручка / Произвольное значеие)"/>
                                     <StackPanel Orientation="Horizontal" Margin="0 30 0 0">
                                         <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding OutEditMoneyBoxCommand}" Width="220" Margin="0 0 40 0" Content="Забрать из кассы"/>
                                         <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding InEditMoneyBoxCommand}" Width="200" Content="Внести в кассу"/>

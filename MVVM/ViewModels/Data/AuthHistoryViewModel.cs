@@ -12,6 +12,8 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public DateTime Datetime => _authHistory.Datetime;
 
+        public string? DataString => Datetime.ToString("dd/MM/yyyy HH:mm:ss");
+
         public int UserId => _authHistory.UserId;
     }
 }

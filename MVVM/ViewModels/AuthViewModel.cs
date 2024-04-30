@@ -89,7 +89,7 @@ namespace Cashbox.MVVM.ViewModels
                 string ListNotClose = string.Empty;
                 int[] SuccessEnterId = [];
 
-                async void closereport(DailyReportViewModel report)
+                static async void closereport(DailyReportViewModel report)
                 {
                     double DayOrdersProccesedSum;
                     List<OrderViewModel> DayOrdersProccesed = await OrderViewModel.GetDayOrdersToMethod((DateOnly)report.Data!, 2);

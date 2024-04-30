@@ -91,6 +91,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private async void OnInEditMoneyBoxCommandExecuted(object p)
         {
             double temp = NewCashInBox;
+            if (temp <= 0)
+            {
+                AppCommand.WarningMessage("Значение должно быть больше 0");
+                return;
+            }
             await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 1);
             AppCommand.InfoMessage($"{temp} ₽ внесено в кассу");
             NewCashInBox -= temp;
@@ -107,6 +112,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private async void OnOutEditMoneyBoxCommandExecuted(object p)
         {
             double temp = NewCashInBox;
+            if (temp > CashInBox)
+            {
+                AppCommand.WarningMessage("Вы не можете забрать больше денег, чем есть в кассе");
+                return;
+            }
             await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 2);
             AppCommand.InfoMessage($"{temp} ₽ вычтено из кассы");
             NewCashInBox -= temp;
@@ -138,7 +148,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public override async void OnLoad()
         {
-            //var data = Order.GetSellDetail(DateOnly.Parse("2.04.2024"), DateOnly.Parse("5.04.2024"));
             AuthHistory = new(await AuthHistoryViewModel.GetAuthHistories());
             AuthHistory = new(AuthHistory.TakeLast(3).OrderByDescending(x => x.Datetime).ToList());
 
