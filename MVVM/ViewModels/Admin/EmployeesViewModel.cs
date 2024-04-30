@@ -13,7 +13,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #region UserData
 
-        private string _pincode;
+        private string _pincode = string.Empty;
         public string Pincode
         {
             get => _pincode;
@@ -153,7 +153,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #endregion
 
-        #region Commands
+            #region Commands
         public RelayCommand SeeUserInfoCommand { get; set; }
         private bool CanSeeUserInfoCommandExecute(object p) => true;
         private void OnSeeUserInfoCommandExecuted(object p)
@@ -167,7 +167,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanCreateUserCommandExecute(object p) => true;
         private async void OnCreateUserCommandExecuted(object p)
         {
-            if (Pincode.ToString().Length != 6 || Name == null || Surname == null || Patronymic == null || Location == null || Phone == null || Role == null) return;
+            if (Pincode.ToString().Length != 6 || Name == null || Surname == null || Patronymic == null || Location == null || Phone == null || Role == null)
+            {
+                AppCommand.WarningMessage("Заполните все поля");
+                return;
+            }
             UserViewModel user = await UserViewModel.CreateUser(PincodeInt, Name, Surname, Patronymic, Location, Phone, Role);
             if (user == null)
             {
@@ -204,6 +208,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             {
                 await UserInfoViewModel.DeactivateUser(SelectedUser.Id);
                 CollectionUsers.Remove(SelectedUser);
+                SelectedUser = null;
                 AppCommand.InfoMessage("Пользователь уволен");
             }
         }
@@ -227,6 +232,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanEditUserCommandExecute(object p) => true;
         private async void OnEditUserCommandExecuted(object p)
         {
+            if (SelectedUser == null)
+                return;
             UserViewModel userVM = await UserViewModel.EditUser(SelectedUser);
             if (userVM == null)
             {

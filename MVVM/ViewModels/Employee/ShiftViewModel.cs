@@ -271,7 +271,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             DailyReportViewModel drvm = DailyReportViewModel.GetCurrentShift();
             if (drvm != null)
             {
-                OrderCollection = new(await OrderViewModel.GetAllDayOrders((DateOnly)drvm.Data));
+                OrderCollection = new(await OrderViewModel.GetAllDayOrders((DateOnly)drvm.Data!));
                 StartCash = drvm.CashOnStart;
             }
             else

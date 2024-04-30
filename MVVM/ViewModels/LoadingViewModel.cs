@@ -84,7 +84,7 @@ namespace Cashbox.MVVM.ViewModels
             await Task.Delay(mainDelay);
 
             SetStatus("Проверка таблицы \"Roles\"", "loading", 2);
-            if (CashBoxDataContext.Context.Roles.Count() != 3)
+            if (!CashBoxDataContext.Context.Roles.Any())
             {
                 SetStatus("Заполняю таблицу \"Roles\" ", "loading", 2);
                 await RoleViewModel.GetRoles();

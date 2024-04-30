@@ -60,7 +60,7 @@ namespace Cashbox.MVVM.Models
             catch (Exception) { return null; }
         }
 
-        private static async Task<bool> ImportProduct(List<ProductViewModel?> productVM)
+        private static async Task<bool> ImportProduct(List<ProductViewModel> productVM)
         {
             try
             {
@@ -104,12 +104,12 @@ namespace Cashbox.MVVM.Models
             try
             {
                 Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == id);
-                if (product == null) return null;
+                if (product == null) return null!;
                 product.IsAvailable = Available;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(product);
             }
-            catch (Exception) { return null; }
+            catch (Exception) { return null!; }
         }
 
 

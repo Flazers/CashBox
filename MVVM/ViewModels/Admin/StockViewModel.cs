@@ -567,7 +567,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private async void UpdateCategory()
         {
             List<ProductCategoryViewModel> productcategory = [];
-            ProductCategoryViewModel AllCategory = await ProductCategoryViewModel.NewExample("Все категории");
+            ProductCategoryViewModel AllCategory = ProductCategoryViewModel.NewExample("Все категории");
             productcategory.Add(AllCategory);
             productcategory.AddRange(await ProductCategoryViewModel.GetProductCategory());
             CollectionProductCategories = new(productcategory);
