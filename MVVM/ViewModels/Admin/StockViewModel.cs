@@ -409,12 +409,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             if (string.IsNullOrEmpty(StringCostImport))
             {
-                AppCommand.WarningMessage("Укажите стоимость прихода");
+                AppCommand.WarningMessage("Укажите стоимость прихода.");
                 return;
             }
             if (!double.TryParse(StringCostImport, out double CostImport))
             {
-                AppCommand.WarningMessage("Укажите стоимость в виде целого или десятичного числа");
+                AppCommand.WarningMessage("Укажите стоимость в виде целого или десятичного числа.");
                 return;
             }
 
