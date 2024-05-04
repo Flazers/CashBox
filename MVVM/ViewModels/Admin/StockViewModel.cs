@@ -535,8 +535,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             styleHeader.VerticalAlignment = TextAlignmentType.Center;
             styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
 
-
-            void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
+            static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
             {
                 Worksheet sheet = wb.Worksheets[i];
                 sheet.Cells[0, cell].PutValue(title);
