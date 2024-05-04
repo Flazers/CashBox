@@ -14,7 +14,6 @@ namespace Cashbox.MVVM.Models
             {
                 Product product = new()
                 {
-                    ArticulCode = productVM.ArticulCode,
                     Title = productVM.Title,
                     Description = productVM.Description,
                     Brand = productVM.Brand,
@@ -44,7 +43,6 @@ namespace Cashbox.MVVM.Models
             {
                 Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == productVM.Id);
                 if (product == null) return null;
-                product.ArticulCode = productVM.ArticulCode;
                 product.Title = productVM.Title;
                 product.Description = productVM.Description;
                 product.Brand = productVM.Brand;
@@ -60,7 +58,7 @@ namespace Cashbox.MVVM.Models
             catch (Exception) { return null; }
         }
 
-        private static async Task<bool> ImportProduct(List<ProductViewModel> productVM)
+        private static async Task<bool> ImportProducts(List<ProductViewModel> productVM)
         {
             try
             {
@@ -81,7 +79,7 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        private static async Task<bool> EditProduct(List<ProductViewModel> productVM)
+        private static async Task<bool> EditProducts(List<ProductViewModel> productVM)
         {
             try
             {
@@ -115,7 +113,7 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<ProductViewModel?> CreateProducts(ProductViewModel? productVM) => await NewProduct(productVM);
         public static async Task<ProductViewModel?> AvailableProducts(int id, bool Available) => await AvailableProduct(id, Available);
-        public static async Task<bool> ImportProductVM(List<ProductViewModel> productVM) => await ImportProduct(productVM);
-        public static async Task<bool> EditProductVM(List<ProductViewModel> productVM) => await EditProduct(productVM);
+        public static async Task<bool> ImportProductsVM(List<ProductViewModel> productVM) => await ImportProducts(productVM);
+        public static async Task<bool> EditProductsVM(List<ProductViewModel> productVM) => await EditProducts(productVM);
     }
 }

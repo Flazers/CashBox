@@ -1,9 +1,12 @@
 ﻿using Aspose.Cells;
 using Cashbox.Core;
 using Cashbox.Core.Commands;
+using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using ExcelDataReader;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Win32;
+using SkiaSharp;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
@@ -15,8 +18,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
     public class StockViewModel : ViewModelBase
     {
         #region Props
-
-        #region VisibilityPanel
 
         private Visibility _panelMainProductVisibility = Visibility.Visible;
         public Visibility PanelMainProductVisibility
@@ -32,19 +33,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _panelContentProductVisibility, value);
         }
 
-
-        #endregion
-
-        #region ProductData
-
         private ProductViewModel? _productData;
         public ProductViewModel? ProductData
         {
             get => _productData;
             set => Set(ref _productData, value);
         }
-
-        #endregion
 
         private bool _isShowAllProduct = false;
         public bool IsShowAllProduct
@@ -58,6 +52,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
         }
 
+        private string _stringCostImport = string.Empty;
+        public string StringCostImport
+        {
+            get => _stringCostImport;
+            set => Set(ref _stringCostImport, value);
+        }
+
         private ObservableCollection<ProductViewModel> _collectionProducts = [];
         public ObservableCollection<ProductViewModel> CollectionProducts
         {
@@ -69,6 +70,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 return _collectionProducts;
             }
             set => Set(ref _collectionProducts, value);
+        }
+
+        private ObservableCollection<ComingProductViewModel> _collectionComing = [];
+        public ObservableCollection<ComingProductViewModel> CollectionComing
+        {
+            get => _collectionComing;
+            set => Set(ref _collectionComing, value);
         }
 
         private ObservableCollection<ProductCategoryViewModel> _collectionProductCategories = [];
@@ -89,47 +97,54 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 OnPropertyChanged();
             }
         }
+
+        private string _searchStr = string.Empty;
+        public string SearchStr
+        {
+            get => _searchStr;
+            set => Set(ref _searchStr, value);
+        }
         #endregion
 
 
         #region Command
 
+        public RelayCommand SearchDataCommand { get; set; }
+        private bool CanSearchDataCommandExecute(object p) => true;
+        private void OnSearchDataCommandExecuted(object p) => Update();
+
         public RelayCommand RemoveCategoryCommand { get; set; }
-        private bool CanRemoveCategoryCommandExecute(object p)
+        private bool CanRemoveCategoryCommandExecute(object p) => true;
+        private async void OnRemoveCategoryCommandExecuted(object p)
         {
-            if (SelectedProductCategory == null)
+            if (SelectedProductCategory.Category == "Все категории")
+            {
+                AppCommand.WarningMessage("Данную категорию нельзя удалить");
+                return;
+            }    
+            if (SelectedProductCategory.Products.Count != 0)
+            {
+                AppCommand.WarningMessage("В выбранной категории присутствуют товары.\n Для удаления выполните экспорт товаров,\n а затем переместите все товары в нужную категорию (лист) и повторите попытку.");
+                return;
+            }
+            if (!await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id))
+                return;
+            UpdateCategory();
+            AppCommand.InfoMessage("Категория удалена");
+        }
+
+        public RelayCommand SelectCategoryCommand { get; set; }
+        private bool CanSelectCategoryCommandExecute(object p)
+        {
+            if (SelectedProductCategory.Id == (int)p)
                 return false;
             return true;
         }
-        private async void OnRemoveCategoryCommandExecuted(object p)
+        private void OnSelectCategoryCommandExecuted(object p)
         {
-            ProductCategoryViewModel data = null;
-            if (SelectedProductCategory.Products.Count != 0)
-            {
-                MessageBoxResult result = MessageBox.Show("В выбранной категории присутствуют товары \nНажмите \"Да\"если хотите перенести все товары выбранную категорию \nНажмите \"Нет\" если хотите удалить все товары из категории \nНажмите \"Отмена\" для отмены удаления ", "Предупреджение", MessageBoxButton.YesNoCancel);
-                switch (result)
-                {
-                    case MessageBoxResult.Yes:
-                        data = await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id, 1);
-                        break;
-                    case MessageBoxResult.No:
-                        data = await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id, 2);
-                        break;
-                    case MessageBoxResult.Cancel:
-                        return;
-                }
-            }
-            else
-            {
-                data = await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id, 3);
-            }
-            if (data != null)
-            {
-                UpdateCategory();
-                AppCommand.InfoMessage("Категория удалена");
-            }
-
+            SelectedProductCategory = CollectionProductCategories.FirstOrDefault(x => x.Id == (int)p);
         }
+
         public RelayCommand GetAllProductCommand { get; set; }
         private bool CanGetAllProductCommandExecute(object p) => true;
         private void OnGetAllProductCommandExecuted(object p)
@@ -153,225 +168,301 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public async void Update()
         {
-            var list = await ProductViewModel.GetProducts(IsShowAllProduct);
-            CollectionProducts = new(list.OrderBy(x => x.Stock.Amount));
+            List<ComingProductViewModel> listcoming = await ComingProduct.GetComing();
+            CollectionComing = new(listcoming.TakeLast(20).OrderByDescending(x => x.CommingDatetime).ToList());
+            List<ProductViewModel> list = await ProductViewModel.GetProducts(IsShowAllProduct);
+            CollectionProducts = new(list.Where(x =>
+                                                x.Title.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
+                                                x.Brand.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
+                                                x.Description.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
+                                                x.SellCost.ToString().Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase)
+                                                )
+                                                .OrderBy(x => x.Stock.Amount));
             if (SelectedProductCategory == null)
                 return;
             if (SelectedProductCategory.Category != "Все категории")
                 CollectionProducts = new(CollectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
         }
 
+        private async Task<List<ProductViewModel>> Analyzer(FileStream stream, bool isEdit)
+        {
+            List<ProductViewModel> listProducts = new(await ProductViewModel.GetProducts(true));
+            List<ProductViewModel> listProductVM = [];
+            List<string> errors = [];
+            string info = string.Empty;
+            using IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
+
+            do
+            {
+                if (reader.Name == "Evaluation Warning")
+                    continue;
+                ProductCategoryViewModel category = CollectionProductCategories.FirstOrDefault(x => x.Category == reader.Name);
+                if (category == null)
+                    continue;
+                reader.Read();
+                int addedcount = 0;
+                int editedcount = 0;
+                int movedcount = 0;
+                int line = 1;
+                while (reader.Read())
+                {
+                    line++;
+                    string error = string.Empty;
+                    int id = 0;
+                    string brand = string.Empty;
+                    string title = string.Empty;
+                    string description = string.Empty;
+                    double sellcost = 0;
+                    int amount = 0;
+                    int IsAvailable = 0;
+
+                    int errorline = 0;
+                    for (int i = 0; i <= 6; i++)
+                        if (reader.GetValue(i) == null)
+                            errorline++;
+                    if (errorline == 7)
+                        continue;
+
+                    if (isEdit)
+                    {
+                        if (reader.GetValue(0) == null)
+                            error += "Поле \"id\" пустое\n";
+                        else if (!int.TryParse(reader.GetValue(0).ToString(), out id))
+                            error += "Поле \"id\" должно быть целым числом\n";
+
+                        if (reader.GetValue(6) == null)
+                            error += "Поле \"В продаже / Снят с продаж\" пустое\n";
+                        else if (!int.TryParse(reader.GetValue(6).ToString(), out IsAvailable) || IsAvailable < 0 || IsAvailable > 1)
+                            error += "Поле \"В продаже / Снят с продаж\" допускает только 1 и 0\n";
+                    }
+
+                    if (reader.GetValue(1) != null)
+                        brand = reader.GetValue(1).ToString();
+                    else
+                        error += "Поле \"Производитель\" пустое\n";
+
+                    if (reader.GetValue(2) != null)
+                        title = reader.GetValue(2).ToString();
+                    else
+                        error += "Поле \"Название\" пустое\n";
+
+                    if (reader.GetValue(3) != null)
+                        description = reader.GetValue(3).ToString();
+                    else
+                        error += "Поле \"Описание\" пустое\n";
+
+                    if (reader.GetValue(4) == null)
+                        error += "Поле \"Продажа\" пустое\n";
+                    else if (!double.TryParse(reader.GetValue(4).ToString(), out sellcost))
+                        error += "В поле \"Продажа\" допустимы целые и дробные числа\n";
+
+                    if (reader.GetValue(5) == null)
+                        error += "Поле \"Колличество\" пустое\n";
+                    else if (!int.TryParse(reader.GetValue(5).ToString(), out amount))
+                        error += "В поле\"Колличество\" допустимы только целые числа\n";
+
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        errors.Add($"Ошибка в категории {reader.Name}. Строка {line}. Ошибки:\n {error}");
+                        continue;
+                    }
+
+                    ProductViewModel productVM = new(new());
+
+                    if (isEdit)
+                    {
+                        productVM = listProducts.FirstOrDefault(x => x.Id == id);
+                        if (productVM == null)
+                        {
+                            errors.Add($"Не удалось найти товар с id {id}. Cтрока {line}\n");
+                            continue;
+                        }
+                    } 
+                    else
+                    {
+                        ProductViewModel product = listProducts.FirstOrDefault(x => x.Brand == brand && x.Title == title && x.Description == description);
+                        if (product != null)
+                        {
+                            product.SellCost = sellcost;
+                            product.AmountRes += amount;
+                            listProductVM.Add(product);
+                            editedcount++;
+                            continue;
+                        }
+                        else addedcount++;
+                    }
+
+                    if (isEdit)
+                    {
+                        if (productVM.CategoryId != category.Id)
+                            movedcount++;
+                    }
+                    productVM.CategoryId = category.Id;
+
+                    productVM.Brand = brand!;
+                    productVM.Title = title!;
+                    productVM.Description = description!;
+                    productVM.SellCost = sellcost;
+                    productVM.AmountRes = amount;
+                    if (IsAvailable == 1) productVM.IsAvailable = true;
+                    else productVM.IsAvailable = false;
+
+                    listProductVM.Add(productVM);
+                }
+                if (!isEdit)
+                    info += $"Категория \"{reader.Name}\". Добавлено: {addedcount} Отредактировано: {editedcount}\n";
+                else if (movedcount > 0)
+                    info += $"В категорию \"{reader.Name}\". Перемещено {movedcount} товаров\n";
+            } while (reader.NextResult());
+
+            if (errors.Count > 0)
+            {
+                string AllError = string.Empty;
+                foreach (var error in errors)
+                    AllError += $"{error}\n";
+                AppCommand.ErrorMessage(AllError);
+                return null!;
+            }
+            if (!string.IsNullOrEmpty(info))
+                AppCommand.InfoMessage(info);
+
+            UpdateCategory();
+            Update();
+
+            return listProductVM;
+        }
+
+        private static IExcelDataReader CheckFileStream(FileStream stream, string extension)
+        {
+            if (extension == ".xlsx")
+                return ExcelReaderFactory.CreateOpenXmlReader(stream);
+            else if (extension == ".xls")
+                return ExcelReaderFactory.CreateBinaryReader(stream);
+            else
+            {
+                AppCommand.WarningMessage("Данные должны быть в формате xlsx или xls");
+                return null!;
+            }
+        }
+
         public RelayCommand EditProductDataCommand { get; set; }
         private bool CanEditProductDataCommandExecute(object p) => true;
         private async void OnEditProductDataCommandExecuted(object p)
         {
-            List<ProductViewModel> products = await ProductViewModel.GetProducts(false);
             OpenFileDialog openFileDialog = new() { Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*", RestoreDirectory = true };
             bool? resultOpen = openFileDialog.ShowDialog();
             if (resultOpen == true)
             {
                 try
                 {
-                    IExcelDataReader edr;
                     using FileStream stream = File.Open(openFileDialog.FileName, FileMode.Open, FileAccess.Read);
-                    using IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
-                    string? extension = openFileDialog.FileName[openFileDialog.FileName.LastIndexOf('.')..];
+                    using IExcelDataReader readerCategory = ExcelReaderFactory.CreateReader(stream);
+                    IExcelDataReader edr = CheckFileStream(stream, openFileDialog.FileName[openFileDialog.FileName.LastIndexOf('.')..]);
 
-                    if (extension == ".xlsx")
-                        edr = ExcelReaderFactory.CreateOpenXmlReader(stream);
-                    else if (extension == ".xls")
-                        edr = ExcelReaderFactory.CreateBinaryReader(stream);
-                    else
+                    int AddedcategoryCount = 0;
+                    int RemovedcategoryCount = 0;
+                    do
                     {
-                        AppCommand.WarningMessage("Данные должны быть в формате xlsx или xls");
+                        if (readerCategory.Name == "Evaluation Warning")
+                            break;                        
+                        if (readerCategory.Name.Trim().Equals("все категории", StringComparison.CurrentCultureIgnoreCase))
+                            break;
+                        ProductCategoryViewModel category = CollectionProductCategories.FirstOrDefault(x => x.Category.Equals(readerCategory.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
+                        if (category == null)
+                        {
+                            await ProductCategoryViewModel.CreateProductCategory(readerCategory.Name.Trim());
+                            AddedcategoryCount++;
+                        }
+                    } while (readerCategory.NextResult());
+                    CollectionProductCategories = new(await ProductCategoryViewModel.GetProductCategory());
+                    if (AddedcategoryCount > 0 || RemovedcategoryCount > 0)
+                        AppCommand.InfoMessage($"Добавлено новых категорий {AddedcategoryCount}");
+
+                    List<ProductViewModel> Products = await Analyzer(stream, true);
+                    edr.Close();
+
+                    if (Products == null)
+                    {
+                        AppCommand.WarningMessage("Исправьте все ошибки и повторите попытку");
                         return;
                     }
 
-                    do
-                    {
-                        if (reader.Name == "Evaluation Warning")
-                            break;
-                        ProductCategoryViewModel category = CollectionProductCategories.FirstOrDefault(x => x.Category == reader.Name);
-                        category ??= await ProductCategoryViewModel.CreateProductCategory(reader.Name);
-                        reader.Read();
-                        int line = 2;
-                        while (reader.Read())
-                        {
-                            string error = string.Empty;
-                            string id = reader.GetValue(0).ToString();
-                            if (string.IsNullOrEmpty(id))
-                                error += "id, ";
-                            string articule = reader.GetString(1);
-                            string brand = reader.GetString(2);
-                            if (string.IsNullOrEmpty(brand))
-                                error += "Производитель, ";
-                            string title = reader.GetString(3);
-                            if (string.IsNullOrEmpty(title))
-                                error += "Название, ";
-                            string description = reader.GetString(4);
-                            if (string.IsNullOrEmpty(description))
-                                error += "Описание, ";
-                            if (error.Length > 30)
-                                continue;
-                            if (!double.TryParse(reader.GetValue(5).ToString(), out double sellcost))
-                                error += "Продажа, ";
-                            if (!int.TryParse(reader.GetValue(6).ToString(), out int amount))
-                                error += "Колличество, ";
-                            if (!double.TryParse(reader.GetValue(7).ToString(), out double IsAvailable) || IsAvailable < 0 || IsAvailable > 1)
-                                error += "В продаже / Снят с продаж, ";
+                    if (await ProductViewModel.EditProducts(Products))
+                        AppCommand.InfoMessage("Товары и категории отредактированы");
 
-                            if (!string.IsNullOrEmpty(error))
-                            {
-                                AppCommand.ErrorMessage($"Ошибка в категории{reader.Name}, строка {line}, полe(-ях): {error}");
-                                return;
-                            }
-
-                            ProductViewModel readedproduct = new(new());
-                            if (string.IsNullOrEmpty(id))
-                            {
-                                AppCommand.WarningMessage($"Не найден товар из строки {line}.");
-                                continue;
-                            }
-
-                            readedproduct = products.FirstOrDefault(x => x.Id == int.Parse(id));
-                            if (readedproduct != null)
-                            {
-                                readedproduct.Brand = brand;
-                                readedproduct.Title = title;
-                                readedproduct.Description = description;
-                                readedproduct.SellCost = sellcost;
-                                readedproduct.CategoryId = category.Id;
-                                readedproduct.AmountRes = amount;
-                                if (IsAvailable == 1) readedproduct.IsAvailable = true;
-                                else readedproduct.IsAvailable = false;
-                                if (articule == null) readedproduct.ArticulCode = string.Empty;
-                                else readedproduct.ArticulCode = articule;
-                            }
-                            line++;
-                        }
-                    } while (reader.NextResult());
-                    edr.Close();
-                    if (await ProductViewModel.EditProduct(products))
-                        AppCommand.InfoMessage("Товары отредактированы");
                     UpdateCategory();
                     Update();
                 }
                 catch (IOException)
                 {
-                    AppCommand.ErrorMessage("Процесс используется другим приложением (Возможно файл открыт).");
+                    AppCommand.WarningMessage("Процесс используется другим приложением (Возможно файл открыт).");
                     return;
                 }
             }
         }
 
+        
+
         public RelayCommand ImportProductDataCommand { get; set; }
         private bool CanImportProductDataCommandExecute(object p) => true;
         private async void OnImportProductDataCommandExecuted(object p)
         {
-            List<ProductViewModel> products = await ProductViewModel.GetProducts(true);
+            if (string.IsNullOrEmpty(StringCostImport))
+            {
+                AppCommand.WarningMessage("Укажите стоимость прихода.");
+                return;
+            }
+            if (!double.TryParse(StringCostImport, out double CostImport))
+            {
+                AppCommand.WarningMessage("Укажите стоимость в виде целого или десятичного числа.");
+                return;
+            }
+
             OpenFileDialog openFileDialog = new() { Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*", RestoreDirectory = true };
             bool? resultOpen = openFileDialog.ShowDialog();
             if (resultOpen == true)
             {
                 try
                 {
-                    IExcelDataReader edr;
-                    using var stream = File.Open(openFileDialog.FileName, FileMode.Open, FileAccess.Read);
-                    using var reader = ExcelReaderFactory.CreateReader(stream);
-                    var extension = openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf('.'));
+                    using FileStream stream = File.Open(openFileDialog.FileName, FileMode.Open, FileAccess.Read);
+                    using IExcelDataReader readerCategory = ExcelReaderFactory.CreateReader(stream);
+                    IExcelDataReader edr = CheckFileStream(stream, openFileDialog.FileName[openFileDialog.FileName.LastIndexOf('.')..]);
+                    List<ProductCategoryViewModel> addedcategories = [];
 
-                    if (extension == ".xlsx")
-                        edr = ExcelReaderFactory.CreateOpenXmlReader(stream);
-                    else if (extension == ".xls")
-                        edr = ExcelReaderFactory.CreateBinaryReader(stream);
-                    else
+                    int categoryCount = 0;
+                    do
                     {
-                        AppCommand.WarningMessage("Данные должны быть в формате xlsx или xls");
+                        if (readerCategory.Name == "Evaluation Warning")
+                            break;
+                        ProductCategoryViewModel category = CollectionProductCategories.FirstOrDefault(x => x.Category == readerCategory.Name);
+                        if (category == null)
+                        {
+                            addedcategories.Add(await ProductCategoryViewModel.CreateProductCategory(readerCategory.Name));
+                            categoryCount++;
+                        }
+                    } while (readerCategory.NextResult());
+                    CollectionProductCategories = new(await ProductCategoryViewModel.GetProductCategory());
+                    if (categoryCount > 0)
+                        AppCommand.InfoMessage($"Добавлено новых категорий {categoryCount}");
+
+                    List<ProductViewModel> Products = await Analyzer(stream, false);
+                    edr.Close();
+
+                    if (Products == null)
+                    {
+                        AppCommand.WarningMessage("Исправьте все ошибки и повторите попытку. \nНовые категории удалены.");
+                        foreach (var item in addedcategories)
+                            await ProductCategoryViewModel.RemoveProductCategory(item.Id);
+                        UpdateCategory();
                         return;
                     }
 
-                    do
-                    {
-                        if (reader.Name == "Evaluation Warning")
-                            break;
-                        ProductCategoryViewModel category = CollectionProductCategories.FirstOrDefault(x => x.Category == reader.Name);
-                        category ??= await ProductCategoryViewModel.CreateProductCategory(reader.Name);
-                        reader.Read();
-                        int addedcount = 0;
-                        int editedcount = 0;
-                        int line = 2;
-                        while (reader.Read())
-                        {
-                            try
-                            {
-                                string error = string.Empty;
-                                string articule = reader.GetString(1);
-                                string brand = reader.GetString(2);
-                                if (string.IsNullOrEmpty(brand))
-                                    error += "Производитель, ";
-                                string title = reader.GetString(3);
-                                if (string.IsNullOrEmpty(title))
-                                    error += "Название, ";
-                                string description = reader.GetString(4);
-                                if (string.IsNullOrEmpty(description))
-                                    error += "Описание, ";
-                                if (error.Length > 30)
-                                    continue;
-                                if (!double.TryParse(reader.GetValue(5).ToString(), out double sellcost))
-                                    error += "Продажа, ";
-                                if (!int.TryParse(reader.GetValue(6).ToString(), out int amount))
-                                    error += "Колличество, ";
-                                if (!double.TryParse(reader.GetValue(7).ToString(), out double IsAvailable) || IsAvailable < 0 || IsAvailable > 1)
-                                    error += "В продаже / Снят с продаж, ";
+                    if (await ProductViewModel.ImportProducts(Products))
+                        AppCommand.InfoMessage("Готово");
 
-                                if (!string.IsNullOrEmpty(error))
-                                {
-                                    AppCommand.ErrorMessage($"Ошибка в категории{reader.Name}, строка {line}, полe(-ях): {error}");
-                                    return;
-                                }
-
-
-                                ProductViewModel product = products.FirstOrDefault(x => x.Brand == brand && x.Title == title && x.Description == description);
-                                if (product != null)
-                                {
-                                    product.SellCost = sellcost;
-                                    product.AmountRes += amount;
-                                    editedcount++;
-                                }
-                                else
-                                {
-                                    product = new(
-                                        new()
-                                        {
-                                            Brand = brand,
-                                            Title = title,
-                                            Description = description,
-                                            SellCost = sellcost,
-                                            CategoryId = category.Id,
-                                        })
-                                    { AmountRes = amount };
-
-                                    if (articule == null) product.ArticulCode = string.Empty;
-                                    else product.ArticulCode = articule;
-
-                                    if (IsAvailable == 1) product.IsAvailable = true;
-                                    else product.IsAvailable = false;
-
-                                    products.Add(product);
-                                    addedcount++;
-                                }
-                                line++;
-                            }
-                            catch (NullReferenceException ex)
-                            {
-                                AppCommand.ErrorMessage(ex.Message);
-                                continue;
-                            }
-                        }
-                        AppCommand.InfoMessage($"Категория \"{reader.Name}\" \nДобавлено новых товаров: {addedcount} \nОтредактировано товаров: {editedcount}");
-                    } while (reader.NextResult());
-                    edr.Close();
-                    await ProductViewModel.ImportProduct(products);
+                    if (!await ComingProductViewModel.NewComing(CostImport))
+                        AppCommand.InfoMessage("Не удалось создать отчет о приходе");
+                    
                     UpdateCategory();
                     Update();
                 }
@@ -388,7 +479,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
         }
 
-        public void SetRowStyle(Workbook wb, int i, int cell, Aspose.Cells.Style style)
+        public static void SetRowStyle(Workbook wb, int i, int cell, Aspose.Cells.Style style)
         {
             wb.Worksheets[i].Cells[$"A{cell}"].SetStyle(style);
             wb.Worksheets[i].Cells[$"B{cell}"].SetStyle(style);
@@ -397,22 +488,20 @@ namespace Cashbox.MVVM.ViewModels.Admin
             wb.Worksheets[i].Cells[$"E{cell}"].SetStyle(style);
             wb.Worksheets[i].Cells[$"F{cell}"].SetStyle(style);
             wb.Worksheets[i].Cells[$"G{cell}"].SetStyle(style);
-            wb.Worksheets[i].Cells[$"H{cell}"].SetStyle(style);
         }
 
-        public void AddProductRow(Workbook wb, int i, int cell, ProductViewModel product)
+        public static void AddProductRow(Workbook wb, int i, int cell, ProductViewModel product)
         {
             wb.Worksheets[i].Cells[$"A{cell}"].PutValue(product.Id);
-            wb.Worksheets[i].Cells[$"B{cell}"].PutValue(product.ArticulCode);
-            wb.Worksheets[i].Cells[$"C{cell}"].PutValue(product.Brand);
-            wb.Worksheets[i].Cells[$"D{cell}"].PutValue(product.Title);
-            wb.Worksheets[i].Cells[$"E{cell}"].PutValue(product.Description);
-            wb.Worksheets[i].Cells[$"F{cell}"].PutValue(product.SellCost);
-            wb.Worksheets[i].Cells[$"G{cell}"].PutValue(product.Stock.Amount);
+            wb.Worksheets[i].Cells[$"B{cell}"].PutValue(product.Brand);
+            wb.Worksheets[i].Cells[$"C{cell}"].PutValue(product.Title);
+            wb.Worksheets[i].Cells[$"D{cell}"].PutValue(product.Description);
+            wb.Worksheets[i].Cells[$"E{cell}"].PutValue(product.SellCost);
+            wb.Worksheets[i].Cells[$"F{cell}"].PutValue(product.Stock.Amount);
             if (product.IsAvailable)
-                wb.Worksheets[i].Cells[$"H{cell}"].PutValue(1);
+                wb.Worksheets[i].Cells[$"G{cell}"].PutValue(1);
             else
-                wb.Worksheets[i].Cells[$"H{cell}"].PutValue(0);
+                wb.Worksheets[i].Cells[$"G{cell}"].PutValue(0);
         }
 
         public RelayCommand ExportProductDataCommand { get; set; }
@@ -446,8 +535,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             styleHeader.VerticalAlignment = TextAlignmentType.Center;
             styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
 
-
-            void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
+            static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
             {
                 Worksheet sheet = wb.Worksheets[i];
                 sheet.Cells[0, cell].PutValue(title);
@@ -465,13 +553,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     else
                         wb.Worksheets.Add(category[i].Category);
                     SetRowHeader(wb, i, 0, "id*", 10);
-                    SetRowHeader(wb, i, 1, "Артикул*", 10);
-                    SetRowHeader(wb, i, 2, "Производитель", 17);
-                    SetRowHeader(wb, i, 3, "Название", 27);
-                    SetRowHeader(wb, i, 4, "Описание", 17);
-                    SetRowHeader(wb, i, 5, "Продажа", 10);
-                    SetRowHeader(wb, i, 6, "Колличество", 14);
-                    SetRowHeader(wb, i, 7, "В продаже / Снят с продаж", 26);
+                    SetRowHeader(wb, i, 1, "Производитель", 17);
+                    SetRowHeader(wb, i, 2, "Название", 27);
+                    SetRowHeader(wb, i, 3, "Описание", 17);
+                    SetRowHeader(wb, i, 4, "Продажа", 10);
+                    SetRowHeader(wb, i, 5, "Колличество", 14);
+                    SetRowHeader(wb, i, 6, "В продаже / Снят с продаж", 26);
 
                     wb.Worksheets[i].Cells.SetRowHeight(0, 30);
                     SetRowStyle(wb, i, 1, styleHeader);
@@ -502,7 +589,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             SaveFileDialog sfd = new()
             {
                 Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
-                FileName = "ExampleProductData"
+                FileName = "ExampleImport"
             };
             sfd.ShowDialog();
 
@@ -523,7 +610,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             styleHeader.VerticalAlignment = TextAlignmentType.Center;
             styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
 
-            void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
+            static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
             {
                 Worksheet sheet = wb.Worksheets[i];
                 sheet.Cells[0, cell].PutValue(title);
@@ -536,29 +623,24 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
                 wb.Worksheets[0].Name = "Категория";
                 SetRowHeader(wb, 0, 0, "id*", 10);
-                SetRowHeader(wb, 0, 1, "Артикул*", 10);
-                SetRowHeader(wb, 0, 2, "Производитель", 17);
-                SetRowHeader(wb, 0, 3, "Название", 27);
-                SetRowHeader(wb, 0, 4, "Описание", 17);
-                SetRowHeader(wb, 0, 5, "Продажа", 10);
-                SetRowHeader(wb, 0, 6, "Колличество", 14);
-                SetRowHeader(wb, 0, 7, "В продаже / Снят с продаж", 26);
+                SetRowHeader(wb, 0, 1, "Производитель", 17);
+                SetRowHeader(wb, 0, 2, "Название", 27);
+                SetRowHeader(wb, 0, 3, "Описание", 17);
+                SetRowHeader(wb, 0, 4, "Продажа", 10);
+                SetRowHeader(wb, 0, 5, "Колличество", 14);
                 wb.Worksheets[0].Cells.SetRowHeight(0, 30);
                 SetRowStyle(wb, 0, 1, styleHeader);
 
                 wb.Worksheets[0].Cells[$"A2"].PutValue(1);
-                wb.Worksheets[0].Cells[$"B2"].PutValue("ES2134");
-                wb.Worksheets[0].Cells[$"C2"].PutValue("Хаски");
-                wb.Worksheets[0].Cells[$"D2"].PutValue("Киви яблоко");
-                wb.Worksheets[0].Cells[$"E2"].PutValue("20 mg strong");
-                wb.Worksheets[0].Cells[$"F2"].PutValue("450");
-                wb.Worksheets[0].Cells[$"G2"].PutValue(10);
-                wb.Worksheets[0].Cells[$"H2"].PutValue(1);
+                wb.Worksheets[0].Cells[$"B2"].PutValue("Хаски");
+                wb.Worksheets[0].Cells[$"C2"].PutValue("Киви яблоко");
+                wb.Worksheets[0].Cells[$"D2"].PutValue("20 mg strong");
+                wb.Worksheets[0].Cells[$"E2"].PutValue("450");
+                wb.Worksheets[0].Cells[$"F2"].PutValue(10);
 
                 wb.Save(sfd.FileName);
 
                 AppCommand.InfoMessage("Шаблон готов");
-                File.OpenRead(sfd.FileName);
             }
         }
 
@@ -579,6 +661,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public StockViewModel()
         {
             UpdateCategory();
+            SelectCategoryCommand = new RelayCommand(OnSelectCategoryCommandExecuted, CanSelectCategoryCommandExecute);
+            SearchDataCommand = new RelayCommand(OnSearchDataCommandExecuted, CanSearchDataCommandExecute);
             RemoveCategoryCommand = new RelayCommand(OnRemoveCategoryCommandExecuted, CanRemoveCategoryCommandExecute);
             RemoveProductCommand = new RelayCommand(OnRemoveProductCommandExecuted, CanRemoveProductCommandExecute);
             GetAllProductCommand = new RelayCommand(OnGetAllProductCommandExecuted, CanGetAllProductCommandExecute);

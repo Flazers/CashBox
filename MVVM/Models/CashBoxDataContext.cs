@@ -10,6 +10,8 @@ public partial class CashBoxDataContext : DbContext
     private static CashBoxDataContext? _context;
     public static CashBoxDataContext Context => _context ??= new CashBoxDataContext();
 
+    public virtual DbSet<AdminMoneyLog> AdminMoneyLog { get; set; }
+
     public virtual DbSet<AuthHistory> AuthHistories { get; set; }
 
     public virtual DbSet<AppSettings> AppSettings { get; set; }
@@ -44,12 +46,36 @@ public partial class CashBoxDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=Data.db");
-        //optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\source\\repos\\CashBox\\MVVM\\Models\\Data.db");
+        //optionsBuilder.UseSqlite("Data Source=Data.db");
+        optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\source\\repos\\CashBox\\MVVM\\Models\\Data.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AdminMoneyLog>(entity =>
+        {
+            entity.ToTable("AdminMoneyLog");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Datetime)
+                .HasColumnType("datetime")
+                .HasColumnName("datetime");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.SubUserId).HasColumnName("sub_user_id");
+            entity.Property(e => e.Money).HasColumnName("money");
+            entity.Property(e => e.Action).HasColumnName("action");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AdminLogs)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AdminMoneyLog_Users_admin");
+
+            entity.HasOne(d => d.SubUser).WithMany(p => p.UserLogs)
+                .HasForeignKey(d => d.SubUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AdminMoneyLog_Users_sub");
+        });
+  
         modelBuilder.Entity<AppSettings>(entity =>
         {
             entity.ToTable("AppSettings");
@@ -72,8 +98,8 @@ public partial class CashBoxDataContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_AuthHistory_Users");
-        });
-
+        });        
+        
         modelBuilder.Entity<AutoDreport>(entity =>
         {
             entity.HasKey(e => e.DailyReportId);
@@ -196,10 +222,6 @@ public partial class CashBoxDataContext : DbContext
             entity.ToTable("Product");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ArticulCode)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("articul_code");
             entity.Property(e => e.Brand)
                 .HasMaxLength(50)
                 .IsUnicode(false)

@@ -7,7 +7,7 @@ namespace Cashbox.MVVM.ViewModels.Data
     {
         private readonly AppSettings _appSettings = appSettings;
 
-        public static async Task<bool> EditSetting(int salary = 0, int award = 0) => await AppSettings.EditSetting(salary, award);
+        public static async Task<bool> EditSetting(int salary = 0) => await AppSettings.EditSetting(salary);
         public static async Task<bool> CreateSetting() => await AppSettings.CreateSetting();
         public static AppSettings Settings => AppSettings.Settings;
 

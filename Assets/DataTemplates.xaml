@@ -25,6 +25,9 @@
     <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:ShiftViewModel}">
         <viewAdmin:ShiftView/>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:LogViewModel}">
+        <viewAdmin:LogView/>
+    </DataTemplate>
     <DataTemplate DataType="{x:Type TypeName=viewModelAdmin:StockViewModel}">
         <viewAdmin:StockView/>
     </DataTemplate>

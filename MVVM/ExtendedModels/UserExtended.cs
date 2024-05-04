@@ -57,12 +57,12 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        public static async Task<UserViewModel?> EditUser(UserViewModel userVMdata)
+        public static async Task<bool> EditUser(UserViewModel userVMdata)
         {
             try
             {
                 User user = CashBoxDataContext.Context.Users.FirstOrDefault(x => x.Id == userVMdata.Id);
-                if (user == null) return null;
+                if (user == null) return false;
                 user.Pin = userVMdata.Pin;
                 user.UserInfo.Name = userVMdata.UserInfo.Name;
                 user.UserInfo.Surname = userVMdata.UserInfo.Surname;
@@ -72,12 +72,29 @@ namespace Cashbox.MVVM.Models
                 user.UserInfo.RoleId = userVMdata.UserInfo.RoleId;
                 UserViewModel userVM = new(user);
                 await CashBoxDataContext.Context.SaveChangesAsync();
-                return userVM;
+                return true;
             }
             catch (Exception ex)
             {
                 AppCommand.ErrorMessage(ex.Message);
-                return null;
+                return true;
+            }
+        }
+
+        public static async Task<bool> TakeSalary(UserViewModel userVMdata, double money)
+        {
+            try
+            {
+                User user = CashBoxDataContext.Context.Users.FirstOrDefault(x => x.Id == userVMdata.Id);
+                if (user == null) return false;
+                user.UserInfo.Salary -= money;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
             }
         }
 

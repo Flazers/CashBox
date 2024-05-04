@@ -7,7 +7,7 @@ namespace Cashbox.MVVM.Models
     public partial class ProductCategory
     {
         private ProductCategory() { }
-        private static async Task<ProductCategoryViewModel?> NewProductCategory(string category)
+        private static async Task<ProductCategoryViewModel> NewProductCategory(string category)
         {
             try
             {
@@ -16,29 +16,28 @@ namespace Cashbox.MVVM.Models
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(productCategory);
             }
-            catch (Exception) { return null; }
+            catch (Exception ex) 
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return null!;
+            }
         }
 
-        private static async Task<ProductCategoryViewModel?> RemoveProductCategory(int id_category, int t)
+        private static async Task<bool> RemoveProductCategory(int id_category)
         {
             try
             {
                 ProductCategory? productCategory = await CashBoxDataContext.Context.ProductCategories.FirstOrDefaultAsync(x => x.Id == id_category);
-                if (productCategory == null) return null;
-                if (t == 1)
-                    foreach (var product in productCategory.Products)
-                        product.CategoryId = 1;
-                else if (t == 2)
-                    foreach (var product in productCategory.Products)
-                        await ProductViewModel.RemoveProduct(product.Id);
+                if (productCategory == null) return false;
+                if (productCategory.Products.Count > 0) return false;
                 CashBoxDataContext.Context.ProductCategories.Remove(productCategory);
                 await CashBoxDataContext.Context.SaveChangesAsync();
-                return new(productCategory);
+                return true;
             }
             catch (Exception ex)
             {
                 AppCommand.ErrorMessage(ex.Message);
-                return null!;
+                return false;
             }
         }
 
@@ -56,7 +55,7 @@ namespace Cashbox.MVVM.Models
             }
         }
         public static async Task<List<ProductCategoryViewModel>> GetProductCategories() => await CashBoxDataContext.Context.ProductCategories.Select(s => new ProductCategoryViewModel(s)).ToListAsync();
-        public static async Task<ProductCategoryViewModel?> CreateProductCategories(string category) => await NewProductCategory(category);
-        public static async Task<ProductCategoryViewModel?> RemoveProductCategories(int id_category, int prodRect) => await RemoveProductCategory(id_category, prodRect);
+        public static async Task<ProductCategoryViewModel> CreateProductCategories(string category) => await NewProductCategory(category);
+        public static async Task<bool> RemoveProductCategories(int id_category) => await RemoveProductCategory(id_category);
     }
 }

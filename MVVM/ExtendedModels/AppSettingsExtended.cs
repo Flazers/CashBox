@@ -28,7 +28,7 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        private static async Task<bool> EditSettings(int salary, int award)
+        private static async Task<bool> EditSettings(int salary)
         {
             try
             {
@@ -46,6 +46,6 @@ namespace Cashbox.MVVM.Models
         }
 
         public static async Task<bool> CreateSetting() => await CreateSettings();
-        public static async Task<bool> EditSetting(int salary, int award) => await EditSettings(salary, award);
+        public static async Task<bool> EditSetting(int salary) => await EditSettings(salary);
     }
 }
