@@ -34,7 +34,7 @@
                                     <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="История авторизаций"/>
                                     <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                                 </Grid>
-                                <ItemsControl Margin="10 0 10 10" ItemsSource="{Binding AuthHistory}">
+                                <ItemsControl Margin="10 0 10 10" d:ItemsSource="{d:SampleData ItemCount=3}" ItemsSource="{Binding AuthHistory}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border Height="40" Padding="5" Background="{StaticResource PanelW}" CornerRadius="10" Margin="0 0 0 15">
@@ -56,7 +56,7 @@
                                 </Grid>
                                 <StackPanel Margin="10 0 10 10">
                                     <TextBox Style="{StaticResource AuthTB}" Text="{Binding NewCashInBox}" PreviewTextInput="TextBox_PreviewTextInput" Tag="Деньги (Выручка / Произвольное значеие)"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0 30 0 0">
+                                    <StackPanel Orientation="Horizontal" Margin="0 20 0 0">
                                         <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding OutEditMoneyBoxCommand}" Width="220" Margin="0 0 40 0" Content="Забрать из кассы"/>
                                         <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding InEditMoneyBoxCommand}" Width="200" Content="Внести в кассу"/>
                                     </StackPanel>

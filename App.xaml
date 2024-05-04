@@ -21,7 +21,7 @@
                 <ResourceDictionary Source="./Assets/Styles/Elements/DatePicker.xaml"/>
                 <ResourceDictionary Source="./Assets/Styles/Elements/ProgressBar.xaml"/>
                 <ResourceDictionary Source="./Assets/Styles/Elements/ScrollViewer.xaml"/>
-                
+
                 <!--Data templates-->
                 <ResourceDictionary Source="./Assets/DataTemplates.xaml"/>
 

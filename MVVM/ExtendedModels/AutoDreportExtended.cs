@@ -34,7 +34,7 @@ namespace Cashbox.MVVM.Models
                 }
                 await CashBoxDataContext.Context.AutoDreports.AddAsync(autoDreport);
                 await MoneyBoxViewModel.UpdateMoney((double)dailyReport.Proceeds, 1);
-                dailyReport.UserInfoVM.Salary = autoDreport.Salary;
+                dailyReport.UserInfoVM.Salary += autoDreport.Salary;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(autoDreport);
             }

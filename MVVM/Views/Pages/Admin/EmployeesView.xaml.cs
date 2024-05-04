@@ -28,5 +28,17 @@ namespace Cashbox.MVVM.Views.Pages.Admin
                 e.Handled = true;
             }
         }
+
+        private void Salary_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            char number = Convert.ToChar(e.Text);
+            if (number == ',' && ((TextBox)sender).Text.Length == 0)
+                e.Handled = true;
+            if (number == ',')
+                if (((TextBox)sender).Text.Contains(number)) e.Handled = true;
+                else return;
+            if (!Char.IsDigit(number))
+                e.Handled = true;
+        }
     }
 }

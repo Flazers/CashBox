@@ -11,6 +11,26 @@ namespace Cashbox.MVVM.ViewModels.Admin
     {
         #region Props
 
+        public Visibility DailyReports
+        {
+            get
+            {
+                if (DailyReportCollection.Count > 0)
+                    return Visibility.Visible;
+                return Visibility.Collapsed;
+            }
+        }
+
+        public Visibility NoDailyReports
+        {
+            get
+            {
+                if (DailyReports == Visibility.Visible)
+                    return Visibility.Collapsed;
+                return Visibility.Visible;
+            }
+        }
+
         private Visibility _orderSelectedPanel = Visibility.Collapsed;
         public Visibility OrderSelectedPanel
         {
@@ -195,10 +215,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public RelayCommand SearchDataCommand { get; set; }
         private bool CanSearchDataCommandExecute(object p) => true;
-        private void OnSearchDataCommandExecuted(object p)
-        {
-            Dataload(Search);
-        }
+        private void OnSearchDataCommandExecuted(object p) => Update();
+        
 
         public RelayCommand GoBackOrderCommand { get; set; }
         private bool CanGoBackOrderCommandExecute(object p) => true;
@@ -293,16 +311,15 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public override async void OnLoad()
         {
             ProductCollection = new(await ProductViewModel.GetProducts(true));
-            Dataload();
         }
 
-        public async void Dataload(string search = "")
+        public async void Update()
         {
             List<DailyReportViewModel> data = await DailyReportViewModel.GetPeriodReports(DateOnly.FromDateTime(StartDate), DateOnly.FromDateTime(EndDate));
-            if (search == "")
+            if (string.IsNullOrEmpty(Search))
                 DailyReportCollection = new(data.OrderByDescending(x => x.Data));
             else
-                DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.ToLower().Trim().Contains(search.ToLower().Trim())).OrderByDescending(x => x.Data));
+                DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.Trim().Contains(Search.Trim(), StringComparison.CurrentCultureIgnoreCase)).OrderByDescending(x => x.Data));
         }
 
         public async void UpdateRefund()
@@ -315,7 +332,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public ShiftViewModel()
         {
-            Dataload();
+            Update();
             UpdateRefund();
             OpenUnRefundCommand = new RelayCommand(OnOpenUnRefundCommandExecuted, CanOpenUnRefundCommandExecute);
             OpenRefundCommand = new RelayCommand(OnOpenRefundCommandExecuted, CanOpenRefundCommandExecute);

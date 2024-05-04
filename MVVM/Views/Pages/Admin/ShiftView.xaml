@@ -33,7 +33,10 @@
                                 </Button>
                             </StackPanel>
                         </Grid>
-                        <ScrollViewer Height="560" Margin="10 0 10 10">
+                        <Grid Visibility="{Binding NoDailyReports}" Height="560" Margin="10 0 10 10">
+                            <TextBlock Text="Отчетов нет" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ScrollViewer Visibility="{Binding DailyReports}" Height="560" Margin="10 0 10 10">
                             <ItemsControl ItemsSource="{Binding DailyReportCollection}" d:ItemsSource="{d:SampleData ItemCount=2}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>

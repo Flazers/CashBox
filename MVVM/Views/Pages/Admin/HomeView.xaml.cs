@@ -17,18 +17,14 @@ namespace Cashbox.MVVM.Views.Pages.Admin
 
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            if (((TextBox)sender).Text.Length >= 6)
-            {
-                e.Handled = true;
-                return;
-            }
             char number = Convert.ToChar(e.Text);
-            if (number == '0' && ((TextBox)sender).Text.Length == 0)
+            if (number == ',' && ((TextBox)sender).Text.Length == 0)
                 e.Handled = true;
+            if (number == ',')
+                if (((TextBox)sender).Text.Contains(number)) e.Handled = true;
+                else return;
             if (!Char.IsDigit(number))
-            {
                 e.Handled = true;
-            }
         }
 
         public async void RefreshDataPlot()

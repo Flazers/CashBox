@@ -40,6 +40,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
             get => _isShiftView;
             set => Set(ref _isShiftView, value);
         }
+
+        private bool _isLogView = false;
+        public bool IsLogView
+        {
+            get => _isLogView;
+            set => Set(ref _isLogView, value);
+        }
         #endregion
 
         #endregion
@@ -58,6 +65,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 SubNavigationService?.NavigateTo<StockViewModel>();
             if (IsShiftView)
                 SubNavigationService?.NavigateTo<ShiftViewModel>();
+            if (IsLogView)
+                SubNavigationService?.NavigateTo<LogViewModel>();
         }
 
         public RelayCommand LogOutCommand { get; set; }

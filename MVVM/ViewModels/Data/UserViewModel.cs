@@ -13,7 +13,8 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<UserViewModel?> GetUserByPin(int pincode) => await User.GetUserByPin(pincode);
         public static async Task<UserViewModel?> CreateUser(int pincode, string name, string surname, string patronymic, string location, string phone, RoleViewModel role) => await User.CreateUser(pincode, name, surname, patronymic, location, phone, role);
         public static async Task<List<UserViewModel>> GetListUsers() => await User.GetListUsers();
-        public static async Task<UserViewModel?> EditUser(UserViewModel userVM) => await User.EditUser(userVM);
+        public static async Task<bool> EditUser(UserViewModel userVM) => await User.EditUser(userVM);
+        public static async Task<bool> TakeSalary(UserViewModel userVM, double money) => await User.TakeSalary(userVM, money);
 
         public void SetUserInfo(UserInfoViewModel? userInfoViewModel)
         {
@@ -38,6 +39,12 @@ namespace Cashbox.MVVM.ViewModels.Data
         public virtual ICollection<DailyReport> DailyReports => _user.DailyReports;
 
         public virtual ICollection<Order> Orders => _user.Orders;
+
+        public virtual ICollection<ComingProduct> ComingProducts => _user.ComingProducts;
+
+        public virtual ICollection<AdminMoneyLog> AdminLogs => _user.AdminLogs;
+
+        public virtual ICollection<AdminMoneyLog> UserLogs => _user.UserLogs;
 
         public UserInfoViewModel UserInfo { get; private set; } = new(user.UserInfo!);
     }

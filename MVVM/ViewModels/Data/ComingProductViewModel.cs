@@ -13,6 +13,8 @@ namespace Cashbox.MVVM.ViewModels.Data
         public int Id => _comingProduct.Id;
         public int UserId => _comingProduct.UserId;
         public DateTime CommingDatetime => _comingProduct.CommingDatetime;
+        public string? DataString => CommingDatetime.ToString("dd/MM/yyyy HH:mm:ss");
+        public double BuyCost => _comingProduct.BuyCost;
         public virtual User User { get; set; } = null!;
     }
 }

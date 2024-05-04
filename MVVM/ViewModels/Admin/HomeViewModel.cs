@@ -70,15 +70,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _cashInBox, value);
         }
 
-        private double _newCashInBox;
+        private double _newCashInBox = 0;
         public double NewCashInBox
         {
-            get
-            {
-                if (_cashInBox <= 1500)
-                    return _newCashInBox;
-                return _cashInBox - 1500;
-            }
+            get => _newCashInBox;
             set => Set(ref _newCashInBox, value);
         }
 
@@ -97,8 +92,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 return;
             }
             await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 1);
+            await AdminMoneyLogViewModel.CreateTransitMB($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} внес в кассу {temp} ₽", temp);
             AppCommand.InfoMessage($"{temp} ₽ внесено в кассу");
-            NewCashInBox -= temp;
+            NewCashInBox = 0;
             CashInBox = MoneyBoxViewModel.GetMoney;
         }
 
@@ -117,9 +113,15 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 AppCommand.WarningMessage("Вы не можете забрать больше денег, чем есть в кассе");
                 return;
             }
+            if (temp <= 0)
+            {
+                AppCommand.WarningMessage("Значение должно быть больше 0");
+                return;
+            }
             await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 2);
+            await AdminMoneyLogViewModel.CreateTransitMB($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} забрал из кассы {temp} ₽", temp);
             AppCommand.InfoMessage($"{temp} ₽ вычтено из кассы");
-            NewCashInBox -= temp;
+            NewCashInBox = 0;
             CashInBox = MoneyBoxViewModel.GetMoney;
         }
 
@@ -148,6 +150,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public override async void OnLoad()
         {
+            if (CashInBox > 1500)
+                NewCashInBox = CashInBox - 1500;
             AuthHistory = new(await AuthHistoryViewModel.GetAuthHistories());
             AuthHistory = new(AuthHistory.TakeLast(3).OrderByDescending(x => x.Datetime).ToList());
 

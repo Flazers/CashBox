@@ -13,20 +13,10 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<ProductViewModel?> CreateProduct(ProductViewModel? productVM) => await Product.CreateProducts(productVM);
         public static async Task<ProductViewModel?> RemoveProduct(int id) => await Product.AvailableProducts(id, false);
         public static async Task<ProductViewModel?> UnRemoveProduct(int id) => await Product.AvailableProducts(id, true);
-        public static async Task<bool> ImportProduct(List<ProductViewModel> productVM) => await Product.ImportProductVM(productVM);
-        public static async Task<bool> EditProduct(List<ProductViewModel> productVM) => await Product.EditProductVM(productVM);
+        public static async Task<bool> ImportProducts(List<ProductViewModel> productVM) => await Product.ImportProductsVM(productVM);
+        public static async Task<bool> EditProducts(List<ProductViewModel> productVM) => await Product.EditProductsVM(productVM);
 
         public int Id => _product.Id;
-
-        public string? ArticulCode
-        {
-            get => _product.ArticulCode;
-            set
-            {
-                _product.ArticulCode = value;
-                OnPropertyChanged();
-            }
-        }
 
         public string Title
         {

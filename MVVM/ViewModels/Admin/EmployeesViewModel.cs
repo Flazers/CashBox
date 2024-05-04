@@ -76,6 +76,34 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #region Visibility
 
+        private Visibility _visibilityIsAdmin = Visibility.Collapsed;
+        public Visibility VisibilityIsAdmin
+        {
+            get => _visibilityIsAdmin;
+            set => Set(ref _visibilityIsAdmin, value);
+        }
+
+        private Visibility _visibilityIsUser = Visibility.Collapsed;
+        public Visibility VisibilityIsUser
+        {
+            get => _visibilityIsUser;
+            set => Set(ref _visibilityIsUser, value);
+        }
+
+        private Visibility _visibilityLog = Visibility.Collapsed;
+        public Visibility VisibilityLog
+        {
+            get => _visibilityLog;
+            set => Set(ref _visibilityLog, value);
+        }
+
+        private Visibility _visibilityMain = Visibility.Visible;
+        public Visibility VisibilityMain
+        {
+            get => _visibilityMain;
+            set => Set(ref _visibilityMain, value);
+        }
+
         private Visibility _visibilityUserInfoPanel = Visibility.Visible;
         public Visibility VisibilityUserInfoPanel
         {
@@ -120,7 +148,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _collectionUserRoles, value);
         }
 
-        private ObservableCollection<UserViewModel> _collectionUsers = new(UserViewModel.GetListUsers().Result);
+        private ObservableCollection<UserViewModel> _collectionUsers = [];
         public ObservableCollection<UserViewModel> CollectionUsers
         {
             get => _collectionUsers;
@@ -139,6 +167,17 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
                 if (value != null)
                 {
+                    if (value.UserInfo.RoleId == 1)
+                    {
+                        VisibilityIsAdmin = Visibility.Visible;
+                        VisibilityIsUser = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        VisibilityIsAdmin = Visibility.Collapsed;
+                        VisibilityIsUser = Visibility.Visible;
+                    }
+
                     NotUserSelectedPanel = Visibility.Collapsed;
                     UserSelectedPanel = Visibility.Visible;
                 }
@@ -151,9 +190,66 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
         }
 
+        private string _searchStr = string.Empty;
+        public string SearchStr
+        {
+            get => _searchStr;
+            set => Set(ref _searchStr, value);
+        }
+
+        private string _givenSalary = string.Empty;
+        public string GivenSalary
+        {
+            get => _givenSalary;
+            set => Set(ref _givenSalary, value);
+        }
+
         #endregion
 
-            #region Commands
+        #region Commands
+
+        public RelayCommand SearchDataCommand { get; set; }
+        private bool CanSearchDataCommandExecute(object p) => true;
+        private void OnSearchDataCommandExecuted(object p) => Update();
+
+        public RelayCommand GiveSalaryCommand { get; set; }
+        private bool CanGiveSalaryCommandExecute(object p) => true;
+        private async void OnGiveSalaryCommandExecuted(object p)
+        {
+            if (SelectedUser == null) return;
+            if (string.IsNullOrEmpty(GivenSalary))
+            {
+                AppCommand.WarningMessage("Введите сколько выдать.");
+                return;
+            }
+            if (int.Parse(GivenSalary.Trim()) > SelectedUser.UserInfo.Salary)
+            {
+                AppCommand.WarningMessage("Нельзя выдать зарплату больше чем начислено.");
+                return;
+            }
+            await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} выдал зарплату сотруднику {SelectedUser.UserInfo.FullName} в размере {GivenSalary} ₽", double.Parse(GivenSalary), SelectedUser.Id);
+            await UserViewModel.TakeSalary(SelectedUser, double.Parse(GivenSalary));
+            AppCommand.InfoMessage("Зарплата выдана");
+            Update();
+        }
+
+        public RelayCommand SeeLogCommand { get; set; }
+        private bool CanSeeLogCommandExecute(object p) => true;
+        private void OnSeeLogCommandExecuted(object p)
+        {
+            if (VisibilityLog == Visibility.Collapsed)
+            {
+                VisibilityLog = Visibility.Visible;
+                VisibilityMain = Visibility.Collapsed;
+            }
+            else
+            {
+                VisibilityLog = Visibility.Collapsed;
+                VisibilityMain = Visibility.Visible;
+            }
+
+        }
+
         public RelayCommand SeeUserInfoCommand { get; set; }
         private bool CanSeeUserInfoCommandExecute(object p) => true;
         private void OnSeeUserInfoCommandExecuted(object p)
@@ -161,6 +257,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             UserViewModel? user = CollectionUsers.FirstOrDefault(x => x.Id == int.Parse(p.ToString()!));
             if (user == null) return;
             SelectedUser = user;
+            GivenSalary = SelectedUser.UserInfo.Salary.ToString();
         }
 
         public RelayCommand CreateUserCommand { get; set; }
@@ -207,6 +304,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (AppCommand.QuestionMessage($"Вы уверены, что хотите уволить сотрудника {SelectedUser.UserInfo.FullName}?") == MessageBoxResult.Yes)
             {
                 await UserInfoViewModel.DeactivateUser(SelectedUser.Id);
+                await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} уволил сотрудника {SelectedUser.UserInfo.FullName}", 0, SelectedUser.Id);
                 CollectionUsers.Remove(SelectedUser);
                 SelectedUser = null;
                 AppCommand.InfoMessage("Пользователь уволен");
@@ -234,21 +332,34 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             if (SelectedUser == null)
                 return;
-            UserViewModel userVM = await UserViewModel.EditUser(SelectedUser);
-            if (userVM == null)
+            if (await UserViewModel.EditUser(SelectedUser))
             {
                 AppCommand.ErrorMessage("Ошибка при редактировании пользователя");
                 return;
             }
+            await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} отредактировал сотрудника под id {SelectedUser.Id} ({SelectedUser.UserInfo.FullName})", 0, SelectedUser.Id);
             AppCommand.InfoMessage("Пользователь отредактирован");
             VisibilityEditUserPanel = Visibility.Collapsed;
             VisibilityUserInfoPanel = Visibility.Visible;
+        }
+
+        private async void Update()
+        {
+            List<UserViewModel> data = await UserViewModel.GetListUsers();
+            if (string.IsNullOrEmpty(SearchStr))
+                CollectionUsers = new(data.OrderBy(x => x.UserInfo.RoleId));
+            else
+                CollectionUsers = new(data.Where(x => x.UserInfo.FullName.Trim().Contains(SearchStr.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase)).OrderBy(x => x.UserInfo.RoleId));
         }
 
         #endregion
 
         public EmployeesViewModel()
         {
+            Update();
+            SeeLogCommand = new RelayCommand(OnSeeLogCommandExecuted, CanSeeLogCommandExecute);
+            GiveSalaryCommand = new RelayCommand(OnGiveSalaryCommandExecuted, CanGiveSalaryCommandExecute);
+            SearchDataCommand = new RelayCommand(OnSearchDataCommandExecuted, CanSearchDataCommandExecute);
             SeeUserInfoCommand = new RelayCommand(OnSeeUserInfoCommandExecuted, CanSeeUserInfoCommandExecute);
             AddUserPanelVisibilityCommand = new RelayCommand(OnAddUserPanelVisibilityCommandExecuted, CanAddUserPanelVisibilityCommandExecute);
             SeeUserInfoPanelVisibilityCommand = new RelayCommand(OnSeeUserInfoPanelVisibilityCommandExecuted, CanSeeUserInfoPanelVisibilityCommandExecute);
