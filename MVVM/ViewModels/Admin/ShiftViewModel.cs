@@ -108,11 +108,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _checkListOneObjVisibility, value);
         }
 
-        private string _search = string.Empty;
-        public string Search
+        private string _searchStr = string.Empty;
+        public string SearchStr
         {
-            get => _search;
-            set => Set(ref _search, value);
+            get => _searchStr;
+            set => Set(ref _searchStr, value);
         }
 
         private ObservableCollection<RefundViewModel> _unSuccessRefundCollection = [];
@@ -209,6 +209,17 @@ namespace Cashbox.MVVM.ViewModels.Admin
             get => _selectedDReport;
             set => Set(ref _selectedDReport, value);
         }
+
+        private int _award;
+        public int Award
+        {
+            get => _award;
+            set
+            {
+                _award = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
         #region Commands
@@ -216,7 +227,18 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public RelayCommand SearchDataCommand { get; set; }
         private bool CanSearchDataCommandExecute(object p) => true;
         private void OnSearchDataCommandExecuted(object p) => Update();
-        
+
+        public RelayCommand GiveAwardCommand { get; set; }
+        private bool CanGiveAwardCommandExecute(object p) => true;
+        private async void OnGiveAwardCommandExecuted(object p)
+        {
+            if (AppCommand.QuestionMessage($"Выдать премию в размере {Award} ₽ сотруднику {SelectedDReport.UserInfoVM.FullName}?") == MessageBoxResult.Yes )
+            {
+                if (await AutoDailyReportViewModel.GiveAward(SelectedDReport, Award))
+                    AppCommand.InfoMessage("Успех");
+            }
+            
+        }
 
         public RelayCommand GoBackOrderCommand { get; set; }
         private bool CanGoBackOrderCommandExecute(object p) => true;
@@ -316,10 +338,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public async void Update()
         {
             List<DailyReportViewModel> data = await DailyReportViewModel.GetPeriodReports(DateOnly.FromDateTime(StartDate), DateOnly.FromDateTime(EndDate));
-            if (string.IsNullOrEmpty(Search))
+            if (string.IsNullOrEmpty(SearchStr))
                 DailyReportCollection = new(data.OrderByDescending(x => x.Data));
             else
-                DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.Trim().Contains(Search.Trim(), StringComparison.CurrentCultureIgnoreCase)).OrderByDescending(x => x.Data));
+                DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase)).OrderByDescending(x => x.Data));
         }
 
         public async void UpdateRefund()
@@ -334,6 +356,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             Update();
             UpdateRefund();
+            GiveAwardCommand = new RelayCommand(OnGiveAwardCommandExecuted, CanGiveAwardCommandExecute);
             OpenUnRefundCommand = new RelayCommand(OnOpenUnRefundCommandExecuted, CanOpenUnRefundCommandExecute);
             OpenRefundCommand = new RelayCommand(OnOpenRefundCommandExecuted, CanOpenRefundCommandExecute);
             SeeRefundsCommand = new RelayCommand(OnSeeRefundsCommandExecuted, CanSeeRefundsCommandExecute);

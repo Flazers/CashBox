@@ -19,6 +19,7 @@ namespace Cashbox.MVVM.Models
                     Brand = productVM.Brand,
                     CategoryId = productVM.CategoryId,
                     SellCost = productVM.SellCost,
+                    CountSell = productVM.CountSell,
                     IsAvailable = true,
                 };
                 CashBoxDataContext.Context.Products.Add(product);

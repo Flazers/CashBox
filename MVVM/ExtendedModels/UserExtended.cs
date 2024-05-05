@@ -70,14 +70,13 @@ namespace Cashbox.MVVM.Models
                 user.UserInfo.Phone = userVMdata.UserInfo.Phone;
                 user.UserInfo.Location = userVMdata.UserInfo.Location;
                 user.UserInfo.RoleId = userVMdata.UserInfo.RoleId;
-                UserViewModel userVM = new(user);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
             {
                 AppCommand.ErrorMessage(ex.Message);
-                return true;
+                return false;
             }
         }
 

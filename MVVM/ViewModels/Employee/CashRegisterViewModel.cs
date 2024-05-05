@@ -64,11 +64,30 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set => Set(ref _collectionProducts, value);
         }
 
-        private string? _searchCollectionProduct;
-        public string? SearchCollectionProduct
+        private ObservableCollection<ProductCategoryViewModel> _collectionProductCategories = [];
+        public ObservableCollection<ProductCategoryViewModel> CollectionProductCategories
         {
-            get => _searchCollectionProduct;
-            set => Set(ref _searchCollectionProduct, value);
+            get => _collectionProductCategories;
+            set => Set(ref _collectionProductCategories, value);
+        }
+
+        private ProductCategoryViewModel? _selectedProductCategory;
+        public ProductCategoryViewModel? SelectedProductCategory
+        {
+            get => _selectedProductCategory;
+            set 
+            {
+                _selectedProductCategory = value;
+                UpdateCategory();
+                OnPropertyChanged();
+            }
+        }
+
+        private string _searchStr = string.Empty;
+        public string SearchStr
+        {
+            get => _searchStr;
+            set => Set(ref _searchStr, value);
         }
 
         private ObservableCollection<OrderProductViewModel> _orderProductsBasket = [];
@@ -432,18 +451,40 @@ namespace Cashbox.MVVM.ViewModels.Employee
             RefundBuyDate = DateTime.Today;
         }
 
-        private async void DataLoad(string search = "")
+        private async void Load()
         {
-            CollectionProducts = new(await ProductViewModel.GetProducts());
-            search = search.ToLower().Trim();
-            if (search != "")
-                CollectionProducts = new(CollectionProducts.Where(x => x.Brand.Contains(search) || x.Title.Contains(search) || x.Description.Contains(search)).ToList());
+            CollectionProductCategories = new(await ProductCategoryViewModel.GetProductCategory());
+            SelectedProductCategory = CollectionProductCategories[0];
+        }
+
+        private async void UpdateCategory()
+        {
+            List<ProductViewModel> products = await ProductViewModel.GetProducts();
+
+            if (SelectedProductCategory == null || SelectedProductCategory.Category == "Все категории")
+                CollectionProducts = new(products.OrderByDescending(s => s.CountSell).ToList());
+            else
+                CollectionProducts = new(products.Where(x => x.CategoryId == SelectedProductCategory.Id).OrderBy(s => s.CountSell).ToList());
+        }
+
+        private void Update()
+        {
+            UpdateCategory();
+            SearchStr = SearchStr.ToLower().Trim();
+            if (!string.IsNullOrEmpty(SearchStr))
+                CollectionProducts = new(CollectionProducts.Where(x => 
+                                                                    x.Brand.Contains(SearchStr, StringComparison.CurrentCultureIgnoreCase) || 
+                                                                    x.Title.Contains(SearchStr, StringComparison.CurrentCultureIgnoreCase) || 
+                                                                    x.SellCost.ToString().Contains(SearchStr, StringComparison.CurrentCultureIgnoreCase) || 
+                                                                    x.Description.Contains(SearchStr, StringComparison.CurrentCultureIgnoreCase)).ToList());
         }
 
         #endregion
         public CashRegisterViewModel()
         {
-            DataLoad();
+            Load();
+            Update();
+
             AddProductInBasketCommand = new RelayCommand(OnAddProductInBasketCommandExecuted, CanAddProductInBasketCommandExecute);
             IncreaseAmountProductBasketCommand = new RelayCommand(OnIncreaseAmountProductBasketCommandExecuted, CanIncreaseAmountProductBasketCommandExecute);
             DecreaseAmountProductBasketCommand = new RelayCommand(OnDecreaseAmountProductBasketCommandExecuted, CanDecreaseAmountProductBasketCommandExecute);

@@ -122,6 +122,8 @@ namespace Cashbox.MVVM.ViewModels
                     }
                     if (AppCommand.QuestionMessage($"Открыта смена у {ListNotClose}\nЗакрыть для продолжения работы?") == MessageBoxResult.Yes)
                         closereport(report);
+                    else
+                        return;
                 }
             }
             if (!OrderViewModel.RemoveNullReferenceOrder())

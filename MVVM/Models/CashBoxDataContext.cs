@@ -232,6 +232,7 @@ public partial class CashBoxDataContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("description");
             entity.Property(e => e.SellCost).HasColumnName("sell_cost");
+            entity.Property(e => e.CountSell).HasColumnName("count_sell");
             entity.Property(e => e.Title)
                 .HasMaxLength(50)
                 .IsUnicode(false)

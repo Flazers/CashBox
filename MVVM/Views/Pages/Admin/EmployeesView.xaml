@@ -44,7 +44,7 @@
                                     <Border Padding="20" Width="340" Background="{StaticResource BasicW}" CornerRadius="20" Margin="10">
                                         <StackPanel>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Style="{StaticResource RegularText}" Margin="0 0 20 6" Text="{Binding Id}"/>
+                                                <TextBlock Style="{StaticResource RegularText}" Margin="0 0 20 6" Text="{Binding Id, StringFormat='\id {0}'}"/>
                                                 <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 10" Text="{Binding UserInfo.Role.Role1}"/>
                                             </StackPanel>
                                             <TextBlock Style="{StaticResource RegularText}" Margin="0 0 0 6" Text="{Binding UserInfo.Surname}"/>
@@ -69,12 +69,12 @@
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
                     <StackPanel Height="650" Margin="10 0">
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Name}" Tag="Имя" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Location}" Tag="Место жительства" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.UserInfo.Phone}" Tag="Телефон" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding SelectedUser.Pin}" Tag="Пинкод" x:Name="pin" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Pincode}" Tag="Пинкод" x:Name="pin" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="10 40 10 0">
                         <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding ClosePanelEditUserCommand}" Width="230" Margin="0 0 20 0" Content="Закрыть"/>

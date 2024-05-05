@@ -177,7 +177,7 @@
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
                     <Grid Margin="10" Height="740">
-                        <ScrollViewer Visibility="{Binding CheckListVisibility}" Height="770">
+                        <ScrollViewer Visibility="{Binding CheckListVisibility}" Height="740">
                             <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding OrderCollection}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>

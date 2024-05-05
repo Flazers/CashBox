@@ -104,7 +104,7 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Padding="20" Width="340" Height="190" Background="{Binding BackGroundColor}" CornerRadius="20" Margin="10">
+                                            <Border Padding="20" Width="340" Height="200" Background="{Binding BackGroundColor}" CornerRadius="20" Margin="10">
                                                 <Grid>
                                                     <StackPanel>
                                                         <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" TextWrapping="Wrap"/>
@@ -113,6 +113,7 @@
                                                     </StackPanel>
                                                     <StackPanel VerticalAlignment="Bottom">
                                                         <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Right" Text="{Binding SellCost, StringFormat='Цена: \{0} ₽'}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Right" Text="{Binding CountSell, StringFormat='Продано: \{0} шт.'}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                         <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Right" Text="{Binding Stock.Amount, StringFormat='В наличии: \{0} шт.'}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                     </StackPanel>
                                                     <Button Height="30" Width="30" Background="{StaticResource BasicB}" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource RemoveIconButton}"

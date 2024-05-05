@@ -70,6 +70,16 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public int CountSell
+        {
+            get => _product.CountSell;
+            set
+            {
+                _product.CountSell = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string ReSellCost { get; set; } = string.Empty;
         public Visibility ReSellCostVisibility
         {

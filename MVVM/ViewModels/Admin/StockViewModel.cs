@@ -166,24 +166,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
         }
 
-        public async void Update()
-        {
-            List<ComingProductViewModel> listcoming = await ComingProduct.GetComing();
-            CollectionComing = new(listcoming.TakeLast(20).OrderByDescending(x => x.CommingDatetime).ToList());
-            List<ProductViewModel> list = await ProductViewModel.GetProducts(IsShowAllProduct);
-            CollectionProducts = new(list.Where(x =>
-                                                x.Title.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-                                                x.Brand.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-                                                x.Description.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-                                                x.SellCost.ToString().Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase)
-                                                )
-                                                .OrderBy(x => x.Stock.Amount));
-            if (SelectedProductCategory == null)
-                return;
-            if (SelectedProductCategory.Category != "Все категории")
-                CollectionProducts = new(CollectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
-        }
-
         private async Task<List<ProductViewModel>> Analyzer(FileStream stream, bool isEdit)
         {
             List<ProductViewModel> listProducts = new(await ProductViewModel.GetProducts(true));
@@ -277,6 +259,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
                             errors.Add($"Не удалось найти товар с id {id}. Cтрока {line}\n");
                             continue;
                         }
+                        if (IsAvailable == 1) productVM.IsAvailable = true;
+                        else productVM.IsAvailable = false;
+                        if (productVM.CategoryId != category.Id)
+                            movedcount++;
                     } 
                     else
                     {
@@ -292,20 +278,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         else addedcount++;
                     }
 
-                    if (isEdit)
-                    {
-                        if (productVM.CategoryId != category.Id)
-                            movedcount++;
-                    }
                     productVM.CategoryId = category.Id;
-
                     productVM.Brand = brand!;
                     productVM.Title = title!;
                     productVM.Description = description!;
                     productVM.SellCost = sellcost;
                     productVM.AmountRes = amount;
-                    if (IsAvailable == 1) productVM.IsAvailable = true;
-                    else productVM.IsAvailable = false;
 
                     listProductVM.Add(productVM);
                 }
@@ -646,13 +624,27 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #endregion
 
+        public async void Update()
+        {
+            List<ComingProductViewModel> listcoming = await ComingProduct.GetComing();
+            CollectionComing = new(listcoming.TakeLast(20).OrderByDescending(x => x.CommingDatetime).ToList());
+            List<ProductViewModel> list = await ProductViewModel.GetProducts(IsShowAllProduct);
+            CollectionProducts = new(list.Where(x =>
+                                                x.Title.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
+                                                x.Brand.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
+                                                x.Description.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
+                                                x.SellCost.ToString().Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase)
+                                                )
+                                                .OrderBy(x => x.Stock.Amount));
+            if (SelectedProductCategory == null)
+                return;
+            if (SelectedProductCategory.Category != "Все категории")
+                CollectionProducts = new(CollectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
+        }
+
         private async void UpdateCategory()
         {
-            List<ProductCategoryViewModel> productcategory = [];
-            ProductCategoryViewModel AllCategory = ProductCategoryViewModel.NewExample("Все категории");
-            productcategory.Add(AllCategory);
-            productcategory.AddRange(await ProductCategoryViewModel.GetProductCategory());
-            CollectionProductCategories = new(productcategory);
+            CollectionProductCategories = new(await ProductCategoryViewModel.GetProductCategory());
             SelectedProductCategory = CollectionProductCategories[0];
         }
 

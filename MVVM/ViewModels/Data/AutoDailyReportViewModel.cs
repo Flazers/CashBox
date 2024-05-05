@@ -8,6 +8,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         private readonly AutoDreport _autoDreport = AutoDreports;
 
         public static async Task<AutoDailyReportViewModel> GenEndShiftAuto(DailyReportViewModel dailyReport) => await AutoDreport.GenReport(dailyReport);
+        public static async Task<bool> GiveAward(DailyReportViewModel dailyReport, int award) => await AutoDreport.GiveAward(dailyReport, award);
         public int DailyReportId => _autoDreport.DailyReportId;
 
         public int Salary

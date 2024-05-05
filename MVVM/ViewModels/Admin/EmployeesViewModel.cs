@@ -1,5 +1,6 @@
 ﻿using Cashbox.Core;
 using Cashbox.Core.Commands;
+using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -264,7 +265,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanCreateUserCommandExecute(object p) => true;
         private async void OnCreateUserCommandExecuted(object p)
         {
-            if (Pincode.ToString().Length != 6 || Name == null || Surname == null || Patronymic == null || Location == null || Phone == null || Role == null)
+            if (Pincode.ToString().Length != 6 || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Surname) || string.IsNullOrEmpty(Patronymic) || string.IsNullOrEmpty(Location) || string.IsNullOrEmpty(Phone) || Role == null)
             {
                 AppCommand.WarningMessage("Заполните все поля");
                 return;
@@ -277,6 +278,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
             CollectionUsers = new(await UserViewModel.GetListUsers());
             AppCommand.InfoMessage("Пользователь создан");
+            Surname = string.Empty;
+            Name = string.Empty;
+            Patronymic = string.Empty;
+            Location = string.Empty;
+            Phone = string.Empty;
+            Pincode = string.Empty;
             SelectedUser = user;
             OnSeeUserInfoPanelVisibilityCommandExecuted(p);
         }
@@ -314,6 +321,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanOpenPanelEmployeeEditCommandExecute(object p) => true;
         private void OnOpenPanelEmployeeEditCommandExecuted(object p)
         {
+            Surname = SelectedUser.UserInfo.Surname;
+            Name = SelectedUser.UserInfo.Name;
+            Patronymic = SelectedUser.UserInfo.Patronymic;
+            Location = SelectedUser.UserInfo.Location;
+            Phone = SelectedUser.UserInfo.Phone;
+            Pincode = SelectedUser.Pin.ToString();
             VisibilityEditUserPanel = Visibility.Visible;
             VisibilityUserInfoPanel = Visibility.Collapsed;
         }
@@ -322,6 +335,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanClosePanelEditUserCommandExecute(object p) => true;
         private void OnClosePanelEditUserCommandExecuted(object p)
         {
+            Surname = string.Empty;
+            Name = string.Empty;
+            Patronymic = string.Empty;
+            Location = string.Empty;
+            Phone = string.Empty;
+            Pincode = string.Empty;
             VisibilityEditUserPanel = Visibility.Collapsed;
             VisibilityUserInfoPanel = Visibility.Visible;
         }
@@ -332,13 +351,28 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             if (SelectedUser == null)
                 return;
-            if (await UserViewModel.EditUser(SelectedUser))
+            if (Pincode.ToString().Length != 6 || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Surname) || string.IsNullOrEmpty(Patronymic) || string.IsNullOrEmpty(Location) || string.IsNullOrEmpty(Phone))
+            {
+                AppCommand.WarningMessage("Заполните все поля");
+                return;
+            }
+            string fullname = SelectedUser.UserInfo.FullName;
+            fullname += $" {SelectedUser.UserInfo.Phone}";
+            SelectedUser.UserInfo.Surname = Surname;
+            SelectedUser.UserInfo.Name = Name;
+            SelectedUser.UserInfo.Patronymic = Patronymic;
+            SelectedUser.UserInfo.Location = Location;
+            SelectedUser.UserInfo.Phone = Phone;
+            SelectedUser.Pin = PincodeInt;
+
+            if (!await UserViewModel.EditUser(SelectedUser))
             {
                 AppCommand.ErrorMessage("Ошибка при редактировании пользователя");
                 return;
             }
-            await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} отредактировал сотрудника под id {SelectedUser.Id} ({SelectedUser.UserInfo.FullName})", 0, SelectedUser.Id);
-            AppCommand.InfoMessage("Пользователь отредактирован");
+            OnClosePanelEditUserCommandExecuted(p);
+            await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} отредактировал сотрудника под id {SelectedUser.Id} ({fullname} => {SelectedUser.UserInfo.FullName} {SelectedUser.UserInfo.Phone})", 0, SelectedUser.Id);
+            AppCommand.InfoMessage($"Пользователь под id {SelectedUser.Id} отредактирован");
             VisibilityEditUserPanel = Visibility.Collapsed;
             VisibilityUserInfoPanel = Visibility.Visible;
         }

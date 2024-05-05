@@ -44,5 +44,20 @@ namespace Cashbox.MVVM.Models
                 return null!;
             }
         }
+
+        public static async Task<bool> GiveAward(DailyReportViewModel dailyReport, int award)
+        {
+            try
+            {
+                CashBoxDataContext.Context.AutoDreports.FirstOrDefault(x => x.DailyReportId == dailyReport.Id).Award = award;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
+        }
     }
 }

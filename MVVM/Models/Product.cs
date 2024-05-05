@@ -14,6 +14,8 @@ public partial class Product
 
     public double SellCost { get; set; }
 
+    public int CountSell { get; set; }
+
     public bool IsAvailable { get; set; }
 
     public virtual ProductCategory Category { get; set; } = null!;
