@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Cashbox.MVVM.Views.Pages.Admin
 {
@@ -20,6 +21,15 @@ namespace Cashbox.MVVM.Views.Pages.Admin
             if (!Char.IsDigit(number))
             {
                 e.Handled = true;
+            }
+        }
+
+        private void Search_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SearchBtn.Focus();
+                SearchBtn.Command.Execute(null);
             }
         }
     }

@@ -210,8 +210,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _selectedDReport, value);
         }
 
-        private int _award;
-        public int Award
+        private string _award = string.Empty;
+        public string Award
         {
             get => _award;
             set
@@ -232,12 +232,23 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanGiveAwardCommandExecute(object p) => true;
         private async void OnGiveAwardCommandExecuted(object p)
         {
-            if (AppCommand.QuestionMessage($"Выдать премию в размере {Award} ₽ сотруднику {SelectedDReport.UserInfoVM.FullName}?") == MessageBoxResult.Yes )
+            if (string.IsNullOrEmpty(Award))
             {
-                if (await AutoDailyReportViewModel.GiveAward(SelectedDReport, Award))
-                    AppCommand.InfoMessage("Успех");
+                AppCommand.WarningMessage("Введите премию в поле \"Выдать\"");
+                return;
             }
-            
+            if (!int.TryParse(Award, out int parsed))
+            {
+                AppCommand.WarningMessage("Некорректное значение");
+                return;
+            }
+            if (AppCommand.QuestionMessage($"Выдать премию в размере {Award} ₽ сотруднику {SelectedDReport.UserInfoVM.FullName}?") == MessageBoxResult.Yes)
+                if (await AutoDailyReportViewModel.GiveAward(SelectedDReport, parsed))
+                {
+                    await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} выдал премию в размере {Award} ₽ сотруднику {SelectedDReport.UserInfoVM.FullName}", parsed, SelectedDReport.UserId);
+                    AppCommand.InfoMessage("Успех");
+                }
+            Update();
         }
 
         public RelayCommand GoBackOrderCommand { get; set; }

@@ -10,7 +10,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
     {
 
         #region Props
-        public static UserViewModel? User { get => Models.User.CurrentUser; }
+        public static UserViewModel? User { get => UserViewModel.GetCurrentUser(); }
 
         #region isBoolView
         private bool _isHomeView = true;

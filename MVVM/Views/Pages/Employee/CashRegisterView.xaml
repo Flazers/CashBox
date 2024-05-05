@@ -33,8 +33,8 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <TextBox Style="{StaticResource Search}" Text="{Binding SearchStr}" Height="60" Margin="0 0 40 0" Width="300" VerticalAlignment="Center"/>
-                            <Button Height="60" Width="60" Command="{Binding SearchDataCommand}" VerticalAlignment="Center" Style="{StaticResource ButtonInPanelGreen}">
+                            <TextBox Style="{StaticResource Search}" Text="{Binding SearchStr}" x:Name="Search" KeyDown="Search_KeyDown" Height="60" Margin="0 0 40 0" Width="300" VerticalAlignment="Center"/>
+                            <Button Height="60" Width="60" Command="{Binding SearchDataCommand}" x:Name="SearchBtn" VerticalAlignment="Center" Style="{StaticResource ButtonInPanelGreen}">
                                 <Icon:PackIconMaterialDesign Kind="Search" Width="30" Height="30"/>
                             </Button>
                         </StackPanel>

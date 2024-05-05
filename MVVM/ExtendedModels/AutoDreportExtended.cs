@@ -49,7 +49,11 @@ namespace Cashbox.MVVM.Models
         {
             try
             {
-                CashBoxDataContext.Context.AutoDreports.FirstOrDefault(x => x.DailyReportId == dailyReport.Id).Award = award;
+                AutoDreport report = CashBoxDataContext.Context.AutoDreports.FirstOrDefault(x => x.DailyReportId == dailyReport.Id);
+                if (report == null)
+                    return false;
+                report.Award += award;
+                report.DailyReport.User.UserInfo.Salary += award;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }

@@ -21,5 +21,14 @@ namespace Cashbox.MVVM.Views.Pages.Employee
                 e.Handled = true;
             }
         }
+
+        private void Search_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SearchBtn.Focus();
+                SearchBtn.Command.Execute(null);
+            }
+        }
     }
 }
