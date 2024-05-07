@@ -184,12 +184,12 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private async void OnStartShiftCommandExecuted(object p)
         {
             StartShiftTime = TimeOnly.FromDateTime(DateTime.Now);
-            DailyReportViewModel drvm = await DailyReportViewModel.StartShift(CurrentDate, (TimeOnly)StartShiftTime);
+            DailyReport = await DailyReportViewModel.StartShift(CurrentDate, (TimeOnly)StartShiftTime);
             StartShiftVisibility = Visibility.Collapsed;
             ProcessShiftVisibility = Visibility.Visible;
             ProcessDoShiftVisibility = Visibility.Visible;
             EndShiftVisibility = Visibility.Collapsed;
-            AppCommand.InfoMessage($"Смена {drvm.Id} открыта");
+            AppCommand.InfoMessage($"Смена {DailyReport.Id} открыта");
         }
 
         public RelayCommand EndShiftCommand { get; set; }

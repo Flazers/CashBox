@@ -12,16 +12,27 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<RefundViewModel> CreateRefund()
         {
-            Refund refund = new()
+            try
             {
-                IsPurchased = false,
-                IsSuccessRefund = false,
-                DailyReportId = DailyReportViewModel.GetCurrentShift().Id,
-            };
-            CashBoxDataContext.Context.Refunds.Add(refund);
-            await CashBoxDataContext.Context.SaveChangesAsync();
-            CurrentRefund = refund;
-            return new(refund);
+                var emptProducts = CashBoxDataContext.Context.Refunds.Where(x => x.ProductId == null).ToList();
+                if (emptProducts.Count > 0)
+                    CashBoxDataContext.Context.Refunds.RemoveRange(emptProducts);
+                Refund refund = new()
+                {
+                    IsPurchased = false,
+                    IsSuccessRefund = false,
+                    DailyReportId = DailyReportViewModel.GetCurrentShift().Id,
+                };
+                CashBoxDataContext.Context.Refunds.Add(refund);
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                CurrentRefund = refund;
+                return new(refund);
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return null!;
+            }
         }
 
         public static async Task<bool> RemoveCurrentRefund()

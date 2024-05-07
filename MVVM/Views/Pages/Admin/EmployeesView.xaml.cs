@@ -79,6 +79,7 @@ namespace Cashbox.MVVM.Views.Pages.Admin
             {
                 SearchBtn.Focus();
                 SearchBtn.Command.Execute(null);
+                Search.Focus();
             }
         }
     }

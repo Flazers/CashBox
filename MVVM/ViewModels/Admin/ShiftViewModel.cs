@@ -245,7 +245,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (AppCommand.QuestionMessage($"Выдать премию в размере {Award} ₽ сотруднику {SelectedDReport.UserInfoVM.FullName}?") == MessageBoxResult.Yes)
                 if (await AutoDailyReportViewModel.GiveAward(SelectedDReport, parsed))
                 {
-                    await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} выдал премию в размере {Award} ₽ сотруднику {SelectedDReport.UserInfoVM.FullName}", parsed, SelectedDReport.UserId);
+                    UserViewModel user = UserViewModel.GetCurrentUser();
+                    await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} выдал премию в размере {Award} ₽ сотруднику (id: {SelectedDReport.UserId}) {SelectedDReport.UserInfoVM.FullName}", parsed, SelectedDReport.UserId);
                     AppCommand.InfoMessage("Успех");
                 }
             Update();

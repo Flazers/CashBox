@@ -30,12 +30,12 @@ namespace Cashbox.MVVM.Models
             catch (Exception) { return null; }
         }
 
-        public static async Task<List<ProductViewModel>> GetProducts(bool NoAvailable)
+        public static async Task<List<ProductViewModel>> GetProducts(bool ShowNoAvailable)
         {
-            if (!NoAvailable)
-                return await CashBoxDataContext.Context.Products.Where(x => x.IsAvailable == true).Select(s => new ProductViewModel(s)).ToListAsync();
-            else
+            if (ShowNoAvailable)
                 return await CashBoxDataContext.Context.Products.Select(s => new ProductViewModel(s)).ToListAsync();
+            else
+                return await CashBoxDataContext.Context.Products.Where(x => x.IsAvailable == true && x.Stock.Amount > 0).Select(s => new ProductViewModel(s)).ToListAsync();
         }
 
         private static async Task<ProductViewModel?> UpdateProduct(ProductViewModel? productVM, bool SetOrPlus)

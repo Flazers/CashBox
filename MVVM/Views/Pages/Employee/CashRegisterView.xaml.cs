@@ -28,6 +28,7 @@ namespace Cashbox.MVVM.Views.Pages.Employee
             {
                 SearchBtn.Focus();
                 SearchBtn.Command.Execute(null);
+                Search.Focus();
             }
         }
     }

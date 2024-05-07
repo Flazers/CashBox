@@ -247,7 +247,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 AppCommand.WarningMessage("Нельзя выдать зарплату больше чем начислено.");
                 return;
             }
-            await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} выдал зарплату сотруднику {SelectedUser.UserInfo.FullName} в размере {GivenSalary} ₽", double.Parse(GivenSalary), SelectedUser.Id);
+            UserViewModel user = UserViewModel.GetCurrentUser();
+            await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} выдал зарплату сотруднику (id: {SelectedUser.Id}) {SelectedUser.UserInfo.FullName} в размере {GivenSalary} ₽", double.Parse(GivenSalary), SelectedUser.Id);
             await UserViewModel.TakeSalary(SelectedUser, double.Parse(GivenSalary));
             AppCommand.InfoMessage("Зарплата выдана");
             Update();
@@ -313,7 +314,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (AppCommand.QuestionMessage($"Вы уверены, что хотите уволить сотрудника {SelectedUser.UserInfo.FullName}?") == MessageBoxResult.Yes)
             {
                 await UserInfoViewModel.DeactivateUser(SelectedUser.Id);
-                await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} уволил сотрудника {SelectedUser.UserInfo.FullName}", 0, SelectedUser.Id);
+                UserViewModel user = UserViewModel.GetCurrentUser();
+                await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} уволил сотрудника (id: {SelectedUser.Id}) {SelectedUser.UserInfo.FullName}", 0, SelectedUser.Id);
                 SelectedUser = null;
                 Update();
                 AppCommand.InfoMessage("Пользователь уволен");
@@ -326,7 +328,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (AppCommand.QuestionMessage($"Вы уверены, что хотите принять сотрудника {SelectedUser.UserInfo.FullName}?") == MessageBoxResult.Yes)
             {
                 await UserInfoViewModel.ActivateUser(SelectedUser.Id);
-                await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} вернул сотрудника {SelectedUser.UserInfo.FullName}", 0, SelectedUser.Id);
+                UserViewModel user = UserViewModel.GetCurrentUser();
+                await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} вернул сотрудника (id: {SelectedUser.Id}) {SelectedUser.UserInfo.FullName}", 0, SelectedUser.Id);
                 Update();
                 if (SelectedUser.UserInfo.IsActive)
                 {
@@ -396,7 +399,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 return;
             }
             OnClosePanelEditUserCommandExecuted(p);
-            await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} отредактировал сотрудника под id {SelectedUser.Id} ({fullname} => {SelectedUser.UserInfo.FullName} {SelectedUser.UserInfo.Phone})", 0, SelectedUser.Id);
+            UserViewModel user = UserViewModel.GetCurrentUser();
+            await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} отредактировал сотрудника (id: {SelectedUser.Id}) ({fullname} => {SelectedUser.UserInfo.FullName} {SelectedUser.UserInfo.Phone})", 0, SelectedUser.Id);
             AppCommand.InfoMessage($"Пользователь под id {SelectedUser.Id} отредактирован");
             if (SelectedUser.Id == UserViewModel.GetCurrentUser().Id)
                 await UserViewModel.GetUserByPin(SelectedUser.Pin);

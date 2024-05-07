@@ -32,6 +32,16 @@ namespace Cashbox.MVVM.Views.Pages.Admin
             {
                 SearchBtn.Focus();
                 SearchBtn.Command.Execute(null);
+                Search.Focus();
+            }
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Search.Focus();
+                show.Focus();
             }
         }
     }

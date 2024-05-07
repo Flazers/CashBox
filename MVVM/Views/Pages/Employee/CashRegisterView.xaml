@@ -26,22 +26,49 @@
                     <Grid Margin="0 -10 0 30" Height="80">
                         <TextBlock Style="{DynamicResource TitleText}" Margin="5 0 0 0" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Товары"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <ComboBox Style="{StaticResource InputCB}" Tag="Категория" Width="300" Height="60" ItemsSource="{Binding CollectionProductCategories}" SelectedItem="{Binding SelectedProductCategory}" Margin="0 0 40 0">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Category}" Style="{StaticResource RegularText}"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                            <TextBox Style="{StaticResource Search}" Text="{Binding SearchStr}" x:Name="Search" KeyDown="Search_KeyDown" Height="60" Margin="0 0 40 0" Width="300" VerticalAlignment="Center"/>
-                            <Button Height="60" Width="60" Command="{Binding SearchDataCommand}" x:Name="SearchBtn" VerticalAlignment="Center" Style="{StaticResource ButtonInPanelGreen}">
+                            <TextBox Style="{StaticResource Search}" Text="{Binding SearchStr}" x:Name="Search" KeyDown="Search_KeyDown" Height="50" Margin="0 0 40 0" Width="300" VerticalAlignment="Center"/>
+                            <Button Height="50" Width="50" Command="{Binding SearchDataCommand}" x:Name="SearchBtn" VerticalAlignment="Center" Style="{StaticResource ButtonInPanelGreen}">
                                 <Icon:PackIconMaterialDesign Kind="Search" Width="30" Height="30"/>
                             </Button>
                         </StackPanel>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
 
-                    <ScrollViewer Height="750" Margin="10 0 10 10">
+                    <StackPanel Orientation="Horizontal" Margin="10 0 10 30">
+                        <TextBlock Height="30" VerticalAlignment="Center" Width="350" Text="{Binding CollectionProducts.Count, StringFormat='Товаров: \{0}'}" 
+                                   HorizontalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}" Margin="0 0 20 0"/>
+                        <Button Style="{StaticResource ButtonInPanelWhite}" Command="{Binding SortSwapCommand}" Height="50" Width="50" Margin="0 0 20 0">
+                            <StackPanel>
+                                <Icon:PackIconMaterial Visibility="{Binding SwapUp}" Kind="ArrowUp" Width="20" Height="20"/>
+                                <Icon:PackIconMaterial Visibility="{Binding SwapDown}" Kind="ArrowDown" Width="20" Height="20"/>
+                            </StackPanel>
+                        </Button>
+
+                        <ComboBox Style="{StaticResource BasicCB}" Tag="Категория" Width="270" SelectedIndex="{Binding Sort}" Margin="0 0 40 0">
+                            <ComboBoxItem>
+                                <TextBlock Text="По продажам" Style="{StaticResource RegularText}"/>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Text="По цене" Style="{StaticResource RegularText}"/>
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                <TextBlock Text="По колличеству" Style="{StaticResource RegularText}"/>
+                            </ComboBoxItem>
+                        </ComboBox>
+                        
+                        <ComboBox Style="{StaticResource BasicCB}" Tag="Категория" Width="270" ItemsSource="{Binding CollectionProductCategories}" SelectedItem="{Binding SelectedProductCategory}" Margin="0 0 40 0">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Category}" Style="{StaticResource RegularText}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <Border Height="670" Margin="10 0 10 10" Visibility="{Binding VisibilityLoadProduct}">
+                        <TextBlock Text="Загрузка..." Style="{StaticResource TitleText}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource TextG}"/>
+                    </Border>
+                    <ScrollViewer Height="670" Margin="10 0 10 10" Visibility="{Binding VisibilityProduct}">
                         <ItemsControl Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=10}" ItemsSource="{Binding CollectionProducts}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -52,7 +79,8 @@
                                 <DataTemplate>
                                     <Border Padding="20" Width="310" Height="210" Background="{StaticResource BasicW}" CornerRadius="20" Margin="10">
                                         <Grid>
-                                            <StackPanel>
+                                            <TextBlock Width="100" VerticalAlignment="Top" Margin="-10" Style="{StaticResource SmallText}" TextAlignment="Right" HorizontalAlignment="Right" Text="{Binding CountSell}"/>
+                                                <StackPanel>
                                                 <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" TextWrapping="Wrap"/>
                                                 <TextBlock Style="{StaticResource RegularText}" Text="{Binding Title}" TextWrapping="Wrap"/>
                                                 <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}"/>
@@ -74,6 +102,9 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </ScrollViewer>
+                    <Border Height="670" Margin="10 0 10 10">
+                        <TextBlock Text="Товаров нет" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
                 </StackPanel>
             </Border>
 

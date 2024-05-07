@@ -126,7 +126,7 @@ namespace Cashbox.MVVM.ViewModels
                         return;
                 }
             }
-            if (!OrderViewModel.RemoveNullReferenceOrder())
+            if (!await OrderViewModel.RemoveNullReferenceOrder())
                 return;
             switch (user.UserInfo?.Role.Id)
             {

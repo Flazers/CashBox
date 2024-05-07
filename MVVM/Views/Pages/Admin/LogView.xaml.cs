@@ -25,6 +25,7 @@ namespace Cashbox.MVVM.Views.Pages.Admin
             {
                 ReloadBtn.Focus();
                 ReloadBtn.Command.Execute(null);
+                Search.Focus();
             }
         }
     }

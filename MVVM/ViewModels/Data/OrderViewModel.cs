@@ -11,6 +11,7 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public static Order? OrderComposition => Order.OrderComposition;
         public static async Task<bool> SellOrder(int paymet, double sellcost, double discount, List<OrderProductViewModel> orderProducts) => await Order.SellOrder(paymet, sellcost, discount, orderProducts);
+
         public static async Task<OrderViewModel> CreateOrder() => await Order.CreateOrder();
         public static async Task<OrderViewModel> RemoveCurrentOrder() => await Order.RemoveCurrentOrder();
         public static async Task<List<OrderViewModel>> GetDayOrdersToMethod(DateOnly dateOnly, int method) => await Order.GetDayOrdersToMethod(dateOnly, method);
@@ -18,7 +19,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<List<OrderViewModel>> GetSellDetail(DateOnly StartData, DateOnly EndData) => await Order.GetSellDetail(StartData, EndData);
         public static async Task<double> GetSumInDay(DateOnly? dateOnly) => await Order.GetSumInDay(dateOnly);
         public static double GetSumMethodInDay(DateOnly? dateOnly) => Order.GetSumMethodInDay(dateOnly);
-        public static bool RemoveNullReferenceOrder() => Order.RemoveNullReferenceOrder();
+        public static async Task<bool> RemoveNullReferenceOrder() => await Order.RemoveNullReferenceOrder();
 
 
         public int Id => _order.Id;
