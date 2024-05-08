@@ -1,5 +1,6 @@
 ﻿using Cashbox.Core;
 using Cashbox.Core.Commands;
+using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -60,18 +61,19 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 return;
             }
             await AppSettingsViewModel.EditSetting(int.Parse(MoneySet));
-            await AdminMoneyLogViewModel.CreateTransitMB($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} отредактировал зарплату за выход ( {MoneySetDef} ₽ => {MoneySet} ₽)", int.Parse(MoneySet));
+            UserViewModel user = UserViewModel.GetCurrentUser();
+            await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} отредактировал зарплату за выход ( {MoneySetDef} ₽ => {MoneySet} ₽)", int.Parse(MoneySet));
             AppCommand.InfoMessage("Новая зарплата за выход установлена");
-            Update();
+            await Update();
         }
 
         public RelayCommand UpdateLogCommand { get; set; }
         private bool CanUpdateLogCommandExecute(object p) => true;
-        private void OnUpdateLogCommandExecuted(object p) => Update();
+        private async void OnUpdateLogCommandExecuted(object p) => await Update();
 
         #endregion
 
-        public async void Update()
+        public async Task Update()
         {
             List<AdminMoneyLogViewModel> list = await AdminMoneyLogViewModel.GetAllLog();
             if (string.IsNullOrEmpty(SearchStr))
@@ -83,9 +85,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
             MoneySetDef = AppSettingsViewModel.Settings.Salary;
         }
 
+        public override void OnLoad()
+        {
+            Task.Run(Update);
+        }
+
         public LogViewModel()
         {
-            Update();
             SaveSettingsCommand = new RelayCommand(OnSaveSettingsCommandExecuted, CanSaveSettingsCommandExecute);
             UpdateLogCommand = new RelayCommand(OnUpdateLogCommandExecuted, CanUpdateLogCommandExecute);
         }

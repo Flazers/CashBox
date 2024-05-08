@@ -21,14 +21,13 @@ namespace Cashbox.Core
         }
 
         public void Dispose() => Dispose(true);
+
         private bool _Disposed;
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing || _Disposed) return;
             _Disposed = true;
         }
-
-        public virtual void Clear() { }
-        public virtual void OnLoad() {  }
+        public virtual void OnLoad() {}
     }
 }

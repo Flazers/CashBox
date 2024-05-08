@@ -37,11 +37,13 @@ namespace Cashbox.MVVM.Models
             return sum;
         }
 
-        public static bool RemoveNullReferenceOrder()
+        public static async Task<bool> RemoveNullReferenceOrder()
         {
             try
             {
-                CashBoxDataContext.Context.RemoveRange(CashBoxDataContext.Context.Orders.Where(x => x.PaymentMethodId == null));
+                var empOrder = await CashBoxDataContext.Context.Orders.Where(x => x.PaymentMethodId == null).ToListAsync();
+                if (empOrder.Count > 0)
+                    CashBoxDataContext.Context.RemoveRange(empOrder);
                 return true;
             }
             catch (Exception ex)
@@ -59,6 +61,7 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<OrderViewModel> CreateOrder()
         {
+            await RemoveNullReferenceOrder();
             OrderComposition = new()
             {
                 UserId = UserViewModel.GetCurrentUser().Id,
@@ -70,7 +73,7 @@ namespace Cashbox.MVVM.Models
             return new(OrderComposition);
         }
 
-        public static async Task<bool> SellOrder(int paymet, double sellcost, double discount, List<OrderProductViewModel> orderProducts)
+        public static async Task<bool> SellOrder(int paymet, double sellcost, int discount, List<OrderProductViewModel> orderProducts)
         {
             try
             {

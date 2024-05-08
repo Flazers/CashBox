@@ -1,5 +1,6 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
+using MahApps.Metro.IconPacks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -10,7 +11,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         private readonly Order _order = order;
 
         public static Order? OrderComposition => Order.OrderComposition;
-        public static async Task<bool> SellOrder(int paymet, double sellcost, double discount, List<OrderProductViewModel> orderProducts) => await Order.SellOrder(paymet, sellcost, discount, orderProducts);
+        public static async Task<bool> SellOrder(int paymet, double sellcost, int discount, List<OrderProductViewModel> orderProducts) => await Order.SellOrder(paymet, sellcost, discount, orderProducts);
         public static async Task<OrderViewModel> CreateOrder() => await Order.CreateOrder();
         public static async Task<OrderViewModel> RemoveCurrentOrder() => await Order.RemoveCurrentOrder();
         public static async Task<List<OrderViewModel>> GetDayOrdersToMethod(DateOnly dateOnly, int method) => await Order.GetDayOrdersToMethod(dateOnly, method);
@@ -18,7 +19,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<List<OrderViewModel>> GetSellDetail(DateOnly StartData, DateOnly EndData) => await Order.GetSellDetail(StartData, EndData);
         public static async Task<double> GetSumInDay(DateOnly? dateOnly) => await Order.GetSumInDay(dateOnly);
         public static double GetSumMethodInDay(DateOnly? dateOnly) => Order.GetSumMethodInDay(dateOnly);
-        public static bool RemoveNullReferenceOrder() => Order.RemoveNullReferenceOrder();
+        public static async Task<bool> RemoveNullReferenceOrder() => await Order.RemoveNullReferenceOrder();
 
 
         public int Id => _order.Id;
@@ -83,16 +84,45 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public Visibility DiscountVisibility
+        {
+            get
+            {
+                if (Discount != 0)
+                    return Visibility.Visible;
+                return Visibility.Collapsed;
+            }
+        }
+
+        public double? SellCostWithDiscount
+        {
+            get => _order.SellCost - (_order.SellCost / 100 * _order.Discount);
+        }
+
         public SolidColorBrush? BackGroundColor
         {
             get
             {
+                if (_order.OrderProducts!.Where(x => x.SellCost != x.Product.SellCost).Any())
+                    if (_order.Discount != 0)
+                        return (SolidColorBrush)Application.Current.Resources["BasicGray"];
+                    else
+                        return (SolidColorBrush)Application.Current.Resources["BasicRed"];
                 if (_order.Discount != 0)
                     return (SolidColorBrush)Application.Current.Resources["BasicCyan"];
-                if (_order.OrderProducts!.Where(x => x.SellCost != x.Product.SellCost).Count() > 0)
-                    return (SolidColorBrush)Application.Current.Resources["BasicRed"];
                 return (SolidColorBrush)Application.Current.Resources["BasicW"];
             }
+        }
+        public PackIconMaterialKind Kind
+        {
+            get => _order.PaymentMethodId switch
+            {
+                1 => PackIconMaterialKind.SmartCard,
+                2 => PackIconMaterialKind.Cash,
+                3 => PackIconMaterialKind.CubeSend,
+                _ => PackIconMaterialKind.Close,
+            };
+            
         }
 
         public virtual ICollection<OrderProduct> OrderProducts => _order.OrderProducts!;

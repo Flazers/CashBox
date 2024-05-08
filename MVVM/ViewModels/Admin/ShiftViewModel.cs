@@ -108,11 +108,27 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _checkListOneObjVisibility, value);
         }
 
-        private string _search = string.Empty;
-        public string Search
+
+        private Visibility _btnCloseReport = Visibility.Collapsed;
+        public Visibility BtnCloseReport
         {
-            get => _search;
-            set => Set(ref _search, value);
+            get => _btnCloseReport;
+            set => Set(ref _btnCloseReport, value);
+        }
+
+        private Visibility _btnOpenReport = Visibility.Collapsed;
+        public Visibility BtnOpenReport
+        {
+            get => _btnOpenReport;
+            set => Set(ref _btnOpenReport, value);
+        }
+
+
+        private string _searchStr = string.Empty;
+        public string SearchStr
+        {
+            get => _searchStr;
+            set => Set(ref _searchStr, value);
         }
 
         private ObservableCollection<RefundViewModel> _unSuccessRefundCollection = [];
@@ -207,8 +223,33 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public DailyReportViewModel? SelectedDReport
         {
             get => _selectedDReport;
-            set => Set(ref _selectedDReport, value);
+            set
+            {
+                _selectedDReport = value;
+                if (value != null)
+                {
+                    BtnCloseReport = Visibility.Collapsed;
+                    BtnOpenReport = Visibility.Collapsed;
+                    if (value.CloseTime == null)
+                        BtnOpenReport = Visibility.Visible;
+                    else
+                        BtnCloseReport = Visibility.Visible;
+                }
+                OnPropertyChanged();
+            }
         }
+
+        private string _award = string.Empty;
+        public string Award
+        {
+            get => _award;
+            set
+            {
+                _award = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Commands
@@ -216,7 +257,35 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public RelayCommand SearchDataCommand { get; set; }
         private bool CanSearchDataCommandExecute(object p) => true;
         private void OnSearchDataCommandExecuted(object p) => Update();
-        
+
+        public RelayCommand GiveAwardCommand { get; set; }
+        private bool CanGiveAwardCommandExecute(object p) => true;
+        private async void OnGiveAwardCommandExecuted(object p)
+        {
+            if (SelectedDReport.CloseTime == null)
+            {
+                AppCommand.WarningMessage("Закройте смену, а затем повторите попытку.");
+                return;
+            }
+            if (string.IsNullOrEmpty(Award))
+            {
+                AppCommand.WarningMessage("Введите премию в поле \"Премия\"");
+                return;
+            }
+            if (!int.TryParse(Award, out int parsed))
+            {
+                AppCommand.WarningMessage("Некорректное значение");
+                return;
+            }
+            if (AppCommand.QuestionMessage($"Прибавить премию в размере {Award} ₽ сотруднику {SelectedDReport.UserInfoVM.FullName}?") == MessageBoxResult.Yes)
+                if (await AutoDailyReportViewModel.GiveAward(SelectedDReport, parsed))
+                {
+                    UserViewModel user = UserViewModel.GetCurrentUser();
+                    await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} прибавил премию в размере {Award} ₽ сотруднику (id: {SelectedDReport.UserId}) {SelectedDReport.UserInfoVM.FullName}", parsed, SelectedDReport.UserId);
+                    AppCommand.InfoMessage("Успех");
+                }
+            Update();
+        }
 
         public RelayCommand GoBackOrderCommand { get; set; }
         private bool CanGoBackOrderCommandExecute(object p) => true;
@@ -225,6 +294,24 @@ namespace Cashbox.MVVM.ViewModels.Admin
             SelectedOrder = null;
             CheckListOneObjVisibility = Visibility.Collapsed;
             CheckListVisibility = Visibility.Visible;
+        }
+
+        public RelayCommand CloseReportCommand { get; set; }
+        private bool CanCloseReportCommandExecute(object p) => true;
+        private async void OnCloseReportCommandExecuted(object p)
+        {
+            if (AppCommand.QuestionMessage($"Закрыть смену сотрудника {SelectedDReport.UserInfoVM.FullName}?") == MessageBoxResult.Yes)
+            {
+                double DayOrdersProccesedSum;
+                List<OrderViewModel> DayOrdersProccesed = await OrderViewModel.GetDayOrdersToMethod((DateOnly)SelectedDReport.Data!, 2);
+                if (DayOrdersProccesed.Count > 0)
+                    DayOrdersProccesedSum = (double)DayOrdersProccesed.Sum(x => x.SellCost)! + SelectedDReport.CashOnStart;
+                else
+                    DayOrdersProccesedSum = SelectedDReport.CashOnStart;
+                DailyReportViewModel drvm = await DailyReportViewModel.EndShift((DateOnly)SelectedDReport.Data!, new(23, 59, 59), DayOrdersProccesedSum, SelectedDReport.UserId);
+                await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
+            }
+            
         }
 
         public RelayCommand SeeOrderListCommand { get; set; }
@@ -299,10 +386,30 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             if (!await RefundViewModel.SuccessRefund())
             {
-                AppCommand.ErrorMessage("Не удалось подтвердить возврат");
+                AppCommand.ErrorMessage("Не удалось отклонить возврат");
                 return;
             }
             AppCommand.InfoMessage("Успех");
+            UpdateRefund();
+        }
+
+        public RelayCommand RejectRefundCommand { get; set; }
+        private bool CanRejectRefundCommandExecute(object p) => true;
+        private async void OnRejectRefundCommandExecuted(object p)
+        {
+            RefundViewModel refund = UnSuccessRefundCollection.FirstOrDefault(x => x.Id == (int)p);
+            if (refund == null)
+                return;
+            if (AppCommand.QuestionMessage($"Отклонить {refund.TypeRefund}?") == MessageBoxResult.Yes)
+            {
+
+                if (!await RefundViewModel.RejectRefund(refund.Id))
+                {
+                    AppCommand.ErrorMessage($"Не удалось подтвердить {refund.TypeRefund}");
+                    return;
+                }
+                AppCommand.InfoMessage("Успех");
+            }
             UpdateRefund();
         }
 
@@ -311,29 +418,33 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public override async void OnLoad()
         {
             ProductCollection = new(await ProductViewModel.GetProducts(true));
+            Update();
         }
 
         public async void Update()
         {
             List<DailyReportViewModel> data = await DailyReportViewModel.GetPeriodReports(DateOnly.FromDateTime(StartDate), DateOnly.FromDateTime(EndDate));
-            if (string.IsNullOrEmpty(Search))
+            UpdateRefund();
+            if (string.IsNullOrEmpty(SearchStr))
                 DailyReportCollection = new(data.OrderByDescending(x => x.Data));
             else
-                DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.Trim().Contains(Search.Trim(), StringComparison.CurrentCultureIgnoreCase)).OrderByDescending(x => x.Data));
+                DailyReportCollection = new(data.Where(x => x.UserInfoVM.FullName.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase)).OrderByDescending(x => x.Data));
         }
 
         public async void UpdateRefund()
         {
             List<RefundViewModel> list = await RefundViewModel.GetRefundedAllProduct();
-            UnSuccessRefundCollection = new(list.Where(x => x.IsSuccessRefund == false && x.BuyDate == null).OrderByDescending(x => x.DailyReport.Data).ToList());
-            SuccessRefundCollection = new(list.Where(x => x.IsSuccessRefund == true && x.BuyDate == null).OrderByDescending(x => x.DailyReport.Data).ToList());
+            UnSuccessRefundCollection = new([.. list.Where(x => x.IsSuccessRefund == false && x.IsPurchased == false).OrderByDescending(x => x.DailyReport.Data)]);
+            SuccessRefundCollection = new([.. list.Where(x => x.IsSuccessRefund == true && x.IsPurchased == false && x.DailyReport.Data >= DateOnly.FromDateTime(StartDate) && x.DailyReport.Data <= DateOnly.FromDateTime(EndDate)).OrderByDescending(x => x.DailyReport.Data)]);
         }
 
 
         public ShiftViewModel()
         {
             Update();
-            UpdateRefund();
+            CloseReportCommand = new RelayCommand(OnCloseReportCommandExecuted, CanCloseReportCommandExecute);
+            RejectRefundCommand = new RelayCommand(OnRejectRefundCommandExecuted, CanRejectRefundCommandExecute);
+            GiveAwardCommand = new RelayCommand(OnGiveAwardCommandExecuted, CanGiveAwardCommandExecute);
             OpenUnRefundCommand = new RelayCommand(OnOpenUnRefundCommandExecuted, CanOpenUnRefundCommandExecute);
             OpenRefundCommand = new RelayCommand(OnOpenRefundCommandExecuted, CanOpenRefundCommandExecute);
             SeeRefundsCommand = new RelayCommand(OnSeeRefundsCommandExecuted, CanSeeRefundsCommandExecute);

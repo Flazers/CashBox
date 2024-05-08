@@ -20,10 +20,18 @@ namespace Cashbox.Service
 
         public void NavigateTo<TViewModel>() where TViewModel : ViewModelBase
         {
-            ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
-            CurrentView = viewModel;
-            CurrentView?.Clear();
-            Application.Current.Dispatcher.Invoke(new Action(() => { CurrentView?.OnLoad(); }));
+            try
+            {
+                ViewModelBase? viewModel = _viewModelFactory?.Invoke(typeof(TViewModel));
+                CurrentView = viewModel;
+                Application.Current.Dispatcher.Invoke(() => { CurrentView.OnLoad(); });
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw;
+            }
         }
     }
 }

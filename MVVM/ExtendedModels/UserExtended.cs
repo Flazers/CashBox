@@ -1,6 +1,8 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.ViewModels.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel;
 
 namespace Cashbox.MVVM.Models
 {
@@ -70,14 +72,13 @@ namespace Cashbox.MVVM.Models
                 user.UserInfo.Phone = userVMdata.UserInfo.Phone;
                 user.UserInfo.Location = userVMdata.UserInfo.Location;
                 user.UserInfo.RoleId = userVMdata.UserInfo.RoleId;
-                UserViewModel userVM = new(user);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
             {
                 AppCommand.ErrorMessage(ex.Message);
-                return true;
+                return false;
             }
         }
 
@@ -98,6 +99,11 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        public static async Task<List<UserViewModel>> GetListUsers() => await CashBoxDataContext.Context.Users.Where(x => x.UserInfo.IsActive == true).Select(s => new UserViewModel(s)).ToListAsync();
+        public static async Task<List<UserViewModel>> GetListUsers(bool ShowAllUsers)
+        {
+            if (ShowAllUsers)
+                return await CashBoxDataContext.Context.Users.Select(s => new UserViewModel(s)).ToListAsync();
+            return await CashBoxDataContext.Context.Users.Where(x => x.UserInfo.IsActive == true).Select(s => new UserViewModel(s)).ToListAsync();
+        }
     }
 }

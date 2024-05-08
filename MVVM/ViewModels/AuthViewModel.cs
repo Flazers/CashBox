@@ -12,6 +12,8 @@ namespace Cashbox.MVVM.ViewModels
     {
         #region Props
 
+        private int countEnter = 0;
+
         #region UserData
 
         private int _pin;
@@ -81,9 +83,20 @@ namespace Cashbox.MVVM.ViewModels
         private async void OnAuthByPinCommandExecuted(object p)
         {
             UserViewModel? user = await UserViewModel.GetUserByPin(Pin);
-            if (user == null) { AppCommand.WarningMessage("Пользователь не найден."); return; }
+            if (user == null) 
+            { 
+                AppCommand.WarningMessage("Пользователь не найден.");
+                countEnter++;
+                return; 
+            }
+            if (countEnter >= 2)
+                if (user.UserInfo.RoleId == 1)
+                {
+                    AppCommand.WarningMessage("Пользователь не найден.");
+                    await AdminMoneyLogViewModel.CreateTransitMB($"Попытка зайти в аккаунт администратора ({user.UserInfo.FullName}) {DateTime.Now.ToString("dd.MM.yyyy HH.mm.ss")}", 0);
+                    return;
+                }
             List<DailyReportViewModel> list = await DailyReportViewModel.GetNotCloseReports();
-
             if (list.Count != 0)
             {
                 string ListNotClose = string.Empty;
@@ -120,11 +133,11 @@ namespace Cashbox.MVVM.ViewModels
                         AppCommand.WarningMessage($"Открыта смена у {ListNotClose}");
                         return;
                     }
-                    if (AppCommand.QuestionMessage($"Открыта смена у {ListNotClose}\nЗакрыть для продолжения работы?") == MessageBoxResult.Yes)
-                        closereport(report);
                 }
             }
-            if (!OrderViewModel.RemoveNullReferenceOrder())
+            if (!await OrderViewModel.RemoveNullReferenceOrder())
+                return;            
+            if (!await RefundViewModel.RemoveNullReferenceRefund())
                 return;
             switch (user.UserInfo?.Role.Id)
             {
@@ -155,10 +168,11 @@ namespace Cashbox.MVVM.ViewModels
         }
         #endregion
 
-        public override void Clear()
+        public override void OnLoad()
         {
             Pin = 0;
             StringPin = string.Empty;
+            countEnter = 0;
         }
 
         public AuthViewModel(INavigationService? navService)

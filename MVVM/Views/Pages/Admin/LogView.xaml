@@ -9,10 +9,7 @@
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="880" d:DesignWidth="1700">
-    <UserControl.DataContext>
-        <vm:LogViewModel/>
-    </UserControl.DataContext>
-    
+
     <StackPanel Orientation="Horizontal">
         <StackPanel Margin="0 0 40 0" Width="1140">
             <Border Style="{StaticResource PanelBorder}" Height="880">
@@ -21,11 +18,11 @@
                         <DockPanel Margin="5 0" VerticalAlignment="Center">
                             <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Логи"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Height="60" Command="{Binding UpdateLogCommand}" Width="60" Margin="0 0 20 0" Style="{StaticResource ButtonInPanelGreen}">
+                                <Button Height="60" x:Name="ReloadBtn" Command="{Binding UpdateLogCommand}" Width="60" Margin="0 0 20 0" Style="{StaticResource ButtonInPanelGreen}">
                                     <Icon:PackIconMaterial Kind="Reload" Width="30" Height="30"/>
                                 </Button>
-                                <TextBox Height="60" Text="{Binding LogCount}" PreviewTextInput="TextBox_PreviewTextInput" Style="{StaticResource InputTB}" Margin="0 0 20 0" Tag="Логи на стр."/>
-                                <TextBox Height="60" Text="{Binding SearchStr}" Style="{StaticResource Search}" Width="400"/>
+                                <TextBox Height="60" Text="{Binding LogCount}" KeyDown="Search_KeyDown" PreviewTextInput="TextBox_PreviewTextInput" Style="{StaticResource InputTB}" Margin="0 0 20 0" Tag="Логи на стр."/>
+                                <TextBox Height="60" Text="{Binding SearchStr}" x:Name="Search" KeyDown="Search_KeyDown" Style="{StaticResource Search}" Width="400"/>
                             </StackPanel>
                         </DockPanel>
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>

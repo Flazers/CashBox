@@ -4,14 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages.Admin"
+             d:DataContext="{d:DesignInstance Type=vm:ShiftViewModel}"
              xmlns:vm="clr-namespace:Cashbox.MVVM.ViewModels.Admin"
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             d:DataContext="{d:DesignInstance Type=vm:ShiftViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="880" d:DesignWidth="1700">
-    <UserControl.DataContext>
-        <vm:ShiftViewModel/>
-    </UserControl.DataContext>
     <StackPanel>
         <StackPanel Orientation="Horizontal">
             <StackPanel Margin="0 0 40 0" Width="1020">
@@ -24,11 +21,11 @@
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
                         <Grid Margin="10 10 10 30">
-                            <TextBox Style="{StaticResource Search}" Text="{Binding Search}" HorizontalAlignment="Left" Width="300"/>
+                            <TextBox Style="{StaticResource Search}" Text="{Binding SearchStr}" x:Name="Search" KeyDown="Search_KeyDown" HorizontalAlignment="Left" Width="300"/>
                             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                 <DatePicker SelectedDate="{Binding StartDate}" Width="195" Margin="0 0 40 0" Tag="С "/>
                                 <DatePicker SelectedDate="{Binding EndDate}" Width="195" Margin="0 0 40 0" Tag="По"/>
-                                <Button Height="50" Width="50" Command="{Binding SearchDataCommand}" Style="{StaticResource ButtonInPanelGreen}">
+                                <Button Height="50" x:Name="SearchBtn" Width="50" Command="{Binding SearchDataCommand}" Style="{StaticResource ButtonInPanelGreen}">
                                     <Icon:PackIconMaterialDesign Kind="Search" Width="30" Height="30"/>
                                 </Button>
                             </StackPanel>
@@ -43,28 +40,46 @@
                                         <Border Padding="20" Background="{StaticResource BasicW}" CornerRadius="20" Margin="0 0 20 20">
                                             <Grid>
                                                 <StackPanel Height="60">
-                                                    <TextBlock Height="30" Margin="0 0 0 5" Text="{Binding DataString}" Style="{StaticResource TitleText}"/>
-                                                    <TextBlock Text="{Binding UserInfoVM.FullName}" Style="{StaticResource RegularText}"/>
+                                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                                                        <TextBlock Height="30" Text="{Binding DataString}" Style="{StaticResource TitleText}"/>
+                                                        <TextBlock Height="30" Margin="20 0 0 0" Style="{StaticResource TitleText}">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0} => {1}">
+                                                                    <Binding Path="OpenTimeString"/>
+                                                                    <Binding Path="CloseTimeString"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding UserId}" Margin="0 0 10 0" Style="{StaticResource RegularText}"/>
+                                                        <TextBlock Text="{Binding UserInfoVM.FullName}" Style="{StaticResource RegularText}"/>
+                                                    </StackPanel>
                                                 </StackPanel>
                                                 <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Orientation="Horizontal">
-                                                    <Border Width="30" VerticalAlignment="Top" Height="30" Margin="0 0 10 0" CornerRadius="20" Background="{StaticResource BasicGray}">
-                                                        <TextBlock Text="{Binding RefundCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}"/>
-                                                    </Border>
-                                                    <Border Width="30" VerticalAlignment="Top" Height="30" Margin="0 0 10 0" CornerRadius="20" Background="{StaticResource BasicRed}">
-                                                        <TextBlock Text="{Binding CrackCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}"/>
-                                                    </Border>
-                                                    <Border Width="30" VerticalAlignment="Top" Height="30" Margin="0 0 40 0" CornerRadius="20">
-                                                        <Border.Background>
-                                                            <LinearGradientBrush>
-                                                                <LinearGradientBrush.GradientStops>
-                                                                    <GradientStop Color="Cyan" Offset="0.3"/>
-                                                                    <GradientStop Color="Purple" Offset="0.6"/>
-                                                                    <GradientStop Color="MediumPurple" Offset="0.9"/>
-                                                                </LinearGradientBrush.GradientStops>
-                                                            </LinearGradientBrush>
-                                                        </Border.Background>
-                                                        <TextBlock Text="{Binding DrawCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextB}"/>
-                                                    </Border>
+                                                    <Grid>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Width="30" VerticalAlignment="Top" Height="30" Margin="0 0 10 0" CornerRadius="20" Background="{StaticResource BasicGray}">
+                                                                <TextBlock Text="{Binding RefundCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}"/>
+                                                            </Border>
+                                                            <Border Width="30" VerticalAlignment="Top" Height="30" Margin="0 0 10 0" CornerRadius="20" Background="{StaticResource BasicRed}">
+                                                                <TextBlock Text="{Binding CrackCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}"/>
+                                                            </Border>
+                                                            <Border Width="30" VerticalAlignment="Top" Height="30" Margin="0 0 40 0" CornerRadius="20">
+                                                                <Border.Background>
+                                                                    <LinearGradientBrush>
+                                                                        <LinearGradientBrush.GradientStops>
+                                                                            <GradientStop Color="Cyan" Offset="0.3"/>
+                                                                            <GradientStop Color="Purple" Offset="0.6"/>
+                                                                            <GradientStop Color="MediumPurple" Offset="0.9"/>
+                                                                        </LinearGradientBrush.GradientStops>
+                                                                    </LinearGradientBrush>
+                                                                </Border.Background>
+                                                                <TextBlock Text="{Binding DrawCount}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextB}"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <TextBlock VerticalAlignment="Bottom" TextWrapping="Wrap" FontWeight="Medium" Text="{Binding AutoDreportVM.Award, StringFormat='\ Премия: {0} ₽'}"/>
+                                                    </Grid>
                                                     <Button Style="{StaticResource ButtonInPanelBase}" Width="60"
                                                             Command="{Binding DataContext.SelectShiftCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
                                                             CommandParameter="{Binding Id}" HorizontalAlignment="Right">
@@ -93,41 +108,11 @@
                             <TextBlock Text="{Binding UnSuccessRefundCollection.Count}"/>
                         </StackPanel>
                     </Button>
-                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding SeeRefundsCommand}" Content="Отчеты" Width="240"/>
+                    <Button Style="{StaticResource ButtonOutPanel}" Command="{Binding SeeRefundsCommand}" Content="Отчет" Width="240"/>
                 </StackPanel>
             </StackPanel>
 
             <StackPanel Margin="0 0 40 0" Width="640">
-                <Border Style="{StaticResource PanelBorder}" Visibility="Collapsed" Height="880">
-                    <StackPanel>
-                        <Grid Margin="0 -10 0 30" Height="80">
-                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Чеки"/>
-                            <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
-                        </Grid>
-                        <Grid Margin="10" Height="740">
-                            <ScrollViewer>
-                                <ItemsControl d:ItemsSource="{d:SampleData ItemCount=3}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border CornerRadius="10" Height="70" Margin="0 0 20 20" Padding="10" Background="{StaticResource BasicW}">
-                                                <Grid>
-                                                    <StackPanel HorizontalAlignment="Left">
-                                                        <TextBlock Style="{StaticResource RegularText}" Foreground="{StaticResource TextB}" Margin="0 0 0 5" FontWeight="Bold" Text="{Binding Id, StringFormat='{}Чек №{0}'}"/>
-                                                        <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding SellDatetime, StringFormat='{}Открыт {0}'}"/>
-                                                    </StackPanel>
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                                        <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Margin="0 0 20 0" Text="{Binding SellCost, StringFormat='{}{0} ₽'}"/>
-                                                        <Button Height="50" Style="{StaticResource ButtonInPanelBase}" Content="Показать"/>
-                                                    </StackPanel>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </Grid>
-                    </StackPanel>
-                </Border>
 
                 <Border Style="{StaticResource PanelBorder}" Visibility="{Binding OrderSelectedPanel}" Height="880">
                     <StackPanel>
@@ -146,25 +131,40 @@
                             </StackPanel>
 
                             <StackPanel VerticalAlignment="Bottom" Visibility="{Binding OrdersListVisibility}">
-                                <ScrollViewer Visibility="{Binding CheckListVisibility}" Height="680">
-                                    <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding SelectedOrderList}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border Padding="10" Background="{Binding BackGroundColor}" CornerRadius="10" Margin="0 0 20 20">
-                                                    <Grid>
-                                                        <StackPanel Height="60">
-                                                            <TextBlock Height="30" Margin="0 0 0 5" Text="{Binding Id, StringFormat='\Чек №{0}'}" Style="{StaticResource TitleText}"/>
-                                                            <TextBlock Text="{Binding SellCost, StringFormat='\Сумма чека {0} ₽'}" Style="{StaticResource RegularText}"/>
-                                                        </StackPanel>
+                                <StackPanel Visibility="{Binding CheckListVisibility}">
+                                    <ScrollViewer Height="600" Margin="0 0 0 40">
+                                        <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding SelectedOrderList}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Padding="10" Background="{Binding BackGroundColor}" CornerRadius="10" Margin="0 0 20 20">
+                                                        <Grid>
+                                                            <StackPanel Height="60">
+                                                                <TextBlock Height="30" Margin="0 0 0 5" Text="{Binding Id, StringFormat='\Чек №{0}'}" Style="{StaticResource TitleText}"/>
+                                                                <TextBlock Text="{Binding SellCost, StringFormat='\Сумма чека {0} ₽'}" Style="{StaticResource RegularText}"/>
+                                                            </StackPanel>
 
-                                                        <Button Style="{StaticResource ButtonInPanelBase}" Command="{Binding DataContext.SeeOrderListCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
-                                                                CommandParameter="{Binding Id}" Content="Подробнее" HorizontalAlignment="Right"/>
-                                                    </Grid>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </ScrollViewer>
+                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                                <Icon:PackIconMaterial Kind="{Binding Kind}" VerticalAlignment="Center" Margin="0 0 20 0" Width="30" Height="30" Foreground="{StaticResource TextB}"/>
+                                                                <Button Style="{StaticResource ButtonInPanelBase}" Command="{Binding DataContext.SeeOrderListCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
+                                                                    CommandParameter="{Binding Id}" Content="Подробнее" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Border Background="{StaticResource BasicW}" Padding="5" CornerRadius="5" Height="60" Margin="0 0 40 0" Width="240">
+                                            <TextBlock VerticalAlignment="Center" Text="{Binding SelectedDReport.AutoDreportVM.FullTransit, StringFormat='\ Итого: {0} ₽'}" FontWeight="Medium" Style="{StaticResource RegularText}"/>
+                                        </Border>
+                                        <Button Visibility="{Binding BtnOpenReport}" Style="{StaticResource ButtonInPanelRed}" Width="320" Content="Закрыть смену" Command="{Binding CloseReportCommand}"/>
+                                        <StackPanel Visibility="{Binding BtnCloseReport}" Orientation="Horizontal">
+                                            <TextBox Style="{StaticResource InputTB}" Height="60" Width="140" Margin="0 0 40 0" Tag="Премия" PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding Award}"/>
+                                            <Button Style="{StaticResource ButtonInPanelCyan}" Command="{Binding GiveAwardCommand}" Content="Зачислить" Width="140"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
 
                                 <StackPanel Height="680" Visibility="{Binding CheckListOneObjVisibility}" VerticalAlignment="Bottom">
                                     <ScrollViewer VerticalAlignment="Top" Height="500" Margin="0 0 0 40">
@@ -197,7 +197,19 @@
                                     <StackPanel Height="140" VerticalAlignment="Bottom">
                                         <StackPanel Orientation="Horizontal" Margin="0 0 0 20">
                                             <Border Height="60" Width="600" Background="{StaticResource BasicW}" CornerRadius="5">
-                                                <TextBlock Text="{Binding SelectedOrder.SellCost, StringFormat='\Итого: {0} ₽'}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                                <Grid Height="50" VerticalAlignment="Center" >
+                                                    <TextBlock Text="{Binding SelectedOrder.Id, StringFormat='\Чек №{0}'}" VerticalAlignment="Center" Margin="10 0 0 0" Style="{StaticResource TitleText}" HorizontalAlignment="Left"/>
+                                                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                        <TextBlock Text="Итого: " VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                                        <Grid Height="50">
+                                                            <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0 -2 0 0" Height="14" Width="45" CornerRadius="6" Visibility="{Binding SelectedOrder.DiscountVisibility}" Background="{StaticResource BasicRed}">
+                                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}" Text="{Binding SelectedOrder.Discount, StringFormat='\-{0}%'}"/>
+                                                            </Border>
+                                                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding SelectedOrder.SellCostWithDiscount, StringFormat='\{0} ₽'}"  Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" Visibility="{Binding SelectedOrder.DiscountVisibility}" Text="{Binding SelectedOrder.SellCost, StringFormat='\{0} ₽'}" Margin="0 0 0 -4" TextDecorations="Strikethrough" Style="{StaticResource SmallText}" FontWeight="Bold" Foreground="{StaticResource TextG}"/>
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </Grid>
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal">
@@ -239,6 +251,7 @@
                         </Grid>
                     </StackPanel>
                 </Border>
+                
                 <Border Style="{StaticResource PanelBorder}" Visibility="{Binding RefundSelectedPanel}" Height="880">
                     <StackPanel>
                         <Grid Margin="0 -10 0 30" Height="80">
@@ -253,19 +266,29 @@
                                 <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding UnSuccessRefundCollection}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Margin="0 0 20 20" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
+                                            <Border Margin="0 0 20 20" Background="{StaticResource BasicW}" Padding="10" CornerRadius="5">
                                                 <Grid>
                                                     <StackPanel>
-                                                        <TextBlock Style="{StaticResource TitleText}" Text="{Binding DailyReport.Data}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}(id: {0}) {1}">
+                                                                    <Binding Path="Id"/>
+                                                                    <Binding Path="DataString"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
                                                         <TextBlock Style="{StaticResource TitleText}" Text="{Binding Product.Brand}" Foreground="{StaticResource TextB}"/>
                                                         <TextBlock Style="{StaticResource RegularText}" Text="{Binding Product.Title}" Foreground="{StaticResource TextB}"/>
                                                         <TextBlock Style="{StaticResource SmallText}" Text="{Binding Product.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
-                                                        <TextBlock Style="{StaticResource RegularText}" Text="{Binding Reason, StringFormat='\Причина: {0}'}" Width="350" TextWrapping="Wrap" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" Visibility="{Binding CrackVisibility}" Text="{Binding Reason, StringFormat='\Причина: {0}'}" Width="350" TextWrapping="Wrap" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" Visibility="{Binding DrawVisibility}" Text="{Binding BuyDateString, StringFormat='\Дата проведения: {0}'}" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
                                                     </StackPanel>
                                                     <StackPanel>
                                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 10">
                                                             <TextBlock Text="{Binding TypeRefund}" Margin="0 0 10 0" Style="{StaticResource RegularText}"/>
-                                                            <Button Style="{StaticResource RemoveIconButton}"/>
+                                                            <Button Style="{StaticResource RemoveIconButton}" HorizontalAlignment="Right" 
+                                                                      Command="{Binding DataContext.RejectRefundCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" 
+                                                                      CommandParameter="{Binding Id}"/>
                                                         </StackPanel>
                                                         <TextBlock Text="{Binding Product.SellCost, StringFormat='\{0} ₽'}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 10" Style="{StaticResource RegularText}"/>
                                                         <TextBlock Text="Подтвержден?" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 5" Style="{StaticResource RegularText}"/>
@@ -297,20 +320,25 @@
                                 <ItemsControl d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding SuccessRefundCollection}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Margin="0 0 20 20" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
+                                            <Border Margin="0 0 20 20" Background="{StaticResource BasicW}" Padding="10" CornerRadius="5">
                                                 <Grid>
                                                     <StackPanel>
-                                                        <TextBlock Style="{StaticResource TitleText}" Text="{Binding DailyReport.Data}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}">
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}(id: {0}) {1}">
+                                                                    <Binding Path="Id"/>
+                                                                    <Binding Path="DataString"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
                                                         <TextBlock Style="{StaticResource TitleText}" Text="{Binding Product.Brand}" Foreground="{StaticResource TextB}"/>
                                                         <TextBlock Style="{StaticResource RegularText}" Text="{Binding Product.Title}" Foreground="{StaticResource TextB}"/>
                                                         <TextBlock Style="{StaticResource SmallText}" Text="{Binding Product.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
-                                                        <TextBlock Style="{StaticResource RegularText}" Text="{Binding Reason, StringFormat='\Причина: {0}'}" Width="350" TextWrapping="Wrap" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" Visibility="{Binding CrackVisibility}" Text="{Binding Reason, StringFormat='\Причина: {0}'}" Width="350" TextWrapping="Wrap" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" Visibility="{Binding DrawVisibility}" Text="{Binding BuyDateString, StringFormat='\Дата проведения: {0}'}" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
                                                     </StackPanel>
                                                     <StackPanel>
-                                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 10">
-                                                            <TextBlock Text="{Binding TypeRefund}" Margin="0 0 10 0" Style="{StaticResource RegularText}"/>
-                                                            <Button Style="{StaticResource RemoveIconButton}"/>
-                                                        </StackPanel>
+                                                        <TextBlock Text="{Binding TypeRefund}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 10" Style="{StaticResource RegularText}"/>
                                                         <TextBlock Text="{Binding Product.SellCost, StringFormat='\{0} ₽'}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 10" Style="{StaticResource RegularText}"/>
                                                         <TextBlock Text="Подтвержден?" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 5" Style="{StaticResource RegularText}"/>
                                                         <ToggleButton Style="{StaticResource ToggleSettings}" HorizontalAlignment="Right" 

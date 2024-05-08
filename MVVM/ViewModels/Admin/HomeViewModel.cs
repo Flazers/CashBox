@@ -1,5 +1,6 @@
 ﻿using Cashbox.Core;
 using Cashbox.Core.Commands;
+using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using System.Collections.ObjectModel;
 
@@ -92,7 +93,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 return;
             }
             await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 1);
-            await AdminMoneyLogViewModel.CreateTransitMB($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} внес в кассу {temp} ₽", temp);
+            UserViewModel user = UserViewModel.GetCurrentUser();
+            await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} внес в кассу {temp} ₽", temp);
             AppCommand.InfoMessage($"{temp} ₽ внесено в кассу");
             NewCashInBox = 0;
             CashInBox = MoneyBoxViewModel.GetMoney;
@@ -119,7 +121,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 return;
             }
             await MoneyBoxViewModel.UpdateMoney(NewCashInBox, 2);
-            await AdminMoneyLogViewModel.CreateTransitMB($"Администратор {UserViewModel.GetCurrentUser().UserInfo.ShortName} забрал из кассы {temp} ₽", temp);
+            UserViewModel user = UserViewModel.GetCurrentUser();
+            await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} забрал из кассы {temp} ₽", temp);
             AppCommand.InfoMessage($"{temp} ₽ вычтено из кассы");
             NewCashInBox = 0;
             CashInBox = MoneyBoxViewModel.GetMoney;
@@ -131,6 +134,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             Details.Clear();
             List<ProductCategoryViewModel> productCategory = await ProductCategoryViewModel.GetProductCategory();
+            productCategory.Remove(productCategory[0]);
             List<ProductViewModel> product = await ProductViewModel.GetProducts(true);
             foreach (var category in productCategory)
                 Details.Add(new()
@@ -152,8 +156,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             if (CashInBox > 1500)
                 NewCashInBox = CashInBox - 1500;
-            AuthHistory = new(await AuthHistoryViewModel.GetAuthHistories());
-            AuthHistory = new(AuthHistory.TakeLast(3).OrderByDescending(x => x.Datetime).ToList());
+            List<AuthHistoryViewModel> authHistoryViewModels = await AuthHistoryViewModel.GetAuthHistories();
+            AuthHistory = new([.. authHistoryViewModels.TakeLast(3).OrderByDescending(x => x.Datetime)]);
 
         }
 

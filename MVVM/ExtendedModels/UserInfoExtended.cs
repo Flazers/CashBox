@@ -48,7 +48,22 @@ namespace Cashbox.MVVM.Models
                 AppCommand.ErrorMessage(ex.Message);
                 return null!;
             }
+        }
 
+        public static async Task<UserInfoViewModel> ActivateUser(int userId)
+        {
+            try
+            {
+                UserInfo user = CashBoxDataContext.Context.UserInfos.FirstOrDefault(x => x.UserId == userId);
+                user.IsActive = true;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return new(user);
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return null!;
+            }
         }
     }
 }

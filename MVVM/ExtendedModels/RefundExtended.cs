@@ -12,16 +12,27 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<RefundViewModel> CreateRefund()
         {
-            Refund refund = new()
+            try
             {
-                IsPurchased = false,
-                IsSuccessRefund = false,
-                DailyReportId = DailyReportViewModel.GetCurrentShift().Id,
-            };
-            CashBoxDataContext.Context.Refunds.Add(refund);
-            await CashBoxDataContext.Context.SaveChangesAsync();
-            CurrentRefund = refund;
-            return new(refund);
+                var emptProducts = CashBoxDataContext.Context.Refunds.Where(x => x.ProductId == null).ToList();
+                if (emptProducts.Count > 0)
+                    CashBoxDataContext.Context.Refunds.RemoveRange(emptProducts);
+                Refund refund = new()
+                {
+                    IsPurchased = false,
+                    IsSuccessRefund = false,
+                    DailyReportId = DailyReportViewModel.GetCurrentShift().Id,
+                };
+                CashBoxDataContext.Context.Refunds.Add(refund);
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                CurrentRefund = refund;
+                return new(refund);
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return null!;
+            }
         }
 
         public static async Task<bool> RemoveCurrentRefund()
@@ -50,7 +61,7 @@ namespace Cashbox.MVVM.Models
                 CurrentRefund.IsSuccessRefund = false;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 await CreateRefund();
-                await CreateRefundDefect(productid, reason);
+                await CreateRefundDefect(productid, $"(Возврат) {reason}");
                 return true;
             }
             catch (Exception ex)
@@ -113,7 +124,40 @@ namespace Cashbox.MVVM.Models
                 AppCommand.ErrorMessage(ex.Message);
                 return false;
             }
+        }
 
+        public static async Task<bool> RejectRefund(int id)
+        {
+            try
+            {
+                Refund refund = CashBoxDataContext.Context.Refunds.FirstOrDefault(x => x.Id == id);
+                if (refund == null)
+                    return false;
+                CashBoxDataContext.Context.Refunds.Remove(refund);
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
+        }
+
+        public static async Task<bool> RemoveNullReferenceRefund()
+        {
+            try
+            {
+                var empOrder = await CashBoxDataContext.Context.Refunds.Where(x => x.ProductId == null).ToListAsync();
+                if (empOrder.Count > 0)
+                    CashBoxDataContext.Context.RemoveRange(empOrder);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
         }
 
         public static async Task<List<RefundViewModel>> GetRefundedAllProduct() => await CashBoxDataContext.Context.Refunds

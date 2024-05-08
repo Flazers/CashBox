@@ -18,5 +18,15 @@ namespace Cashbox.MVVM.Views.Pages.Admin
             if (!Char.IsDigit(number))
                 e.Handled = true;
         }
+
+        private void Search_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ReloadBtn.Focus();
+                ReloadBtn.Command.Execute(null);
+                Search.Focus();
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace Cashbox.MVVM.Models
         {
             foreach (var item in orderProducts)
             {
+                item.ProductVM.CountSell += item.Amount;
                 OrderProducts.Add(new()
                 {
                     OrderId = item.OrderId,

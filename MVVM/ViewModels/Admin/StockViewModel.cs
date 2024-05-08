@@ -4,9 +4,7 @@ using Cashbox.Core.Commands;
 using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using ExcelDataReader;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Win32;
-using SkiaSharp;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
@@ -19,6 +17,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
     {
         #region Props
 
+        private bool canupdate = false;
         private Visibility _panelMainProductVisibility = Visibility.Visible;
         public Visibility PanelMainProductVisibility
         {
@@ -26,11 +25,32 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _panelMainProductVisibility, value);
         }
 
-        private Visibility _panelContentProductVisibility = Visibility.Collapsed;
-        public Visibility PanelContentProductVisibility
+        private Visibility _visibilityLoadProduct = Visibility.Collapsed;
+        public Visibility VisibilityLoadProduct
         {
-            get => _panelContentProductVisibility;
-            set => Set(ref _panelContentProductVisibility, value);
+            get => _visibilityLoadProduct;
+            set => Set(ref _visibilityLoadProduct, value);
+        }
+
+        private Visibility _visibilityProduct = Visibility.Collapsed;
+        public Visibility VisibilityProduct
+        {
+            get => _visibilityProduct;
+            set => Set(ref _visibilityProduct, value);
+        }
+
+        private Visibility _swapUp = Visibility.Collapsed;
+        public Visibility SwapUp
+        {
+            get => _swapUp;
+            set => Set(ref _swapUp, value);
+        }
+
+        private Visibility _swapDown = Visibility.Visible;
+        public Visibility SwapDown
+        {
+            get => _swapDown;
+            set => Set(ref _swapDown, value);
         }
 
         private ProductViewModel? _productData;
@@ -47,8 +67,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set
             {
                 _isShowAllProduct = value;
-                Update();
                 OnPropertyChanged();
+                if (canupdate)
+                    Update().GetAwaiter();
             }
         }
 
@@ -64,9 +85,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             get
             {
-                PanelContentProductVisibility = Visibility.Collapsed;
+                VisibilityProduct = Visibility.Collapsed;
                 if (_collectionProducts.Any())
-                    PanelContentProductVisibility = Visibility.Visible;
+                    VisibilityProduct = Visibility.Visible;
                 return _collectionProducts;
             }
             set => Set(ref _collectionProducts, value);
@@ -93,8 +114,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set
             {
                 _selectedProductCategory = value;
-                Update();
                 OnPropertyChanged();
+                if (canupdate)
+                    Update().GetAwaiter();
             }
         }
 
@@ -104,6 +126,39 @@ namespace Cashbox.MVVM.ViewModels.Admin
             get => _searchStr;
             set => Set(ref _searchStr, value);
         }
+
+        private int _sort = 0;
+        public int Sort
+        {
+            get => _sort;
+            set
+            {
+                _sort = value;
+                OnPropertyChanged();
+                if (canupdate)
+                    Update().GetAwaiter();
+            }
+        }
+
+        private int _productCount = 0;
+        public int ProductCount
+        {
+            get => _productCount;
+            set => Set(ref _productCount, value);
+        }
+
+        private int _showProductCount = 20;
+        public int ShowProductCount
+        {
+            get => _showProductCount;
+            set
+            {
+                _showProductCount = value;
+                OnPropertyChanged();
+                if (canupdate)
+                    Update().GetAwaiter();
+            }
+        }
         #endregion
 
 
@@ -111,7 +166,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public RelayCommand SearchDataCommand { get; set; }
         private bool CanSearchDataCommandExecute(object p) => true;
-        private void OnSearchDataCommandExecuted(object p) => Update();
+        private async void OnSearchDataCommandExecuted(object p) => await Update();
+
 
         public RelayCommand RemoveCategoryCommand { get; set; }
         private bool CanRemoveCategoryCommandExecute(object p) => true;
@@ -121,7 +177,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             {
                 AppCommand.WarningMessage("Данную категорию нельзя удалить");
                 return;
-            }    
+            }
             if (SelectedProductCategory.Products.Count != 0)
             {
                 AppCommand.WarningMessage("В выбранной категории присутствуют товары.\n Для удаления выполните экспорт товаров,\n а затем переместите все товары в нужную категорию (лист) и повторите попытку.");
@@ -154,6 +210,24 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
 
         #region ProductCommand
+
+        public RelayCommand SortSwapCommand { get; set; }
+        private bool CanSortSwapCommandExecute(object p) => true;
+        private async void OnSortSwapCommandExecuted(object p)
+        {
+            if (SwapUp == Visibility.Visible)
+            {
+                SwapUp = Visibility.Collapsed;
+                SwapDown = Visibility.Visible;
+            }
+            else
+            {
+                SwapUp = Visibility.Visible;
+                SwapDown = Visibility.Collapsed;
+            }
+            await Update();
+        }
+
         public RelayCommand RemoveProductCommand { get; set; }
         private bool CanRemoveProductCommandExecute(object p) => true;
         private async void OnRemoveProductCommandExecuted(object p)
@@ -161,27 +235,21 @@ namespace Cashbox.MVVM.ViewModels.Admin
             var data = await ProductViewModel.RemoveProduct((int)p);
             if (data != null)
             {
-                Update();
-                AppCommand.InfoMessage("Товар удален");
+                await Update();
+                AppCommand.InfoMessage("Товар снят с продажи");
             }
         }
 
-        public async void Update()
+        public RelayCommand ReturnProductCommand { get; set; }
+        private bool CanReturnProductCommandExecute(object p) => true;
+        private async void OnReturnProductCommandExecuted(object p)
         {
-            List<ComingProductViewModel> listcoming = await ComingProduct.GetComing();
-            CollectionComing = new(listcoming.TakeLast(20).OrderByDescending(x => x.CommingDatetime).ToList());
-            List<ProductViewModel> list = await ProductViewModel.GetProducts(IsShowAllProduct);
-            CollectionProducts = new(list.Where(x =>
-                                                x.Title.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-                                                x.Brand.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-                                                x.Description.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-                                                x.SellCost.ToString().Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase)
-                                                )
-                                                .OrderBy(x => x.Stock.Amount));
-            if (SelectedProductCategory == null)
-                return;
-            if (SelectedProductCategory.Category != "Все категории")
-                CollectionProducts = new(CollectionProducts.Where(x => x.CategoryId == SelectedProductCategory?.Id).ToList());
+            var data = await ProductViewModel.UnRemoveProduct((int)p);
+            if (data != null)
+            {
+                await Update();
+                AppCommand.InfoMessage("Товар возвращен");
+            }
         }
 
         private async Task<List<ProductViewModel>> Analyzer(FileStream stream, bool isEdit)
@@ -277,7 +345,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
                             errors.Add($"Не удалось найти товар с id {id}. Cтрока {line}\n");
                             continue;
                         }
-                    } 
+                        if (IsAvailable == 1) productVM.IsAvailable = true;
+                        else productVM.IsAvailable = false;
+                        if (productVM.CategoryId != category.Id)
+                            movedcount++;
+                    }
                     else
                     {
                         ProductViewModel product = listProducts.FirstOrDefault(x => x.Brand == brand && x.Title == title && x.Description == description);
@@ -292,20 +364,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         else addedcount++;
                     }
 
-                    if (isEdit)
-                    {
-                        if (productVM.CategoryId != category.Id)
-                            movedcount++;
-                    }
                     productVM.CategoryId = category.Id;
-
                     productVM.Brand = brand!;
                     productVM.Title = title!;
                     productVM.Description = description!;
                     productVM.SellCost = sellcost;
                     productVM.AmountRes = amount;
-                    if (IsAvailable == 1) productVM.IsAvailable = true;
-                    else productVM.IsAvailable = false;
 
                     listProductVM.Add(productVM);
                 }
@@ -325,9 +389,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
             if (!string.IsNullOrEmpty(info))
                 AppCommand.InfoMessage(info);
-
-            UpdateCategory();
-            Update();
 
             return listProductVM;
         }
@@ -364,7 +425,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     do
                     {
                         if (readerCategory.Name == "Evaluation Warning")
-                            break;                        
+                            break;
                         if (readerCategory.Name.Trim().Equals("все категории", StringComparison.CurrentCultureIgnoreCase))
                             break;
                         ProductCategoryViewModel category = CollectionProductCategories.FirstOrDefault(x => x.Category.Equals(readerCategory.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
@@ -391,7 +452,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         AppCommand.InfoMessage("Товары и категории отредактированы");
 
                     UpdateCategory();
-                    Update();
+                    await Update();
                 }
                 catch (IOException)
                 {
@@ -400,8 +461,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 }
             }
         }
-
-        
 
         public RelayCommand ImportProductDataCommand { get; set; }
         private bool CanImportProductDataCommandExecute(object p) => true;
@@ -462,9 +521,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
                     if (!await ComingProductViewModel.NewComing(CostImport))
                         AppCommand.InfoMessage("Не удалось создать отчет о приходе");
-                    
+
+                    StringCostImport = string.Empty;
                     UpdateCategory();
-                    Update();
+                    await Update();
                 }
                 catch (IOException)
                 {
@@ -513,72 +573,76 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
                 FileName = "ExportedProductData"
             };
-            sfd.ShowDialog();
-
-            List<ProductViewModel> products = await ProductViewModel.GetProducts(true);
-            List<ProductCategoryViewModel> category = await ProductCategoryViewModel.GetProductCategory();
-
-            CellsFactory cellsFactory = new();
-            Aspose.Cells.Style style = cellsFactory.CreateStyle();
-            style.Borders.SetStyle(CellBorderType.Thin);
-            style.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
-            style.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
-            style.Borders.SetColor(Color.Black);
-
-            CellsFactory cellsHeader = new();
-            Aspose.Cells.Style styleHeader = cellsHeader.CreateStyle();
-            styleHeader.Borders.SetStyle(CellBorderType.Thin);
-            styleHeader.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
-            styleHeader.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
-            styleHeader.Borders.SetColor(Color.Black);
-            styleHeader.HorizontalAlignment = TextAlignmentType.Center;
-            styleHeader.VerticalAlignment = TextAlignmentType.Center;
-            styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
-
-            static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
+            bool? resultOpen = sfd.ShowDialog();
+            if (resultOpen == true)
             {
-                Worksheet sheet = wb.Worksheets[i];
-                sheet.Cells[0, cell].PutValue(title);
-                sheet.Cells.SetColumnWidth(cell, width);
-            }
+                List<ProductViewModel> products = await ProductViewModel.GetProducts(true);
+                products = [.. products.OrderByDescending(x => x.IsAvailable)];
+                List<ProductCategoryViewModel> category = await ProductCategoryViewModel.GetProductCategory();
+                category.Remove(category[0]);
 
-            if (sfd.FileName != "")
-            {
-                Workbook wb = new();
+                CellsFactory cellsFactory = new();
+                Aspose.Cells.Style style = cellsFactory.CreateStyle();
+                style.Borders.SetStyle(CellBorderType.Thin);
+                style.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
+                style.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
+                style.Borders.SetColor(Color.Black);
 
-                for (int i = 0; i < category.Count; i++)
+                CellsFactory cellsHeader = new();
+                Aspose.Cells.Style styleHeader = cellsHeader.CreateStyle();
+                styleHeader.Borders.SetStyle(CellBorderType.Thin);
+                styleHeader.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
+                styleHeader.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
+                styleHeader.Borders.SetColor(Color.Black);
+                styleHeader.HorizontalAlignment = TextAlignmentType.Center;
+                styleHeader.VerticalAlignment = TextAlignmentType.Center;
+                styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
+
+                static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
                 {
-                    if (i == 0)
-                        wb.Worksheets[i].Name = category[i].Category;
-                    else
-                        wb.Worksheets.Add(category[i].Category);
-                    SetRowHeader(wb, i, 0, "id*", 10);
-                    SetRowHeader(wb, i, 1, "Производитель", 17);
-                    SetRowHeader(wb, i, 2, "Название", 27);
-                    SetRowHeader(wb, i, 3, "Описание", 17);
-                    SetRowHeader(wb, i, 4, "Продажа", 10);
-                    SetRowHeader(wb, i, 5, "Колличество", 14);
-                    SetRowHeader(wb, i, 6, "В продаже / Снят с продаж", 26);
-
-                    wb.Worksheets[i].Cells.SetRowHeight(0, 30);
-                    SetRowStyle(wb, i, 1, styleHeader);
+                    Worksheet sheet = wb.Worksheets[i];
+                    sheet.Cells[0, cell].PutValue(title);
+                    sheet.Cells.SetColumnWidth(cell, width);
                 }
 
-                for (int i = 0; i < category.Count; i++)
+                if (sfd.FileName != "")
                 {
-                    int count = 1;
-                    int position = 2;
-                    foreach (ProductViewModel item in products.Where(x => x.CategoryId == category[i].Id))
+                    Workbook wb = new();
+
+                    for (int i = 0; i < category.Count; i++)
                     {
-                        AddProductRow(wb, i, position, item);
-                        SetRowStyle(wb, i, position, style);
-                        wb.Worksheets[i].Cells.SetRowHeight(count, 16);
-                        position++;
-                    }
-                }
+                        if (i == 0)
+                            wb.Worksheets[i].Name = category[i].Category;
+                        else
+                            wb.Worksheets.Add(category[i].Category);
+                        SetRowHeader(wb, i, 0, "id*", 10);
+                        SetRowHeader(wb, i, 1, "Производитель", 17);
+                        SetRowHeader(wb, i, 2, "Название", 27);
+                        SetRowHeader(wb, i, 3, "Описание", 17);
+                        SetRowHeader(wb, i, 4, "Продажа", 10);
+                        SetRowHeader(wb, i, 5, "Колличество", 14);
+                        SetRowHeader(wb, i, 6, "В продаже / Снят с продаж", 26);
 
-                wb.Save(sfd.FileName);
-                AppCommand.InfoMessage("Готово");
+                        wb.Worksheets[i].Cells.SetRowHeight(0, 30);
+                        SetRowStyle(wb, i, 1, styleHeader);
+                    }
+
+                    for (int i = 0; i < category.Count; i++)
+                    {
+                        int count = 1;
+                        int position = 2;
+                        foreach (ProductViewModel item in products.Where(x => x.CategoryId == category[i].Id))
+                        {
+                            AddProductRow(wb, i, position, item);
+                            SetRowStyle(wb, i, position, style);
+                            wb.Worksheets[i].Cells.SetRowHeight(count, 16);
+                            position++;
+                        }
+                    }
+
+                    wb.Save(sfd.FileName);
+                    AppCommand.InfoMessage("Готово");
+                }
             }
         }
 
@@ -591,56 +655,58 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
                 FileName = "ExampleImport"
             };
-            sfd.ShowDialog();
-
-            CellsFactory cellsFactory = new();
-            Aspose.Cells.Style style = cellsFactory.CreateStyle();
-            style.Borders.SetStyle(CellBorderType.Thin);
-            style.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
-            style.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
-            style.Borders.SetColor(Color.Black);
-
-            CellsFactory cellsHeader = new();
-            Aspose.Cells.Style styleHeader = cellsHeader.CreateStyle();
-            styleHeader.Borders.SetStyle(CellBorderType.Thin);
-            styleHeader.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
-            styleHeader.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
-            styleHeader.Borders.SetColor(Color.Black);
-            styleHeader.HorizontalAlignment = TextAlignmentType.Center;
-            styleHeader.VerticalAlignment = TextAlignmentType.Center;
-            styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
-
-            static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
+            bool? resultOpen = sfd.ShowDialog();
+            if (resultOpen == true)
             {
-                Worksheet sheet = wb.Worksheets[i];
-                sheet.Cells[0, cell].PutValue(title);
-                sheet.Cells.SetColumnWidth(cell, width);
-            }
+                CellsFactory cellsFactory = new();
+                Aspose.Cells.Style style = cellsFactory.CreateStyle();
+                style.Borders.SetStyle(CellBorderType.Thin);
+                style.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
+                style.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
+                style.Borders.SetColor(Color.Black);
 
-            if (sfd.FileName != string.Empty)
-            {
-                Workbook wb = new();
+                CellsFactory cellsHeader = new();
+                Aspose.Cells.Style styleHeader = cellsHeader.CreateStyle();
+                styleHeader.Borders.SetStyle(CellBorderType.Thin);
+                styleHeader.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
+                styleHeader.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
+                styleHeader.Borders.SetColor(Color.Black);
+                styleHeader.HorizontalAlignment = TextAlignmentType.Center;
+                styleHeader.VerticalAlignment = TextAlignmentType.Center;
+                styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
 
-                wb.Worksheets[0].Name = "Категория";
-                SetRowHeader(wb, 0, 0, "id*", 10);
-                SetRowHeader(wb, 0, 1, "Производитель", 17);
-                SetRowHeader(wb, 0, 2, "Название", 27);
-                SetRowHeader(wb, 0, 3, "Описание", 17);
-                SetRowHeader(wb, 0, 4, "Продажа", 10);
-                SetRowHeader(wb, 0, 5, "Колличество", 14);
-                wb.Worksheets[0].Cells.SetRowHeight(0, 30);
-                SetRowStyle(wb, 0, 1, styleHeader);
+                static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
+                {
+                    Worksheet sheet = wb.Worksheets[i];
+                    sheet.Cells[0, cell].PutValue(title);
+                    sheet.Cells.SetColumnWidth(cell, width);
+                }
 
-                wb.Worksheets[0].Cells[$"A2"].PutValue(1);
-                wb.Worksheets[0].Cells[$"B2"].PutValue("Хаски");
-                wb.Worksheets[0].Cells[$"C2"].PutValue("Киви яблоко");
-                wb.Worksheets[0].Cells[$"D2"].PutValue("20 mg strong");
-                wb.Worksheets[0].Cells[$"E2"].PutValue("450");
-                wb.Worksheets[0].Cells[$"F2"].PutValue(10);
+                if (sfd.FileName != string.Empty)
+                {
+                    Workbook wb = new();
 
-                wb.Save(sfd.FileName);
+                    wb.Worksheets[0].Name = "Категория";
+                    SetRowHeader(wb, 0, 0, "id*", 10);
+                    SetRowHeader(wb, 0, 1, "Производитель", 17);
+                    SetRowHeader(wb, 0, 2, "Название", 27);
+                    SetRowHeader(wb, 0, 3, "Описание", 17);
+                    SetRowHeader(wb, 0, 4, "Продажа", 10);
+                    SetRowHeader(wb, 0, 5, "Колличество", 14);
+                    wb.Worksheets[0].Cells.SetRowHeight(0, 30);
+                    SetRowStyle(wb, 0, 1, styleHeader);
 
-                AppCommand.InfoMessage("Шаблон готов");
+                    wb.Worksheets[0].Cells[$"A2"].PutValue(1);
+                    wb.Worksheets[0].Cells[$"B2"].PutValue("Хаски");
+                    wb.Worksheets[0].Cells[$"C2"].PutValue("Киви яблоко");
+                    wb.Worksheets[0].Cells[$"D2"].PutValue("20 mg strong");
+                    wb.Worksheets[0].Cells[$"E2"].PutValue("450");
+                    wb.Worksheets[0].Cells[$"F2"].PutValue(10);
+
+                    wb.Save(sfd.FileName);
+
+                    AppCommand.InfoMessage("Шаблон готов");
+                }
             }
         }
 
@@ -648,12 +714,74 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         private async void UpdateCategory()
         {
-            List<ProductCategoryViewModel> productcategory = [];
-            ProductCategoryViewModel AllCategory = ProductCategoryViewModel.NewExample("Все категории");
-            productcategory.Add(AllCategory);
-            productcategory.AddRange(await ProductCategoryViewModel.GetProductCategory());
-            CollectionProductCategories = new(productcategory);
+            CollectionProductCategories = new(await ProductCategoryViewModel.GetProductCategory());
             SelectedProductCategory = CollectionProductCategories[0];
+        }
+
+        public override async void OnLoad()
+        {
+            canupdate = false;
+            await Update();
+            canupdate = true;
+        }
+
+        private async Task Update()
+        {
+            VisibilityProduct = Visibility.Collapsed;
+            VisibilityLoadProduct = Visibility.Visible;
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    List<ComingProductViewModel> listcoming = await ComingProduct.GetComing();
+                    CollectionComing = new(listcoming.TakeLast(20).OrderByDescending(x => x.CommingDatetime).ToList());
+                    List<ProductViewModel> products = await ProductViewModel.GetProducts(IsShowAllProduct);
+                    if (SelectedProductCategory != null && SelectedProductCategory.Category != "Все категории")
+                        products = products.Where(x => x.CategoryId == SelectedProductCategory.Id).ToList();
+                    ProductCount = products.Count;
+                    switch (Sort)
+                    {
+                        case 1:
+                            if (SwapDown == Visibility.Visible)
+                                products = [.. products.OrderByDescending(x => x.SellCost)];
+                            else
+                                products = [.. products.OrderBy(x => x.SellCost)];
+                            break;
+                        case 2:
+                            if (SwapDown == Visibility.Visible)
+                                products = [.. products.OrderByDescending(x => x.Stock.Amount)];
+                            else
+                                products = [.. products.OrderBy(x => x.Stock.Amount)];
+                            break;
+                        case 3:
+                            if (SwapDown == Visibility.Visible)
+                                products = [.. products.OrderBy(x => x.IsAvailable)];
+                            else
+                                products = [.. products.OrderByDescending(x => x.IsAvailable)];
+                            break;
+                        default:
+                            if (SwapDown == Visibility.Visible)
+                                products = [.. products.OrderByDescending(x => x.CountSell)];
+                            else
+                                products = [.. products.OrderBy(x => x.CountSell)];
+                            break;
+                    }
+                    string searchs = SearchStr.ToLower().Trim();
+                    if (!string.IsNullOrEmpty(searchs))
+                        products = products.Where(x => x.Brand.Contains(searchs, StringComparison.CurrentCultureIgnoreCase) ||
+                                                       x.Title.Contains(searchs, StringComparison.CurrentCultureIgnoreCase) ||
+                                                       x.SellCost.ToString().Contains(searchs, StringComparison.CurrentCultureIgnoreCase) ||
+                                                       x.Description.Contains(searchs, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                    CollectionProducts = new(products.Take(ShowProductCount));
+                });
+            }
+            catch (Exception)
+            {
+                AppCommand.ErrorMessage("Возник конфликт потоков. Повторите операцию");
+                return;
+            }
+            VisibilityLoadProduct = Visibility.Collapsed;
+            VisibilityProduct = Visibility.Visible;
         }
 
         #endregion
@@ -661,6 +789,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public StockViewModel()
         {
             UpdateCategory();
+            SortSwapCommand = new RelayCommand(OnSortSwapCommandExecuted, CanSortSwapCommandExecute);
+            ReturnProductCommand = new RelayCommand(OnReturnProductCommandExecuted, CanReturnProductCommandExecute);
             SelectCategoryCommand = new RelayCommand(OnSelectCategoryCommandExecuted, CanSelectCategoryCommandExecute);
             SearchDataCommand = new RelayCommand(OnSearchDataCommandExecuted, CanSearchDataCommandExecute);
             RemoveCategoryCommand = new RelayCommand(OnRemoveCategoryCommandExecuted, CanRemoveCategoryCommandExecute);

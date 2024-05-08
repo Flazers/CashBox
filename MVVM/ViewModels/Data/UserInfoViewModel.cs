@@ -1,5 +1,7 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
+using System.Windows;
+using System.Windows.Media;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -14,6 +16,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         }
 
         public static async Task<UserInfoViewModel> DeactivateUser(int userId) => await UserInfo.DeactivateUser(userId);
+        public static async Task<UserInfoViewModel> ActivateUser(int userId) => await UserInfo.ActivateUser(userId);
 
         public void SetFullName()
         {
@@ -97,6 +100,17 @@ namespace Cashbox.MVVM.ViewModels.Data
             {
                 _userInfo.IsActive = value;
                 OnPropertyChanged();
+            }
+        }
+
+        public SolidColorBrush BackGround
+        {
+            get
+            {
+                if (IsActive)
+                    return (SolidColorBrush)Application.Current.Resources["BasicW"];
+                return (SolidColorBrush)Application.Current.Resources["HoverW"];
+
             }
         }
 
