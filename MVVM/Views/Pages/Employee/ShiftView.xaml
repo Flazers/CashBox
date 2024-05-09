@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages.Employee"
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"   
-             mc:Ignorable="d" 
-             xmlns:vm="clr-namespace:Cashbox.MVVM.ViewModels.Employee"
+             mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:ShiftViewModel}"
+             xmlns:vm="clr-namespace:Cashbox.MVVM.ViewModels.Employee"
              d:DesignHeight="1000" d:DesignWidth="1700">
     <StackPanel>
         <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
@@ -107,7 +107,7 @@
                                     <Icon:PackIconMaterial Kind="Account" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="Сотрудник" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding DailyReport.UserInfoVM.ShortName}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding DailyReportVMobj.UserInfoVM.ShortName}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                             <Grid Margin="0 10 0 0">
                                 <StackPanel Orientation="Horizontal">
@@ -126,21 +126,21 @@
                                     <Icon:PackIconMaterial Kind="Account" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="Сотрудник" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding DailyReport.UserInfoVM.ShortName}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding DailyReportVMobj.UserInfoVM.ShortName}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                             <Grid Margin="0 10 0 0">
                                 <StackPanel Orientation="Horizontal">
                                     <Icon:PackIconMaterial Kind="ClockStart" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="Открыта" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding StartShiftTime}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding StartShiftTimeString}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                             <Grid Margin="0 10 0 0">
                                 <StackPanel Orientation="Horizontal">
                                     <Icon:PackIconMaterial Kind="ClockEnd" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="Закрыта" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding EndShiftTime}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding EndShiftTimeString}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                             <Grid Height="60" Margin="0 10 0 0">
                                 <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Top" CornerRadius="1"/>
@@ -188,8 +188,11 @@
                                                     <TextBlock Text="{Binding SellCost, StringFormat='\Сумма чека {0} ₽'}" Style="{StaticResource RegularText}"/>
                                                 </StackPanel>
 
-                                                <Button Style="{StaticResource ButtonInPanelBase}" Command="{Binding DataContext.SeeOrderListCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
-                                                 CommandParameter="{Binding Id}" Content="Подробнее" HorizontalAlignment="Right"/>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <Icon:PackIconMaterial Kind="{Binding Kind}" VerticalAlignment="Center" Margin="0 0 20 0" Width="30" Height="30" Foreground="{StaticResource TextB}"/>
+                                                    <Button Style="{StaticResource ButtonInPanelBase}" Command="{Binding DataContext.SeeOrderListCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
+                                                            CommandParameter="{Binding Id}" Content="Подробнее" />
+                                                </StackPanel>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
@@ -229,7 +232,16 @@
                             <StackPanel Height="140" VerticalAlignment="Bottom">
                                 <StackPanel Orientation="Horizontal" Margin="0 0 0 20">
                                     <Border Height="60" Width="560" Background="{StaticResource BasicW}" CornerRadius="5">
-                                        <TextBlock Text="{Binding SelectedOrder.SellCost, StringFormat='\Итого: {0} ₽'}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                        <StackPanel Height="50" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                            <TextBlock Text="Итого: " VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                            <Grid Height="50">
+                                                <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0 -2 0 0" Height="14" Width="45" CornerRadius="6" Visibility="{Binding SelectedOrder.DiscountVisibility}" Background="{StaticResource BasicRed}">
+                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}" Text="{Binding SelectedOrder.Discount, StringFormat='\-{0}%'}"/>
+                                                </Border>
+                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding SelectedOrder.SellCostWithDiscount, StringFormat='\{0} ₽'}"  Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Bottom" Visibility="{Binding SelectedOrder.DiscountVisibility}" Text="{Binding SelectedOrder.SellCost, StringFormat='\{0} ₽'}" Margin="0 0 0 -4" TextDecorations="Strikethrough" Style="{StaticResource SmallText}" FontWeight="Bold" Foreground="{StaticResource TextG}"/>
+                                            </Grid>
+                                        </StackPanel>
                                     </Border>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">

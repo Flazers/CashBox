@@ -82,5 +82,29 @@ namespace Cashbox.MVVM.Views.Pages.Admin
                 Search.Focus();
             }
         }
+
+        private void Surname_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                Name.Focus();
+        }
+
+        private void Name_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                Patronymic.Focus();
+        }
+
+        private void Patronymic_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                Location.Focus();
+        }
+
+        private void Location_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                Phone.Focus();
+        }
     }
 }

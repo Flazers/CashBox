@@ -9,9 +9,9 @@
              d:DataContext="{d:DesignInstance Type=vm:StockViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="880" d:DesignWidth="1700">
-    <UserControl.DataContext>
+    <!--<UserControl.DataContext>
         <vm:StockViewModel/>
-    </UserControl.DataContext>
+    </UserControl.DataContext>-->
     <StackPanel>
         <StackPanel Orientation="Horizontal">
 
@@ -99,7 +99,7 @@
                                 <TextBlock Height="30" VerticalAlignment="Center" Width="350" HorizontalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}" Margin="0 0 20 0">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="Товаров: {0} из {1}">
-                                            <Binding Path="ShowProductCount"/>
+                                            <Binding Path="ShowedProductCount"/>
                                             <Binding Path="ProductCount"/>
                                         </MultiBinding>
                                     </TextBlock.Text>

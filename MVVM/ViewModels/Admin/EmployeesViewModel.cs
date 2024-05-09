@@ -251,6 +251,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} выдал зарплату сотруднику (id: {SelectedUser.Id}) {SelectedUser.UserInfo.FullName} в размере {GivenSalary} ₽", double.Parse(GivenSalary), SelectedUser.Id);
             await UserViewModel.TakeSalary(SelectedUser, double.Parse(GivenSalary));
             AppCommand.InfoMessage("Зарплата выдана");
+            GivenSalary = string.Empty;
             Update();
         }
 
@@ -316,7 +317,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 await UserInfoViewModel.DeactivateUser(SelectedUser.Id);
                 UserViewModel user = UserViewModel.GetCurrentUser();
                 await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} уволил сотрудника (id: {SelectedUser.Id}) {SelectedUser.UserInfo.FullName}", 0, SelectedUser.Id);
-                SelectedUser = null;
                 Update();
                 AppCommand.InfoMessage("Пользователь уволен");
             }
@@ -415,6 +415,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 CollectionUsers = new(data.OrderBy(x => x.UserInfo.RoleId));
             else
                 CollectionUsers = new(data.Where(x => x.UserInfo.FullName.Trim().Contains(SearchStr.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase)).OrderBy(x => x.UserInfo.RoleId));
+            if (SelectedUser != null)
+                SelectedUser = data.FirstOrDefault(x => x.Id == SelectedUser.Id);
         }
 
         #endregion

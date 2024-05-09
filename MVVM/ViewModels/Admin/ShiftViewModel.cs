@@ -242,11 +242,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 AppCommand.WarningMessage("Некорректное значение");
                 return;
             }
-            if (AppCommand.QuestionMessage($"Выдать премию в размере {Award} ₽ сотруднику {SelectedDReport.UserInfoVM.FullName}?") == MessageBoxResult.Yes)
+            if (AppCommand.QuestionMessage($"Прибавить премию в размере {Award} ₽ сотруднику {SelectedDReport.UserInfoVM.FullName}?") == MessageBoxResult.Yes)
                 if (await AutoDailyReportViewModel.GiveAward(SelectedDReport, parsed))
                 {
                     UserViewModel user = UserViewModel.GetCurrentUser();
-                    await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} выдал премию в размере {Award} ₽ сотруднику (id: {SelectedDReport.UserId}) {SelectedDReport.UserInfoVM.FullName}", parsed, SelectedDReport.UserId);
+                    await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} прибавил премию в размере {Award} ₽ сотруднику (id: {SelectedDReport.UserId}) {SelectedDReport.UserInfoVM.FullName}", parsed, SelectedDReport.UserId);
                     AppCommand.InfoMessage("Успех");
                 }
             Update();
@@ -333,10 +333,30 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             if (!await RefundViewModel.SuccessRefund())
             {
-                AppCommand.ErrorMessage("Не удалось подтвердить возврат");
+                AppCommand.ErrorMessage("Не удалось отклонить возврат");
                 return;
             }
             AppCommand.InfoMessage("Успех");
+            UpdateRefund();
+        }
+
+        public RelayCommand RejectRefundCommand { get; set; }
+        private bool CanRejectRefundCommandExecute(object p) => true;
+        private async void OnRejectRefundCommandExecuted(object p)
+        {
+            RefundViewModel refund = UnSuccessRefundCollection.FirstOrDefault(x => x.Id == (int)p);
+            if (refund == null)
+                return;
+            if (AppCommand.QuestionMessage($"Отклонить {refund.TypeRefund}?") == MessageBoxResult.Yes)
+            {
+
+                if (!await RefundViewModel.RejectRefund(refund.Id))
+                {
+                    AppCommand.ErrorMessage($"Не удалось подтвердить {refund.TypeRefund}");
+                    return;
+                }
+                AppCommand.InfoMessage("Успех");
+            }
             UpdateRefund();
         }
 
@@ -350,6 +370,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public async void Update()
         {
             List<DailyReportViewModel> data = await DailyReportViewModel.GetPeriodReports(DateOnly.FromDateTime(StartDate), DateOnly.FromDateTime(EndDate));
+            UpdateRefund();
             if (string.IsNullOrEmpty(SearchStr))
                 DailyReportCollection = new(data.OrderByDescending(x => x.Data));
             else
@@ -359,15 +380,15 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public async void UpdateRefund()
         {
             List<RefundViewModel> list = await RefundViewModel.GetRefundedAllProduct();
-            UnSuccessRefundCollection = new(list.Where(x => x.IsSuccessRefund == false && x.BuyDate == null).OrderByDescending(x => x.DailyReport.Data).ToList());
-            SuccessRefundCollection = new(list.Where(x => x.IsSuccessRefund == true && x.BuyDate == null).OrderByDescending(x => x.DailyReport.Data).ToList());
+            UnSuccessRefundCollection = new([.. list.Where(x => x.IsSuccessRefund == false && x.IsPurchased == false).OrderByDescending(x => x.DailyReport.Data)]);
+            SuccessRefundCollection = new([.. list.Where(x => x.IsSuccessRefund == true && x.IsPurchased == false && x.DailyReport.Data >= DateOnly.FromDateTime(StartDate) && x.DailyReport.Data <= DateOnly.FromDateTime(EndDate)).OrderByDescending(x => x.DailyReport.Data)]);
         }
 
 
         public ShiftViewModel()
         {
             Update();
-            UpdateRefund();
+            RejectRefundCommand = new RelayCommand(OnRejectRefundCommandExecuted, CanRejectRefundCommandExecute);
             GiveAwardCommand = new RelayCommand(OnGiveAwardCommandExecuted, CanGiveAwardCommandExecute);
             OpenUnRefundCommand = new RelayCommand(OnOpenUnRefundCommandExecuted, CanOpenUnRefundCommandExecute);
             OpenRefundCommand = new RelayCommand(OnOpenRefundCommandExecuted, CanOpenRefundCommandExecute);

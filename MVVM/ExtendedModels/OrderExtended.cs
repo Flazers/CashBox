@@ -73,7 +73,7 @@ namespace Cashbox.MVVM.Models
             return new(OrderComposition);
         }
 
-        public static async Task<bool> SellOrder(int paymet, double sellcost, double discount, List<OrderProductViewModel> orderProducts)
+        public static async Task<bool> SellOrder(int paymet, double sellcost, int discount, List<OrderProductViewModel> orderProducts)
         {
             try
             {

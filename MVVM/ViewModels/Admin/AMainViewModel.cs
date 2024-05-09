@@ -82,7 +82,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         #region Navigation
 
-        public override void Clear()
+        public override void OnLoad()
         {
             IsHomeView = true;
             IsEmployeeView = false;

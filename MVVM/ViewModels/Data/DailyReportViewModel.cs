@@ -27,6 +27,8 @@ namespace Cashbox.MVVM.ViewModels.Data
         }
 
         public string? DataString => ((DateOnly)Data!).ToString("dd/MM/yyyy");
+        public string? OpenTimeString => _dailyReport.OpenTime.ToString();
+        public string? CloseTimeString => _dailyReport.CloseTime.ToString();
 
         public TimeOnly? OpenTime
         {

@@ -31,5 +31,14 @@ namespace Cashbox.MVVM.Views.Pages.Employee
                 Search.Focus();
             }
         }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Search.Focus();
+                show.Focus();
+            }
+        }
     }
 }

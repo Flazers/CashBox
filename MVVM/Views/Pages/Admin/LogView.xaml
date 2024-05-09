@@ -9,10 +9,7 @@
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="880" d:DesignWidth="1700">
-    <UserControl.DataContext>
-        <vm:LogViewModel/>
-    </UserControl.DataContext>
-    
+
     <StackPanel Orientation="Horizontal">
         <StackPanel Margin="0 0 40 0" Width="1140">
             <Border Style="{StaticResource PanelBorder}" Height="880">

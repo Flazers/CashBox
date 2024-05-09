@@ -4,7 +4,6 @@ using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace Cashbox.MVVM.ViewModels.Employee
 {
@@ -12,7 +11,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
     {
         #region Props
         public static UserViewModel? User { get => Models.User.CurrentUser; }
-
+        bool canupdate = false;
         #region Visibility
 
         private Visibility _orderPanelVisibility = Visibility.Collapsed;
@@ -20,6 +19,13 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             get => _orderPanelVisibility;
             set => Set(ref _orderPanelVisibility, value);
+        }
+
+        private Visibility _menuPanelVisibility = Visibility.Visible;
+        public Visibility MenuPanelVisibility
+        {
+            get => _menuPanelVisibility;
+            set => Set(ref _menuPanelVisibility, value);
         }
 
         private Visibility _returnPanelVisibility = Visibility.Collapsed;
@@ -40,13 +46,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             get => _drawPanelVisibility;
             set => Set(ref _drawPanelVisibility, value);
-        }
-
-        private Visibility _menuPanelVisibility = Visibility.Visible;
-        public Visibility MenuPanelVisibility
-        {
-            get => _menuPanelVisibility;
-            set => Set(ref _menuPanelVisibility, value);
         }
 
         private Visibility _swapUp = Visibility.Collapsed;
@@ -75,6 +74,13 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             get => _visibilityProduct;
             set => Set(ref _visibilityProduct, value);
+        }
+
+        private Visibility _totalVisibility = Visibility.Collapsed;
+        public Visibility TotalVisibility
+        {
+            get => _totalVisibility;
+            set => Set(ref _totalVisibility, value);
         }
 
         #endregion
@@ -114,9 +120,9 @@ namespace Cashbox.MVVM.ViewModels.Employee
             set
             {
                 _selectedProductCategory = value;
-                if (Update().Status != TaskStatus.Running)
-                    Task.Run(Update);
                 OnPropertyChanged();
+                if (canupdate)
+                    Update().GetAwaiter();
             }
         }
 
@@ -170,8 +176,24 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private double _totalCost;
         public double TotalCost
         {
-            get => _totalCost - (_totalCost / 100 * DiscountOrderCost);
-            set => Set(ref _totalCost, value);
+            get => _totalCost;
+            set
+            {
+                _totalCost = value;
+                ReTotalCost = value - (value / 100 * DiscountOrderCost);
+                if (value != ReTotalCost)
+                    TotalVisibility = Visibility.Visible;
+                else
+                    TotalVisibility = Visibility.Collapsed;
+                OnPropertyChanged();
+            }
+        }
+
+        private double _reTotalCost;
+        public double ReTotalCost
+        {
+            get => _reTotalCost;
+            set => Set(ref _reTotalCost, value);
         }
 
         private Refund? _currentRefund;
@@ -204,17 +226,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
             }
         }
 
-        public static string ShiftOpenTime
-        {
-            get
-            {
-                DailyReportViewModel CurrentShift = DailyReportViewModel.GetCurrentShift();
-                if (CurrentShift == null)
-                    return "нет";
-                return $"{CurrentShift.Data} в {CurrentShift.OpenTime}";
-            }
-        }
-
         private int _sort = 0;
         public int Sort
         {
@@ -223,11 +234,32 @@ namespace Cashbox.MVVM.ViewModels.Employee
             {
                 _sort = value;
                 OnPropertyChanged();
-                if (Update().Status != TaskStatus.Running)
-                    Task.Run(Update);
+                if (canupdate)
+                    Update().GetAwaiter();
             }
         }
 
+        private int _productCount = 0;
+        public int ProductCount
+        {
+            get => _productCount;
+            set => Set(ref _productCount, value);
+        }
+
+        private int _showProductCount = 20;
+        public int ShowProductCount
+        {
+            get => _showProductCount;
+            set
+            {
+                if (value > ProductCount)
+                    value = ProductCount;
+                _showProductCount = value;
+                OnPropertyChanged();
+                if (canupdate)
+                    Update().GetAwaiter();
+            }
+        }
 
         #endregion
 
@@ -235,11 +267,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         public RelayCommand SearchDataCommand { get; set; }
         private bool CanSearchDataCommandExecute(object p) => true;
-        private void OnSearchDataCommandExecuted(object p)
-        {
-            if (Update().Status != TaskStatus.Running) 
-                Task.Run(Update);
-        }
+        private async void OnSearchDataCommandExecuted(object p) => await Update();
 
         public RelayCommand IncreaseAmountProductBasketCommand { get; set; }
         private bool CanIncreaseAmountProductBasketCommandExecute(object p)
@@ -363,6 +391,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 return;
             }
             item.SellCost = double.Parse(item.ProductVM.ReSellCost);
+            AppCommand.InfoMessage("Цена выставлена");
         }
 
         public RelayCommand OpenBasketOrderPanelCommand { get; set; }
@@ -434,6 +463,14 @@ namespace Cashbox.MVVM.ViewModels.Employee
             OnOpenMenuPanelCommandExecuted(p);
         }
 
+        public RelayCommand SetDiscountCommand { get; set; }
+        private bool CanSetDiscountCommandExecute(object p) => true;
+        private void OnSetDiscountCommandExecuted(object p)
+        {
+            ReTotalCost = TotalCost - (TotalCost / 100 * DiscountOrderCost);
+        }
+
+
         public RelayCommand SellOrderCommand { get; set; }
         private bool CanSellOrderCommandExecute(object p)
         {
@@ -459,7 +496,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
                         return;
                     break;
             }
-            if (!await OrderViewModel.SellOrder(method, TotalCost, 0, [.. OrderProductsBasket]))
+            if (!await OrderViewModel.SellOrder(method, TotalCost, DiscountOrderCost, [.. OrderProductsBasket]))
                 return;
             await Update();
             OnOpenMenuPanelCommandExecuted(p);
@@ -526,13 +563,19 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private bool CanClearSelectedProductCommandExecute(object p) => true;
         private void OnClearSelectedProductCommandExecuted(object p)
         {
-            SelectedProductRef = [];
-            RefundBuyDate = DateTime.Today;
+            if (SelectedProductRef == null)
+                return;
+            if (AppCommand.QuestionMessage("Убрать товар?") == MessageBoxResult.Yes)
+            {
+                SelectedProductRef = [];
+                RefundBuyDate = DateTime.Today;
+
+            }
         }
 
         public RelayCommand SortSwapCommand { get; set; }
         private bool CanSortSwapCommandExecute(object p) => true;
-        private void OnSortSwapCommandExecuted(object p)
+        private async void OnSortSwapCommandExecuted(object p)
         {
             if (SwapUp == Visibility.Visible)
             {
@@ -544,14 +587,14 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 SwapUp = Visibility.Visible;
                 SwapDown = Visibility.Collapsed;
             }
-            if (Update().Status != TaskStatus.Running)
-                Task.Run(Update);
+            await Update();
         }
 
-        private async void Load()
+        public override async void OnLoad()
         {
             CollectionProductCategories = new(await ProductCategoryViewModel.GetProductCategory());
             SelectedProductCategory = CollectionProductCategories[0];
+            await Update();
         }
 
         private async Task Update()
@@ -560,47 +603,62 @@ namespace Cashbox.MVVM.ViewModels.Employee
             VisibilityLoadProduct = Visibility.Visible;
             await Task.Run(async () =>
             {
-                List<ProductViewModel> products = await ProductViewModel.GetProducts();
-                if (SelectedProductCategory != null && SelectedProductCategory.Category != "Все категории")
-                    products = products.Where(x => x.CategoryId == SelectedProductCategory.Id).ToList();
-                switch (Sort)
+                try
                 {
-                    case 1:
-                        if (SwapDown == Visibility.Visible)
-                            products = [.. products.OrderByDescending(x => x.SellCost)];
-                        else
-                            products = [.. products.OrderBy(x => x.SellCost)];
-                        break;
-                    case 2:
-                        if (SwapDown == Visibility.Visible)
-                            products = [.. products.OrderByDescending(x => x.Stock.Amount)];
-                        else
-                            products = [.. products.OrderBy(x => x.Stock.Amount)];
-                        break;
-                    default:
-                        if (SwapDown == Visibility.Visible)
-                            products = [.. products.OrderByDescending(x => x.CountSell)];
-                        else
-                            products = [.. products.OrderBy(x => x.CountSell)];
-                        break;
+                    List<ProductViewModel> products = await ProductViewModel.GetProducts();
+                    if (SelectedProductCategory != null && SelectedProductCategory.Category != "Все категории")
+                        products = products.Where(x => x.CategoryId == SelectedProductCategory.Id).ToList();
+                    ProductCount = products.Count;
+                    if (ShowProductCount > ProductCount)
+                        ShowProductCount = ProductCount;
+                    switch (Sort)
+                    {
+                        case 1:
+                            if (SwapDown == Visibility.Visible)
+                                products = [.. products.OrderByDescending(x => x.SellCost)];
+                            else
+                                products = [.. products.OrderBy(x => x.SellCost)];
+                            break;
+                        case 2:
+                            if (SwapDown == Visibility.Visible)
+                                products = [.. products.OrderByDescending(x => x.Stock.Amount)];
+                            else
+                                products = [.. products.OrderBy(x => x.Stock.Amount)];
+                            break;
+                        case 3:
+                            if (SwapDown == Visibility.Visible)
+                                products = [.. products.OrderBy(x => x.IsAvailable)];
+                            else
+                                products = [.. products.OrderByDescending(x => x.IsAvailable)];
+                            break;
+                        default:
+                            if (SwapDown == Visibility.Visible)
+                                products = [.. products.OrderByDescending(x => x.CountSell)];
+                            else
+                                products = [.. products.OrderBy(x => x.CountSell)];
+                            break;
+                    }
+                    string searchs = SearchStr.ToLower().Trim();
+                    if (!string.IsNullOrEmpty(searchs))
+                        products = products.Where(x => x.Brand.Contains(searchs, StringComparison.CurrentCultureIgnoreCase) ||
+                                                       x.Title.Contains(searchs, StringComparison.CurrentCultureIgnoreCase) ||
+                                                       x.SellCost.ToString().Contains(searchs, StringComparison.CurrentCultureIgnoreCase) ||
+                                                       x.Description.Contains(searchs, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                    CollectionProducts = new(products.Take(ShowProductCount));
+                    VisibilityLoadProduct = Visibility.Collapsed;
+                    VisibilityProduct = Visibility.Visible;
                 }
-                string searchs = SearchStr.ToLower().Trim();
-                if (!string.IsNullOrEmpty(searchs))
-                    products = products.Where(x => x.Brand.Contains(searchs, StringComparison.CurrentCultureIgnoreCase) ||
-                                                   x.Title.Contains(searchs, StringComparison.CurrentCultureIgnoreCase) ||
-                                                   x.SellCost.ToString().Contains(searchs, StringComparison.CurrentCultureIgnoreCase) ||
-                                                   x.Description.Contains(searchs, StringComparison.CurrentCultureIgnoreCase)).ToList();
-                CollectionProducts = new(products);
-                VisibilityLoadProduct = Visibility.Collapsed;
-                VisibilityProduct = Visibility.Visible;
+                catch (Exception)
+                {
+                    AppCommand.ErrorMessage("Возник конфликт потоков. Повторите операцию");
+                    return;
+                }
             });
         }
 
         #endregion
         public CashRegisterViewModel()
         {
-            Load();
-
             SortSwapCommand = new RelayCommand(OnSortSwapCommandExecuted, CanSortSwapCommandExecute);
             SearchDataCommand = new RelayCommand(OnSearchDataCommandExecuted, CanSearchDataCommandExecute);
 
@@ -615,6 +673,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             ReturnCrackProductCommand = new RelayCommand(OnReturnCrackProductCommandExecuted, CanReturnCrackProductCommandExecute);
             DrawProductCommand = new RelayCommand(OnDrawProductCommandExecuted, CanDrawProductCommandExecute);
             ClearSelectedProductCommand = new RelayCommand(OnClearSelectedProductCommandExecuted, CanClearSelectedProductCommandExecute);
+            SetDiscountCommand = new RelayCommand(OnSetDiscountCommandExecuted, CanSetDiscountCommandExecute);
 
             OpenBasketOrderPanelCommand = new RelayCommand(OnOpenBasketOrderPanelCommandExecuted, CanOpenBasketOrderPanelCommandExecute);
             OpenReturnOrderPanelCommand = new RelayCommand(OnOpenReturnOrderPanelCommandExecuted, CanOpenReturnOrderPanelCommandExecute);
@@ -622,6 +681,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             OpenMenuPanelCommand = new RelayCommand(OnOpenMenuPanelCommandExecuted, CanOpenMenuPanelCommandExecute);
             OpenDrawPanelCommand = new RelayCommand(OnOpenDrawPanelCommandExecuted, CanOpenDrawPanelCommandExecute);
             ChangeSellCostCommand = new RelayCommand(OnChangeSellCostCommandExecuted, CanChangeSellCostCommandExecute);
+            canupdate = true;
         }
     }
 }

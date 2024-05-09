@@ -61,7 +61,7 @@ namespace Cashbox.MVVM.Models
                 CurrentRefund.IsSuccessRefund = false;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 await CreateRefund();
-                await CreateRefundDefect(productid, reason);
+                await CreateRefundDefect(productid, $"(Возврат) {reason}");
                 return true;
             }
             catch (Exception ex)
@@ -124,7 +124,24 @@ namespace Cashbox.MVVM.Models
                 AppCommand.ErrorMessage(ex.Message);
                 return false;
             }
+        }
 
+        public static async Task<bool> RejectRefund(int id)
+        {
+            try
+            {
+                Refund refund = CashBoxDataContext.Context.Refunds.FirstOrDefault(x => x.Id == id);
+                if (refund == null)
+                    return false;
+                CashBoxDataContext.Context.Refunds.Remove(refund);
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
         }
 
         public static async Task<List<RefundViewModel>> GetRefundedAllProduct() => await CashBoxDataContext.Context.Refunds

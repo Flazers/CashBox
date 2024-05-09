@@ -20,6 +20,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<List<RefundViewModel>> GetRefundedDefect() => await Refund.GetRefundedDefect();
         public static async Task<List<RefundViewModel>> GetRefundedReason() => await Refund.GetRefundedReason();
         public static async Task<bool> SuccessRefund() => await Refund.SuccessRefund();
+        public static async Task<bool> RejectRefund(int id) => await Refund.RejectRefund(id);
         public static async Task<List<RefundViewModel>> GetDraw() => await Refund.GetDraw();
 
         public int Id => _refund.Id;
@@ -64,6 +65,8 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public string? BuyDateString => _refund.BuyDate.ToString();
+
         public bool IsPurchased
         {
             get => _refund.IsPurchased;
@@ -84,6 +87,26 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public Visibility DrawVisibility 
+        { 
+            get 
+            {
+                if (_refund.IsPurchased == false && _refund.BuyDate != null)
+                    return Visibility.Visible;
+                return Visibility.Collapsed;
+            } 
+        }
+
+        public Visibility CrackVisibility 
+        {
+            get 
+            {
+                if (_refund.IsPurchased == false && _refund.BuyDate == null)
+                    return Visibility.Visible;
+                return Visibility.Collapsed;
+            }
+        }
+
         public string TypeRefund
         {
             get
@@ -92,7 +115,8 @@ namespace Cashbox.MVVM.ViewModels.Data
                     return "Брак";
                 else if (_refund.IsPurchased == false && _refund.BuyDate != null)
                     return "Розыгрыш";
-                return "Возврат";
+                else
+                    return "Возврат";
             }
         }
 
@@ -117,6 +141,8 @@ namespace Cashbox.MVVM.ViewModels.Data
                 OnPropertyChanged();
             }
         }
+
+        public string? DataString => _refund.DailyReport.Data.ToString();
 
         public virtual DailyReport DailyReport
         {

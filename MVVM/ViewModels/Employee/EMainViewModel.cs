@@ -64,7 +64,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         #region Navigation
 
-        public override void Clear()
+        public override void OnLoad()
         {
             IsShiftView = true;
             IsCashRegisterView = false;

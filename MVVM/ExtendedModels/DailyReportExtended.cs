@@ -14,7 +14,6 @@ namespace Cashbox.MVVM.Models
             get
             {
                 DailyReport dr = CashBoxDataContext.Context.DailyReports.FirstOrDefault(x => x.Data == DateOnly.FromDateTime(DateTime.Today) && x.UserId == UserViewModel.GetCurrentUser().Id);
-                CurrentShift = null;
                 if (dr != null)
                     CurrentShift = new(dr);
                 return _currentShift;

@@ -9,15 +9,9 @@
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="1000" d:DesignWidth="1700">
-    <UserControl.DataContext>
-        <vm:CashRegisterViewModel/>
-    </UserControl.DataContext>
     <StackPanel>
         <Border Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
-            <DockPanel VerticalAlignment="Center">
-                <TextBlock Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Сотрудник: \{0}'}"/>
-                <TextBlock Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Right" Text="{Binding ShiftOpenTime, StringFormat='Смена открыта: \{0}'}"/>
-            </DockPanel>
+            <TextBlock VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Сотрудник: \{0}'}"/>
         </Border>
 
         <Grid Margin="0 40 0 0">
@@ -35,8 +29,14 @@
                     </Grid>
 
                     <StackPanel Orientation="Horizontal" Margin="10 0 10 30">
-                        <TextBlock Height="30" VerticalAlignment="Center" Width="350" Text="{Binding CollectionProducts.Count, StringFormat='Товаров: \{0}'}" 
-                                   HorizontalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}" Margin="0 0 20 0"/>
+                        <TextBlock Height="30" VerticalAlignment="Center" Width="200" HorizontalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}" Margin="0 0 20 0">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="Товаров: {0} из {1}">
+                                    <Binding Path="ShowProductCount"/>
+                                    <Binding Path="ProductCount"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
                         <Button Style="{StaticResource ButtonInPanelWhite}" Command="{Binding SortSwapCommand}" Height="50" Width="50" Margin="0 0 20 0">
                             <StackPanel>
                                 <Icon:PackIconMaterial Visibility="{Binding SwapUp}" Kind="ArrowUp" Width="20" Height="20"/>
@@ -59,11 +59,14 @@
                         <ComboBox Style="{StaticResource BasicCB}" Tag="Категория" Width="270" ItemsSource="{Binding CollectionProductCategories}" SelectedItem="{Binding SelectedProductCategory}" Margin="0 0 40 0">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Category}" Style="{StaticResource RegularText}"/>
+                                    <TextBlock Text="{Binding Category}" TextWrapping="Wrap" Style="{StaticResource RegularText}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                    </StackPanel>
+
+                        <TextBox Height="50" Width="110" PreviewTextInput="TextBox_PreviewTextInput" x:Name="show" KeyDown="TextBox_KeyDown" Text="{Binding ShowProductCount}" Style="{StaticResource TbPlaceholderTag}" Tag="Т. на стр."/>
+                        
+                   </StackPanel>
 
                     <Border Height="670" Margin="10 0 10 10" Visibility="{Binding VisibilityLoadProduct}">
                         <TextBlock Text="Загрузка..." Style="{StaticResource TitleText}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource TextG}"/>
@@ -176,7 +179,7 @@
 
                                                     <StackPanel VerticalAlignment="Center" Margin="0 0 0 10" HorizontalAlignment="Right" Orientation="Horizontal">
                                                         <TextBox Style="{StaticResource TbPlaceholderTag}" FontSize="16" PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding ProductVM.ReSellCost}" Tag="Другая цена"/>
-                                                        <Button Style="{StaticResource ButtonInPanelBase}" Height="30" Width="30" Padding="-5"
+                                                        <Button Style="{StaticResource ButtonInPanelGreen}" Height="30" Width="30" Padding="-5"
                                                                 Command="{Binding DataContext.ChangeSellCostCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}"
                                                                 CommandParameter="{Binding ProductVM.Id}">
                                                             <Icon:PackIconMaterial Kind="Check"/>
@@ -201,15 +204,21 @@
                         <StackPanel VerticalAlignment="Bottom">
                             <StackPanel Orientation="Horizontal" Margin="0 0 0 25">
                                 <Border Width="270" Margin="0 0 20 0" Padding="5" Background="{StaticResource BasicW}" CornerRadius="5" Height="60" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding TotalCost, StringFormat='\Итого: {0} ₽'}" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                    <StackPanel Height="50" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                        <TextBlock Text="Итого: " VerticalAlignment="Center" Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                        <Grid Height="50">
+                                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding ReTotalCost, StringFormat='\{0} ₽'}"  Style="{StaticResource TitleText}" Foreground="{StaticResource TextB}"/>
+                                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="{Binding TotalVisibility}" Text="{Binding TotalCost, StringFormat='\{0} ₽'}" Margin="0 -4 0 0" TextDecorations="Strikethrough" Style="{StaticResource SmallText}" FontWeight="Bold" Foreground="{StaticResource TextG}"/>
+                                        </Grid>
+                                    </StackPanel>
                                 </Border>
                                 <Border Width="270" Padding="10" Height="60" CornerRadius="10" Background="{StaticResource BasicW}">
                                     <Grid>
                                         <TextBlock Text="Скидка (%):" VerticalAlignment="Center" Style="{StaticResource RegularText}"/>
                                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                            <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="{Binding DiscountOrderCost}" Margin="5" Width="70" Background="Transparent" BorderThickness="0" />
-                                            <Button Height="40" Width="40" Style="{StaticResource ButtonInPanelBase}" HorizontalAlignment="Center" >
-                                                <Icon:PackIconMaterial Kind="Reload" Width="20" Height="20"/>
+                                            <TextBox HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Text="{Binding DiscountOrderCost}" Margin="5" Width="70" PreviewTextInput="TextBox_PreviewTextInput" Background="Transparent" BorderThickness="0" />
+                                            <Button Height="40" Width="40" Style="{StaticResource ButtonInPanelBase}" Command="{Binding SetDiscountCommand}" HorizontalAlignment="Center" >
+                                                <Icon:PackIconMaterial Kind="Check" Width="20" Height="20"/>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
@@ -266,7 +275,8 @@
                                                 <Grid>
                                                     <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Top" HorizontalAlignment="Right"
                                                                Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
-                                                    <Button Style="{StaticResource ButtonInPanelRed}" Height="40" FontSize="16" HorizontalAlignment="Right" Command="{Binding ClearSelectedProductCommand}" VerticalAlignment="Bottom" Content="Убрать"/>
+                                                    <Button Style="{StaticResource ButtonInPanelRed}" Height="40" FontSize="16" HorizontalAlignment="Right" 
+Command="{Binding DataContext.ClearSelectedProductCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" CommandParameter="{Binding Id}" VerticalAlignment="Bottom" Content="Убрать"/>
                                                 </Grid>
 
                                             </DockPanel>
@@ -323,7 +333,8 @@
                                             <Grid>
                                                 <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Top" HorizontalAlignment="Right"
                                                                Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
-                                                <Button Style="{StaticResource ButtonInPanelRed}" Height="40" FontSize="16" HorizontalAlignment="Right" Command="{Binding ClearSelectedProductCommand}" VerticalAlignment="Bottom" Content="Убрать"/>
+                                                <Button Style="{StaticResource ButtonInPanelRed}" Height="40" FontSize="16" HorizontalAlignment="Right" 
+Command="{Binding DataContext.ClearSelectedProductCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" CommandParameter="{Binding Id}" VerticalAlignment="Bottom" Content="Убрать"/>
                                             </Grid>
                                         </DockPanel>
                                     </Border>
@@ -375,7 +386,8 @@
                                             <Grid>
                                                 <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Top" HorizontalAlignment="Right"
                                                                Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
-                                                <Button Style="{StaticResource ButtonInPanelRed}" Height="40" FontSize="16" HorizontalAlignment="Right" Command="{Binding ClearSelectedProductCommand}" VerticalAlignment="Bottom" Content="Убрать"/>
+                                                <Button Style="{StaticResource ButtonInPanelRed}" Height="40" FontSize="16" HorizontalAlignment="Right" 
+Command="{Binding DataContext.ClearSelectedProductCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" CommandParameter="{Binding Id}" VerticalAlignment="Bottom" Content="Убрать"/>
                                             </Grid>
                                         </DockPanel>
                                     </Border>

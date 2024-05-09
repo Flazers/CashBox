@@ -28,8 +28,6 @@ namespace Cashbox.Core
             if (!disposing || _Disposed) return;
             _Disposed = true;
         }
-
-        public virtual void Clear() { }
-        public virtual void OnLoad() {  }
+        public virtual void OnLoad() {}
     }
 }

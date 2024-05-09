@@ -9,11 +9,6 @@
              mc:Ignorable="d" 
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
              d:DesignHeight="880" d:DesignWidth="1700">
-
-    <UserControl.DataContext>
-        <vm:EmployeesViewModel/>
-    </UserControl.DataContext>
-    
     <StackPanel Orientation="Horizontal">
         <StackPanel Margin="0 0 40 0" Width="1140">
             <Border Style="{StaticResource PanelBorder}" Height="880">
@@ -148,11 +143,11 @@
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
                     <StackPanel Height="650" Margin="10 0">
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" x:Name="Surname" KeyDown="Surname_KeyDown" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" x:Name="Name" KeyDown="Name_KeyDown" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" x:Name="Patronymic" KeyDown="Patronymic_KeyDown" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" x:Name="Location" KeyDown="Location_KeyDown" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" x:Name="Phone" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>
                         <ComboBox Tag="Роль" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionUserRoles}" DisplayMemberPath="Role1" 
                             SelectedValuePath="Id" SelectedItem="{Binding Role}" Margin="0 0 0 20"/>
                         <TextBox Style="{StaticResource InputTB}" Text="{Binding Pincode}" Tag="Пинкод" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
