@@ -12,6 +12,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
         #region Props
         public static UserViewModel? User { get => Models.User.CurrentUser; }
         bool canupdate = false;
+
         #region Visibility
 
         private Visibility _orderPanelVisibility = Visibility.Collapsed;
@@ -239,6 +240,19 @@ namespace Cashbox.MVVM.ViewModels.Employee
             }
         }
 
+        private bool _isShowAllProduct = false;
+        public bool IsShowAllProduct
+        {
+            get => _isShowAllProduct;
+            set
+            {
+                _isShowAllProduct = value;
+                OnPropertyChanged();
+                if (canupdate)
+                    Update().GetAwaiter();
+            }
+        }
+
         private int _productCount = 0;
         public int ProductCount
         {
@@ -330,6 +344,19 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
         private void OnAddProductInBasketCommandExecuted(object p)
         {
+            ProductViewModel tempselectedprod = CollectionProducts.FirstOrDefault(x => x.Id == (int)p);
+            if (tempselectedprod.IsAvailable == false || tempselectedprod.Stock.Amount == 0)
+            {
+                if (ReturnPanelVisibility != Visibility.Visible && CrackPanelVisibility != Visibility.Visible)
+                {
+                    AppCommand.WarningMessage("Товар снят с продажи / нет в наличии");
+                    return;
+                }
+                SelectedProductRef = [];
+                SelectedProductRef.Add(CollectionProducts.FirstOrDefault(x => x.Id == (int)p));
+                return;
+            }
+
             if (ReturnPanelVisibility == Visibility.Visible || CrackPanelVisibility == Visibility.Visible || DrawPanelVisibility == Visibility.Visible)
             {
                 SelectedProductRef = [];
@@ -401,6 +428,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             if (OrderViewModel.OrderComposition == null)
                 await OrderViewModel.CreateOrder();
             SelectedOrder = Order.OrderComposition;
+            DiscountOrderCost = 0;
             OrderPanelVisibility = Visibility.Visible;
             MenuPanelVisibility = Visibility.Collapsed;
         }
@@ -592,9 +620,11 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         public override async void OnLoad()
         {
+            canupdate = false;
             CollectionProductCategories = new(await ProductCategoryViewModel.GetProductCategory());
             SelectedProductCategory = CollectionProductCategories[0];
             await Update();
+            canupdate = true;
         }
 
         private async Task Update()
@@ -605,12 +635,10 @@ namespace Cashbox.MVVM.ViewModels.Employee
             {
                 try
                 {
-                    List<ProductViewModel> products = await ProductViewModel.GetProducts();
+                    List<ProductViewModel> products = await ProductViewModel.GetProducts(IsShowAllProduct);
                     if (SelectedProductCategory != null && SelectedProductCategory.Category != "Все категории")
                         products = products.Where(x => x.CategoryId == SelectedProductCategory.Id).ToList();
                     ProductCount = products.Count;
-                    if (ShowProductCount > ProductCount)
-                        ShowProductCount = ProductCount;
                     switch (Sort)
                     {
                         case 1:
@@ -681,7 +709,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
             OpenMenuPanelCommand = new RelayCommand(OnOpenMenuPanelCommandExecuted, CanOpenMenuPanelCommandExecute);
             OpenDrawPanelCommand = new RelayCommand(OnOpenDrawPanelCommandExecuted, CanOpenDrawPanelCommandExecute);
             ChangeSellCostCommand = new RelayCommand(OnChangeSellCostCommandExecuted, CanChangeSellCostCommandExecute);
-            canupdate = true;
         }
     }
 }

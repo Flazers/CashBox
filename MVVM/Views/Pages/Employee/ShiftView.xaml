@@ -114,7 +114,7 @@
                                     <Icon:PackIconMaterial Kind="ClockOutline" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
                                     <TextBlock Margin="10 0 0 0" Text="Открыта" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
-                                <TextBlock HorizontalAlignment="Right" Text="{Binding StartShiftTime}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                <TextBlock HorizontalAlignment="Right" Text="{Binding StartShiftTimeString}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
                         </StackPanel>
                     </DockPanel>

@@ -28,7 +28,16 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public string? DataString => ((DateOnly)Data!).ToString("dd/MM/yyyy");
         public string? OpenTimeString => _dailyReport.OpenTime.ToString();
-        public string? CloseTimeString => _dailyReport.CloseTime.ToString();
+        public string? CloseTimeString 
+        {
+            get
+            {
+                if (_dailyReport.CloseTime == null)
+                    return "Смена открыта";
+                return _dailyReport.CloseTime.ToString();
+            }
+        }
+
 
         public TimeOnly? OpenTime
         {

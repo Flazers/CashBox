@@ -97,7 +97,6 @@ namespace Cashbox.MVVM.ViewModels
                     return;
                 }
             List<DailyReportViewModel> list = await DailyReportViewModel.GetNotCloseReports();
-
             if (list.Count != 0)
             {
                 string ListNotClose = string.Empty;
@@ -134,13 +133,11 @@ namespace Cashbox.MVVM.ViewModels
                         AppCommand.WarningMessage($"Открыта смена у {ListNotClose}");
                         return;
                     }
-                    if (AppCommand.QuestionMessage($"Открыта смена у {ListNotClose}\nЗакрыть для продолжения работы?") == MessageBoxResult.Yes)
-                        closereport(report);
-                    else
-                        return;
                 }
             }
             if (!await OrderViewModel.RemoveNullReferenceOrder())
+                return;            
+            if (!await RefundViewModel.RemoveNullReferenceRefund())
                 return;
             switch (user.UserInfo?.Role.Id)
             {

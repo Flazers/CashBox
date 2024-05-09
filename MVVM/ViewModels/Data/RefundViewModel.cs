@@ -22,6 +22,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<bool> SuccessRefund() => await Refund.SuccessRefund();
         public static async Task<bool> RejectRefund(int id) => await Refund.RejectRefund(id);
         public static async Task<List<RefundViewModel>> GetDraw() => await Refund.GetDraw();
+        public static async Task<bool> RemoveNullReferenceRefund() => await Refund.RemoveNullReferenceRefund();
 
         public int Id => _refund.Id;
 

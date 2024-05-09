@@ -115,7 +115,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             {
                 _selectedProductCategory = value;
                 OnPropertyChanged();
-                Update().GetAwaiter();
+                if (canupdate)
+                    Update().GetAwaiter();
             }
         }
 
@@ -157,13 +158,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 if (canupdate)
                     Update().GetAwaiter();
             }
-        }
-
-        private int _showedProductCount = 0;
-        public int ShowedProductCount
-        {
-            get => _showedProductCount;
-            set => Set(ref _showedProductCount, value);
         }
         #endregion
 
@@ -724,6 +718,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
             SelectedProductCategory = CollectionProductCategories[0];
         }
 
+        public override async void OnLoad()
+        {
+            canupdate = false;
+            await Update();
+            canupdate = true;
+        }
+
         private async Task Update()
         {
             VisibilityProduct = Visibility.Collapsed;
@@ -738,8 +739,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     if (SelectedProductCategory != null && SelectedProductCategory.Category != "Все категории")
                         products = products.Where(x => x.CategoryId == SelectedProductCategory.Id).ToList();
                     ProductCount = products.Count;
-                    if (ShowProductCount > ProductCount)
-                        ShowProductCount = ProductCount;
                     switch (Sort)
                     {
                         case 1:
@@ -774,7 +773,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
                                                        x.SellCost.ToString().Contains(searchs, StringComparison.CurrentCultureIgnoreCase) ||
                                                        x.Description.Contains(searchs, StringComparison.CurrentCultureIgnoreCase)).ToList();
                     CollectionProducts = new(products.Take(ShowProductCount));
-                    ShowedProductCount = CollectionProducts.Count;
                 });
             }
             catch (Exception)
@@ -802,7 +800,6 @@ namespace Cashbox.MVVM.ViewModels.Admin
             ExportProductDataCommand = new RelayCommand(OnExportProductDataCommandExecuted, CanExportProductDataCommandExecute);
             EditProductDataCommand = new RelayCommand(OnEditProductDataCommandExecuted, CanEditProductDataCommandExecute);
             FileForImportCommand = new RelayCommand(OnFileForImportCommandExecuted, CanFileForImportCommandExecute);
-            canupdate = true;
         }
     }
 }

@@ -144,6 +144,22 @@ namespace Cashbox.MVVM.Models
             }
         }
 
+        public static async Task<bool> RemoveNullReferenceRefund()
+        {
+            try
+            {
+                var empOrder = await CashBoxDataContext.Context.Refunds.Where(x => x.ProductId == null).ToListAsync();
+                if (empOrder.Count > 0)
+                    CashBoxDataContext.Context.RemoveRange(empOrder);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
+        }
+
         public static async Task<List<RefundViewModel>> GetRefundedAllProduct() => await CashBoxDataContext.Context.Refunds
                                                                                 .Select(s => new RefundViewModel(s))
                                                                                 .ToListAsync();

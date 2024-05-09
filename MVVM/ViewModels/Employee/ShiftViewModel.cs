@@ -171,6 +171,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         public string? StartShiftTimeString => StartShiftTime.ToString();
         public string? EndShiftTimeString => EndShiftTime.ToString();
+        
 
         private DateOnly _currentDate = DateOnly.FromDateTime(DateTime.Today);
         public DateOnly CurrentDate
@@ -186,19 +187,26 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private bool CanStartShiftCommandExecute(object p) => true;
         private async void OnStartShiftCommandExecuted(object p)
         {
-            DailyReportViewModel dailyReport = await DailyReport.GetReport(CurrentDate);
-            if (dailyReport != null)
+            try
             {
-                AppCommand.WarningMessage($"Смена открыта и завершена сотрудником {dailyReport.UserInfoVM.FullName}");
-                return;
+                DailyReportViewModel dailyReport = await DailyReportViewModel.GetReport(CurrentDate);
+                if (dailyReport != null)
+                {
+                    AppCommand.WarningMessage($"Смена открыта и завершена сотрудником {dailyReport.UserInfoVM.FullName}");
+                    return;
+                }
             }
-            StartShiftTime = TimeOnly.FromDateTime(DateTime.Now);
-            DailyReportVMobj = await DailyReportViewModel.StartShift(CurrentDate, (TimeOnly)StartShiftTime);
-            StartShiftVisibility = Visibility.Collapsed;
-            ProcessShiftVisibility = Visibility.Visible;
-            ProcessDoShiftVisibility = Visibility.Visible;
-            EndShiftVisibility = Visibility.Collapsed;
-            AppCommand.InfoMessage($"Смена {DailyReportVMobj.Id} открыта");
+            catch (Exception)
+            {
+                StartShiftTime = TimeOnly.FromDateTime(DateTime.Now);
+                DailyReportVMobj = await DailyReportViewModel.StartShift(CurrentDate, (TimeOnly)StartShiftTime);
+                StartShiftVisibility = Visibility.Collapsed;
+                ProcessShiftVisibility = Visibility.Visible;
+                ProcessDoShiftVisibility = Visibility.Visible;
+                EndShiftVisibility = Visibility.Collapsed;
+                AppCommand.InfoMessage($"Смена {DailyReportVMobj.Id} открыта");
+            }
+           
         }
 
         public RelayCommand EndShiftCommand { get; set; }
@@ -220,7 +228,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 ProcessDoShiftVisibility = Visibility.Collapsed;
                 EndShiftVisibility = Visibility.Visible;
                 AutoShift = adreport;
-                AppCommand.InfoMessage($"Смена {drvm.Id} закрыта");
+                AppCommand.InfoMessage($"Смена {drvm.Id} закрыта в {EndShiftTimeString}");
             }
 
         }
@@ -274,9 +282,9 @@ namespace Cashbox.MVVM.ViewModels.Employee
         public override async void OnLoad()
         {
             DateOnly dateOnly = DateOnly.FromDateTime(DateTime.Today);
-            CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCost!);
-            NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCost!);
-            SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCost!);
+            CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCostWithDiscount!);
+            NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCostWithDiscount!);
+            SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCostWithDiscount!);
             DailyReportViewModel drvm = DailyReportViewModel.GetCurrentShift();
             if (drvm != null)
             {

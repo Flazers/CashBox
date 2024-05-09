@@ -99,7 +99,7 @@
                                 <TextBlock Height="30" VerticalAlignment="Center" Width="350" HorizontalAlignment="Center" Style="{StaticResource RegularText}" Foreground="{StaticResource TextW}" Margin="0 0 20 0">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="Товаров: {0} из {1}">
-                                            <Binding Path="ShowedProductCount"/>
+                                            <Binding Path="CollectionProducts.Count"/>
                                             <Binding Path="ProductCount"/>
                                         </MultiBinding>
                                     </TextBlock.Text>

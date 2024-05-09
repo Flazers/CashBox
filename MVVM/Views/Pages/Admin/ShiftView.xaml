@@ -158,8 +158,11 @@
                                         <Border Background="{StaticResource BasicW}" Padding="5" CornerRadius="5" Height="60" Margin="0 0 40 0" Width="240">
                                             <TextBlock VerticalAlignment="Center" Text="{Binding SelectedDReport.AutoDreportVM.FullTransit, StringFormat='\ Итого: {0} ₽'}" FontWeight="Medium" Style="{StaticResource RegularText}"/>
                                         </Border>
-                                        <TextBox Style="{StaticResource InputTB}" Height="60" Width="140" Margin="0 0 40 0" Tag="Премия" PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding Award}"/>
-                                        <Button Style="{StaticResource ButtonInPanelCyan}" Command="{Binding GiveAwardCommand}" Content="Зачислить" Width="140"/>
+                                        <Button Visibility="{Binding BtnOpenReport}" Style="{StaticResource ButtonInPanelRed}" Width="320" Content="Закрыть смену" Command="{Binding CloseReportCommand}"/>
+                                        <StackPanel Visibility="{Binding BtnCloseReport}" Orientation="Horizontal">
+                                            <TextBox Style="{StaticResource InputTB}" Height="60" Width="140" Margin="0 0 40 0" Tag="Премия" PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding Award}"/>
+                                            <Button Style="{StaticResource ButtonInPanelCyan}" Command="{Binding GiveAwardCommand}" Content="Зачислить" Width="140"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </StackPanel>
 

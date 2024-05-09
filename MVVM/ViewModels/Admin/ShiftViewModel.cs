@@ -108,6 +108,22 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _checkListOneObjVisibility, value);
         }
 
+
+        private Visibility _btnCloseReport = Visibility.Collapsed;
+        public Visibility BtnCloseReport
+        {
+            get => _btnCloseReport;
+            set => Set(ref _btnCloseReport, value);
+        }
+
+        private Visibility _btnOpenReport = Visibility.Collapsed;
+        public Visibility BtnOpenReport
+        {
+            get => _btnOpenReport;
+            set => Set(ref _btnOpenReport, value);
+        }
+
+
         private string _searchStr = string.Empty;
         public string SearchStr
         {
@@ -207,7 +223,20 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public DailyReportViewModel? SelectedDReport
         {
             get => _selectedDReport;
-            set => Set(ref _selectedDReport, value);
+            set
+            {
+                _selectedDReport = value;
+                if (value != null)
+                {
+                    BtnCloseReport = Visibility.Collapsed;
+                    BtnOpenReport = Visibility.Collapsed;
+                    if (value.CloseTime == null)
+                        BtnOpenReport = Visibility.Visible;
+                    else
+                        BtnCloseReport = Visibility.Visible;
+                }
+                OnPropertyChanged();
+            }
         }
 
         private string _award = string.Empty;
@@ -220,6 +249,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 OnPropertyChanged();
             }
         }
+
         #endregion
 
         #region Commands
@@ -232,9 +262,14 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanGiveAwardCommandExecute(object p) => true;
         private async void OnGiveAwardCommandExecuted(object p)
         {
+            if (SelectedDReport.CloseTime == null)
+            {
+                AppCommand.WarningMessage("Закройте смену, а затем повторите попытку.");
+                return;
+            }
             if (string.IsNullOrEmpty(Award))
             {
-                AppCommand.WarningMessage("Введите премию в поле \"Выдать\"");
+                AppCommand.WarningMessage("Введите премию в поле \"Премия\"");
                 return;
             }
             if (!int.TryParse(Award, out int parsed))
@@ -259,6 +294,24 @@ namespace Cashbox.MVVM.ViewModels.Admin
             SelectedOrder = null;
             CheckListOneObjVisibility = Visibility.Collapsed;
             CheckListVisibility = Visibility.Visible;
+        }
+
+        public RelayCommand CloseReportCommand { get; set; }
+        private bool CanCloseReportCommandExecute(object p) => true;
+        private async void OnCloseReportCommandExecuted(object p)
+        {
+            if (AppCommand.QuestionMessage($"Закрыть смену сотрудника {SelectedDReport.UserInfoVM.FullName}?") == MessageBoxResult.Yes)
+            {
+                double DayOrdersProccesedSum;
+                List<OrderViewModel> DayOrdersProccesed = await OrderViewModel.GetDayOrdersToMethod((DateOnly)SelectedDReport.Data!, 2);
+                if (DayOrdersProccesed.Count > 0)
+                    DayOrdersProccesedSum = (double)DayOrdersProccesed.Sum(x => x.SellCost)! + SelectedDReport.CashOnStart;
+                else
+                    DayOrdersProccesedSum = SelectedDReport.CashOnStart;
+                DailyReportViewModel drvm = await DailyReportViewModel.EndShift((DateOnly)SelectedDReport.Data!, new(23, 59, 59), DayOrdersProccesedSum, SelectedDReport.UserId);
+                await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
+            }
+            
         }
 
         public RelayCommand SeeOrderListCommand { get; set; }
@@ -365,6 +418,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public override async void OnLoad()
         {
             ProductCollection = new(await ProductViewModel.GetProducts(true));
+            Update();
         }
 
         public async void Update()
@@ -388,6 +442,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         public ShiftViewModel()
         {
             Update();
+            CloseReportCommand = new RelayCommand(OnCloseReportCommandExecuted, CanCloseReportCommandExecute);
             RejectRefundCommand = new RelayCommand(OnRejectRefundCommandExecuted, CanRejectRefundCommandExecute);
             GiveAwardCommand = new RelayCommand(OnGiveAwardCommandExecuted, CanGiveAwardCommandExecute);
             OpenUnRefundCommand = new RelayCommand(OnOpenUnRefundCommandExecuted, CanOpenUnRefundCommandExecute);
