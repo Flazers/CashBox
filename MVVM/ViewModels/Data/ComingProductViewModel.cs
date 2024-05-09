@@ -9,6 +9,7 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public static async Task<bool> NewComing(double BuyCost) => await ComingProduct.NewComing(BuyCost);
         public static async Task<List<ComingProductViewModel>> GetComing() => await ComingProduct.GetComing();
+        public static async Task<List<ComingProductViewModel>> GetComingFromData(DateTime startDate, DateTime endDate) => await ComingProduct.GetComingFromData(startDate, endDate);
 
         public int Id => _comingProduct.Id;
         public int UserId => _comingProduct.UserId;

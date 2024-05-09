@@ -594,6 +594,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             if (await RefundViewModel.CreateDraw(SelectedProductRef.FirstOrDefault().Id, DateOnly.FromDateTime(RefundBuyDate)))
                 AppCommand.InfoMessage("Продукт разыгран");
             CurrentRefund = null;
+            await Update();
             OnOpenMenuPanelCommandExecuted(p);
         }
 

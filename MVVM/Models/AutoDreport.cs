@@ -6,13 +6,13 @@ public partial class AutoDreport
 
     public int Salary { get; set; }
 
-    public double? AutoProceeds { get; set; }
+    public double AutoProceeds { get; set; }
 
-    public double? Forfeit { get; set; }
+    public double Forfeit { get; set; }
 
-    public int? Award { get; set; }
+    public int Award { get; set; }
 
-    public double? FullTransit { get; set; }
+    public double FullTransit { get; set; }
 
     public virtual DailyReport DailyReport { get; set; } = null!;
 }

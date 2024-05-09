@@ -12,9 +12,9 @@ public partial class Order
 
     public int DailyReportId { get; set; }
 
-    public double? SellCost { get; set; }
+    public double SellCost { get; set; }
 
-    public double? Discount { get; set; }
+    public double Discount { get; set; }
 
     public virtual ICollection<OrderProduct>? OrderProducts { get; set; } = [];
 

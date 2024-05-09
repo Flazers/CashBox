@@ -79,13 +79,18 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 AppCommand.WarningMessage("Введите деньги на начало смены");
                 return;
             }
+            if (StartCash == StartCashtDef.ToString() && MoneySet == MoneySetDef.ToString())
+            {
+                AppCommand.InfoMessage("Изменения сохранены");
+                return;
+            }
             UserViewModel user = UserViewModel.GetCurrentUser();
             await AppSettingsViewModel.EditSetting(int.Parse(MoneySet), int.Parse(StartCash));
             if (StartCash != StartCashtDef.ToString())
                 await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} отредактировал деньги на начало смены ( {StartCashtDef} ₽ => {StartCash} ₽)", int.Parse(StartCash));
             if (MoneySet != MoneySetDef.ToString())
                 await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} отредактировал зарплату за выход ( {MoneySetDef} ₽ => {MoneySet} ₽)", int.Parse(MoneySet));
-            AppCommand.InfoMessage("Успех");
+            AppCommand.InfoMessage("Изменения сохранены");
             await Update();
         }
 
@@ -105,6 +110,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                                                       x.Action.Trim().Contains(SearchStr.Trim(), StringComparison.CurrentCultureIgnoreCase)
                                                       ).Take(LogCount));
             MoneySetDef = AppSettingsViewModel.Settings.Salary;
+            StartCashtDef = AppSettingsViewModel.Settings.StartCash;
         }
 
         public override void OnLoad()

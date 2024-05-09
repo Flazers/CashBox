@@ -34,11 +34,8 @@ namespace Cashbox.MVVM.Models
             try
             {
                 AppSettings appsetting = CashBoxDataContext.Context.AppSettings.FirstOrDefault(x => x.Id == 1)!;
-                if (salary != 0 && startcash != 0)
-                {
-                    appsetting.Salary = salary;
-                    appsetting.StartCash = startcash;
-                }
+                appsetting.Salary = salary;
+                appsetting.StartCash = startcash;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }

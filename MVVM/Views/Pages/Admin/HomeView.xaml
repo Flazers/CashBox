@@ -70,27 +70,72 @@
             <StackPanel Width="560">
                 <Border Style="{StaticResource PanelBorder}" Height="880">
                     <StackPanel>
-                        <Grid Margin="0 -10 0 30" Height="80">
-                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Детализация доходов"/>
+                        <Grid Margin="0 -10 0 20" Height="80">
+                            <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Детализация"/>
                             <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                         </Grid>
-                        <StackPanel Height="680" Margin="10 0 10 10">
-                            <ItemsControl ItemsSource="{Binding Details}" d:ItemsSource="{d:SampleData ItemCount=6}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Icon:PackIconMaterial Kind="Safe" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
-                                                <TextBlock Margin="10 0 0 0" Text="{Binding Category}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
-                                            </StackPanel>
-                                            <TextBlock HorizontalAlignment="Right" Text="{Binding Money, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
+                        <ScrollViewer Height="670" Margin="10">
+                            <StackPanel Margin="0 0 20 0">
 
-                        <StackPanel Margin="10" Orientation="Horizontal">
+                                <Grid Margin="0 0 0 10">
+                                    <Icon:PackIconMaterial Kind="PlusBoxOutline" Foreground="{StaticResource BasicW}" Height="40" Width="40"/>
+                                    <TextBlock Margin="50 0 0 0" Text="Доходы" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                    <TextBlock HorizontalAlignment="Right" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{} {0} - {1} ₽">
+                                                <Binding Path="Income"/>
+                                                <Binding Path="ExpensesDiscount"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+
+                                <ItemsControl Margin="10 0 0 0" ItemsSource="{Binding Details}" d:ItemsSource="{d:SampleData ItemCount=6}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0 0 0 5">
+                                                <TextBlock Margin="10 0 0 0" Text="{Binding Category}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                                <TextBlock HorizontalAlignment="Right" Text="{Binding Money, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <Grid Margin="0 30 0 10">
+                                    <Icon:PackIconMaterial Kind="MinusBoxOutline" Foreground="{StaticResource BasicW}" Height="40" Width="40"/>
+                                    <TextBlock Margin="50 0 0 0" Text="Расходы" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                    <TextBlock HorizontalAlignment="Right" Text="{Binding Expenses, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                </Grid>
+
+                                <StackPanel Margin="10 0 0 0">
+                                    <Grid Margin="0 0 0 5">
+                                        <TextBlock Margin="10 0 0 0" Text="Зарплата сотрудникам" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                        <TextBlock HorizontalAlignment="Right" Text="{Binding ExpensesSalary, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                    </Grid>
+                                    <Grid Margin="0 0 0 5">
+                                        <TextBlock Margin="10 0 0 0" Text="Приходы" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                        <TextBlock HorizontalAlignment="Right" Text="{Binding ExpensesProduct, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                    </Grid>
+                                </StackPanel>
+
+
+                                <Grid Margin="0 30 0 10">
+                                    <Icon:PackIconMaterial Kind="Inbox" Foreground="{StaticResource BasicW}" Height="40" Width="40"/>
+                                    <TextBlock Margin="50 0 0 0" Text="Прибыль" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                    <TextBlock HorizontalAlignment="Right" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{} {0} - {1} ₽">
+                                                <Binding Path="Profit"/>
+                                                <Binding Path="ExpensesDiscount"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <StackPanel Margin="10 20 10 10" Orientation="Horizontal">
                             <DatePicker Width="195" Margin="0 0 40 0" SelectedDate="{Binding StartDate}" Tag="С "/>
                             <DatePicker Width="195" Margin="0 0 40 0" SelectedDate="{Binding EndDate}" Tag="По"/>
                             <Button Height="50" Width="50" Command="{Binding GetDetailCommand}" Style="{StaticResource ButtonInPanelGreen}">
@@ -101,6 +146,6 @@
                 </Border>
             </StackPanel>
         </StackPanel>
-        
+
     </StackPanel>
 </UserControl>

@@ -22,7 +22,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double? AutoProceeds
+        public double AutoProceeds
         {
             get => _autoDreport.AutoProceeds;
             set
@@ -32,7 +32,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double? FullTransit
+        public double FullTransit
         {
             get => _autoDreport.FullTransit;
             set
@@ -42,7 +42,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double? Forfeit
+        public double Forfeit
         {
             get => _autoDreport.Forfeit;
             set
@@ -52,7 +52,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public int? Award
+        public int Award
         {
             get => _autoDreport.Award;
             set

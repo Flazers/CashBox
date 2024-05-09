@@ -64,7 +64,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double? SellCost
+        public double SellCost
         {
             get => _order.SellCost;
             set
@@ -74,7 +74,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double? Discount
+        public double Discount
         {
             get => _order.Discount;
             set
@@ -94,7 +94,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double? SellCostWithDiscount
+        public double SellCostWithDiscount
         {
             get => _order.SellCost - (_order.SellCost / 100 * _order.Discount);
         }

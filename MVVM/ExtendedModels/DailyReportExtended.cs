@@ -74,20 +74,20 @@ namespace Cashbox.MVVM.Models
             {
                 if (drvm == null)
                     return false;
+                drvm.TakedSalary = true;
                 int allsalary = salary + award;
                 int tempsalary = 0;
-                drvm.AutoDreportVM.Salary = allsalary;
+                drvm.AutoDreportVM.Salary = salary;
                 drvm.AutoDreportVM.Award = award;
-                drvm.TakedSalary = true;
                 int money = MoneyBoxViewModel.GetMoney;
                 if (money < allsalary)
                 {
                     tempsalary = allsalary - money;
-                    AppCommand.InfoMessage($"Денег в кассе недостаточно для выдачи полной зарплаты, напишите администратору для получения остатка зарплаты: {tempsalary} ₽");
+                    AppCommand.InfoMessage($"Денег в кассе недостаточно для выдачи полной зарплаты, напишите администратору для получения остатка зарплаты: \nЗарплата: {salary}\nПремия: {award}\nВзято из кассы: {allsalary - tempsalary}\nОстаток:{tempsalary} ₽");
                 }
                 await MoneyBoxViewModel.UpdateMoney(allsalary - tempsalary, 2);
-                await AdminMoneyLogViewModel.CreateTransitMB($"Сотрудник (id: {drvm.UserId}) {drvm.UserInfoVM.FullName} забрал из кассы {allsalary - tempsalary} ₽", allsalary - tempsalary);
-                drvm.UserInfoVM.Salary = 0;
+                await AdminMoneyLogViewModel.CreateTransitMB($"Сотрудник (id: {drvm.UserId}) {drvm.UserInfoVM.FullName} забрал из кассы {allsalary - tempsalary} ₽ \nЗарплата: {salary} ₽. \nПремия: {award} ₽ ", allsalary - tempsalary);
+                drvm.UserInfoVM.Salary -= allsalary;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }

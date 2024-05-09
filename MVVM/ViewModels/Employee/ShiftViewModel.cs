@@ -270,6 +270,11 @@ namespace Cashbox.MVVM.ViewModels.Employee
         private bool CanTakeSalaryCommandExecute(object p) => true;
         private async void OnTakeSalaryCommandExecuted(object p)
         {
+            if (DailyReportVMobj.UserId != UserViewModel.GetCurrentUser().Id)
+            {
+                AppCommand.WarningMessage("Вы не можете собрать зарплату за другого.");
+                return;
+            }
             if (DailyReportVMobj.TakedSalary)
             {
                 AppCommand.WarningMessage("Зарплата уже собрана.");
@@ -280,7 +285,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 AppCommand.ErrorMessage("Не удалось получить зарплату");
                 return;
             }
-            Salary = DailyReportVMobj.UserInfoVM.Salary;
+            Salary = AutoShift.Salary;
+            Award = AutoShift.Award;
 
         }
 

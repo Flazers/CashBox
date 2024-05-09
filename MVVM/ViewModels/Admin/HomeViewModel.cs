@@ -25,6 +25,49 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _details, value);
         }
 
+        private double _income = 0;
+        public double Income
+        {
+            get => _income;
+            set => Set(ref _income, value);
+        }
+
+        private double _expensesProduct = 0;
+        public double ExpensesProduct
+        {
+            get => _expensesProduct;
+            set => Set(ref _expensesProduct, value);
+        }
+
+        private double _expensesDiscount = 0;
+        public double ExpensesDiscount
+        {
+            get => _expensesDiscount;
+            set => Set(ref _expensesDiscount, value);
+        }
+
+        private double _expensesSalary = 0;
+        public double ExpensesSalary
+        {
+            get => _expensesSalary;
+            set => Set(ref _expensesSalary, value);
+        }
+
+        private double _expenses = 0;
+        public double Expenses
+        {
+            get => _expenses;
+            set => Set(ref _expenses, value);
+        }
+
+        private double _profit = 0;
+        public double Profit
+        {
+            get => _profit;
+            set => Set(ref _profit, value);
+        }
+        
+
         private ObservableCollection<AuthHistoryViewModel>? _authHistory;
         public ObservableCollection<AuthHistoryViewModel>? AuthHistory
         {
@@ -133,6 +176,13 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private async void OnGetDetailCommandExecuted(object p)
         {
             Details.Clear();
+            Expenses = 0;
+            Income = 0;
+            ExpensesProduct = 0;
+            ExpensesSalary = 0;
+            Profit = 0;
+            ExpensesDiscount = 0;
+
             List<ProductCategoryViewModel> productCategory = await ProductCategoryViewModel.GetProductCategory();
             productCategory.Remove(productCategory[0]);
             List<ProductViewModel> product = await ProductViewModel.GetProducts(true);
@@ -142,11 +192,25 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     Category = category.Category,
                     Money = 0
                 });
-            foreach (var orderProduct in await OrderProductViewModel.GetOrderProduct(StartDate, EndDate))
+            List<OrderProductViewModel> ordersProd = await OrderProductViewModel.GetOrderProduct(StartDate, EndDate);
+            List<OrderViewModel> orders = await OrderViewModel.GetSellDetail(DateOnly.FromDateTime(StartDate), DateOnly.FromDateTime(EndDate));
+            foreach (var order in orders)
+                ExpensesDiscount += order.SellCostWithDiscount;
+            foreach (var orderProduct in ordersProd)
             {
-                var selectedproduct = product.FirstOrDefault(x => x.Id == orderProduct.ProductId);
-                Details.FirstOrDefault(x => x.Category == selectedproduct.Category.Category).Money += selectedproduct.SellCost * orderProduct.Amount;
+                double allcost = orderProduct.SellCost * orderProduct.Amount;
+                Details.FirstOrDefault(x => x.Category == orderProduct.Product.Category.Category).Money += allcost;
+                Income += allcost;
             }
+            List<DailyReportViewModel> dailyReports = await DailyReportViewModel.GetPeriodReports(DateOnly.FromDateTime(StartDate), DateOnly.FromDateTime(EndDate));
+            foreach (var item in dailyReports)
+                ExpensesSalary += item.AutoDreportVM.Salary + item.AutoDreportVM.Award;
+            List<ComingProductViewModel> comingProducts = await ComingProductViewModel.GetComingFromData(StartDate, EndDate);
+            foreach (var item in comingProducts)
+                ExpensesProduct += item.BuyCost;
+            ExpensesDiscount = Math.Round(Income - ExpensesDiscount, 1);
+            Expenses = ExpensesSalary + ExpensesProduct;
+            Profit = Income - Expenses;
         }
 
 

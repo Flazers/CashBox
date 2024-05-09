@@ -1,5 +1,6 @@
 ﻿using Cashbox.Core;
 using Cashbox.MVVM.Models;
+using System.Windows;
 
 namespace Cashbox.MVVM.ViewModels.Data
 {
@@ -87,6 +88,16 @@ namespace Cashbox.MVVM.ViewModels.Data
             {
                 _dailyReport.TakedSalary = value;
                 OnPropertyChanged();
+            }
+        }
+
+        public Visibility TakedSalaryVisibility
+        {
+            get
+            {
+                if (TakedSalary)
+                    return Visibility.Visible;
+                return Visibility.Collapsed;
             }
         }
 

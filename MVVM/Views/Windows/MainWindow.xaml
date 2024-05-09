@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Cashbox.Views.Windows"
         mc:Ignorable="d"
         Title="MainWindow" 
-        Height="1200" Width="1920" 
+        Height="1080" Width="1920" 
         Icon="/Assets/Icons/64x64.png"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"

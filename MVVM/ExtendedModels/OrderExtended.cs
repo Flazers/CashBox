@@ -67,6 +67,8 @@ namespace Cashbox.MVVM.Models
                 UserId = UserViewModel.GetCurrentUser().Id,
                 DailyReportId = DailyReportViewModel.GetCurrentShift().Id,
                 SellDatetime = DateTime.Now,
+                SellCost = 0,
+                Discount = 0,
             };
             CashBoxDataContext.Context.Add(OrderComposition);
             await CashBoxDataContext.Context.SaveChangesAsync();

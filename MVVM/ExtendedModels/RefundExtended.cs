@@ -96,6 +96,10 @@ namespace Cashbox.MVVM.Models
         {
             try
             {
+                Product prod = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == productid);
+                if (prod == null)
+                    return false;
+                prod.Stock.Amount--;
                 CurrentRefund.Reason = "Розыгрыш";
                 CurrentRefund.BuyDate = datedraw;
                 CurrentRefund.ProductId = productid;

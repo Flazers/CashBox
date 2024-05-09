@@ -31,5 +31,6 @@ namespace Cashbox.MVVM.Models
 
         public static async Task<bool> NewComing(double BuyCost) => await CreateNewComing(BuyCost);
         public static async Task<List<ComingProductViewModel>> GetComing() => await CashBoxDataContext.Context.ComingProducts.Select(s => new ComingProductViewModel(s)).ToListAsync();
+        public static async Task<List<ComingProductViewModel>> GetComingFromData(DateTime startDate, DateTime endDate) => await CashBoxDataContext.Context.ComingProducts.Where(x => x.CommingDatetime >= startDate && x.CommingDatetime <= endDate).Select(s => new ComingProductViewModel(s)).ToListAsync();
     }
 }
