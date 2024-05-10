@@ -86,7 +86,8 @@ namespace Cashbox.MVVM.Models
                     AppCommand.InfoMessage($"Денег в кассе недостаточно для выдачи полной зарплаты, напишите администратору для получения остатка зарплаты: \nЗарплата: {salary}\nПремия: {award}\nВзято из кассы: {allsalary - tempsalary}\nОстаток:{tempsalary} ₽");
                 }
                 await MoneyBoxViewModel.UpdateMoney(allsalary - tempsalary, 2);
-                await AdminMoneyLogViewModel.CreateTransitMB($"Сотрудник (id: {drvm.UserId}) {drvm.UserInfoVM.FullName} забрал из кассы {allsalary - tempsalary} ₽ \nЗарплата: {salary} ₽. \nПремия: {award} ₽ ", allsalary - tempsalary);
+                if (allsalary - tempsalary != 0)
+                    await AdminMoneyLogViewModel.CreateTransitMB($"Сотрудник (id: {drvm.UserId}) {drvm.UserInfoVM.FullName} забрал из кассы {allsalary - tempsalary} ₽ \nЗарплата: {salary} ₽. \nПремия: {award} ₽ ", allsalary - tempsalary);
                 drvm.UserInfoVM.Salary -= allsalary;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;

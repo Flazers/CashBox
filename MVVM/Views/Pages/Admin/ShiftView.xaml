@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages.Admin"
-             d:DataContext="{d:DesignInstance Type=vm:ShiftViewModel}"
              xmlns:vm="clr-namespace:Cashbox.MVVM.ViewModels.Admin"
+             d:DataContext="{d:DesignInstance Type=vm:ShiftViewModel}"
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
              d:DesignHeight="880" d:DesignWidth="1700">
@@ -23,6 +23,7 @@
                         <Grid Margin="10 10 10 30">
                             <TextBox Style="{StaticResource Search}" Text="{Binding SearchStr}" x:Name="Search" KeyDown="Search_KeyDown" HorizontalAlignment="Left" Width="300"/>
                             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <TextBlock Text="{Binding DailyReportCollection.Count, StringFormat='\ {0} шт.'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Margin="0 0 40 0"/>
                                 <DatePicker SelectedDate="{Binding StartDate}" Width="195" Margin="0 0 40 0" Tag="С "/>
                                 <DatePicker SelectedDate="{Binding EndDate}" Width="195" Margin="0 0 40 0" Tag="По"/>
                                 <Button Height="50" x:Name="SearchBtn" Width="50" Command="{Binding SearchDataCommand}" Style="{StaticResource ButtonInPanelGreen}">
@@ -30,9 +31,9 @@
                                 </Button>
                             </StackPanel>
                         </Grid>
-                        <!--<Grid Visibility="{Binding NoDailyReports}" Height="560" Margin="10 0 10 10">
+                        <Grid Visibility="{Binding NoDailyReports}" Height="560" Margin="10 0 10 10">
                             <TextBlock Text="Отчетов нет" Style="{StaticResource TitleText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>-->
+                        </Grid>
                         <ScrollViewer Visibility="{Binding DailyReports}" Height="560" Margin="10 0 10 10">
                             <ItemsControl ItemsSource="{Binding DailyReportCollection}" d:ItemsSource="{d:SampleData ItemCount=2}">
                                 <ItemsControl.ItemTemplate>

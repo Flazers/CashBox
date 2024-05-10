@@ -18,6 +18,7 @@
                         <DockPanel Margin="5 0" VerticalAlignment="Center">
                             <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Логи"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBlock Text="{Binding CollectionsLogs.Count, StringFormat='\Найдено: {0}'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Margin="0 0 40 0"/>
                                 <Button Height="60" x:Name="ReloadBtn" Command="{Binding UpdateLogCommand}" Width="60" Margin="0 0 20 0" Style="{StaticResource ButtonInPanelGreen}">
                                     <Icon:PackIconMaterial Kind="Reload" Width="30" Height="30"/>
                                 </Button>

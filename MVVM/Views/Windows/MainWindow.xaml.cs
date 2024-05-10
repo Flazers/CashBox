@@ -14,17 +14,5 @@ namespace Cashbox.Views.Windows
             InitializeComponent();
         }
 
-        private void MainWindow_Closing(object? sender, CancelEventArgs e)
-        {
-            //MessageBoxResult res = MessageBox.Show("закрыть окно", "", MessageBoxButton.YesNo);
-            //if (res == MessageBoxResult.Yes)
-            //{
-            //    e.Cancel = false;
-            //    return;
-            //}
-            //MessageBox.Show("не закрыл");
-            //e.Cancel = true;
-        }
-
     }
 }
