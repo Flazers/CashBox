@@ -247,6 +247,11 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 AppCommand.WarningMessage("Нельзя выдать зарплату больше чем начислено.");
                 return;
             }
+            if (int.Parse(GivenSalary.Trim()) == 0)
+            {
+                AppCommand.WarningMessage("Введите корректное значение.");
+                return;
+            }
             UserViewModel user = UserViewModel.GetCurrentUser();
             await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} выдал зарплату сотруднику (id: {SelectedUser.Id}) {SelectedUser.UserInfo.FullName} в размере {GivenSalary} ₽", double.Parse(GivenSalary), SelectedUser.Id);
             await UserViewModel.TakeSalary(SelectedUser, int.Parse(GivenSalary));

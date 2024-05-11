@@ -218,11 +218,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public override async void OnLoad()
         {
-            if (CashInBox > 1500)
-                NewCashInBox = CashInBox - 1500;
+            NewCashInBox = CashInBox;
             List<AuthHistoryViewModel> authHistoryViewModels = await AuthHistoryViewModel.GetAuthHistories();
             AuthHistory = new([.. authHistoryViewModels.TakeLast(3).OrderByDescending(x => x.Datetime)]);
-
         }
 
         public HomeViewModel()
