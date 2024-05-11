@@ -52,14 +52,23 @@
                     <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                 </Grid>
                 <StackPanel Height="690" Margin="10 0">
-                    <Grid Margin="0 0 0 40">
+                    <Grid Margin="0 0 0 20">
                         <StackPanel Orientation="Horizontal">
                             <Icon:PackIconMaterial Kind="Cash" Foreground="{StaticResource BasicW}" Height="50" Width="50"/>
                             <TextBlock Margin="10 0 0 0" Text="Зарплата за выход" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                         </StackPanel>
                         <TextBlock HorizontalAlignment="Right" Text="{Binding MoneySetDef, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                     </Grid>
-                    <TextBox Style="{StaticResource InputTB}" Text="{Binding MoneySet}" Tag="Зарплата за выход" PreviewTextInput="TextBox_PreviewTextInput"/>
+                    <TextBox Style="{StaticResource InputTB}" Text="{Binding MoneySet}" Margin="0 0 0 40" Tag="Зарплата за выход" PreviewTextInput="TextBox_PreviewTextInput"/>
+                    
+                    <Grid Margin="0 0 0 20">
+                        <StackPanel Orientation="Horizontal">
+                            <Icon:PackIconMaterial Kind="Safe" Foreground="{StaticResource BasicW}" Height="50" Width="50"/>
+                            <TextBlock Margin="10 0 0 0" Text="Денег на н. c." Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                        </StackPanel>
+                        <TextBlock HorizontalAlignment="Right" Text="{Binding StartCashtDef, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                    </Grid>
+                    <TextBox Style="{StaticResource InputTB}" Text="{Binding StartCash}" Tag="Денег на начало смены" PreviewTextInput="TextBox_PreviewTextInput"/>
                 </StackPanel>
                 <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding SaveSettingsCommand}" Margin="10 0" Content="Сохранить"/>
             </StackPanel>

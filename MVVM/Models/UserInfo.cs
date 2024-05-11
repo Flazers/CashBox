@@ -18,7 +18,7 @@ public partial class UserInfo
 
     public bool IsActive { get; set; }
 
-    public double Salary { get; set; }
+    public int Salary { get; set; }
 
     public virtual Role Role { get; set; } = null!;
 

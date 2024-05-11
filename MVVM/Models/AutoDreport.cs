@@ -10,7 +10,7 @@ public partial class AutoDreport
 
     public double? Forfeit { get; set; }
 
-    public double? Award { get; set; }
+    public int? Award { get; set; }
 
     public double? FullTransit { get; set; }
 

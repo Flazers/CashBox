@@ -52,7 +52,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double? Award
+        public int? Award
         {
             get => _autoDreport.Award;
             set

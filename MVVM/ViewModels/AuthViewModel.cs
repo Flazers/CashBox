@@ -71,12 +71,10 @@ namespace Cashbox.MVVM.ViewModels
 
                 static async void closereport(DailyReportViewModel report)
                 {
-                    double DayOrdersProccesedSum;
+                    int DayOrdersProccesedSum = 0;
                     List<OrderViewModel> DayOrdersProccesed = await OrderViewModel.GetDayOrdersToMethod((DateOnly)report.Data!, 2);
                     if (DayOrdersProccesed.Count > 0)
-                        DayOrdersProccesedSum = (double)DayOrdersProccesed.Sum(x => x.SellCost)! + report.CashOnStart;
-                    else
-                        DayOrdersProccesedSum = report.CashOnStart;
+                        DayOrdersProccesedSum = (int)DayOrdersProccesed.Sum(x => x.SellCostWithDiscount)!;
                     DailyReportViewModel drvm = await DailyReportViewModel.EndShift((DateOnly)report.Data!, new(23, 59, 59), DayOrdersProccesedSum, report.UserId);
                     await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
                 }

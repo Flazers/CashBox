@@ -302,12 +302,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
         {
             if (AppCommand.QuestionMessage($"Закрыть смену сотрудника {SelectedDReport.UserInfoVM.FullName}?") == MessageBoxResult.Yes)
             {
-                double DayOrdersProccesedSum;
+                int DayOrdersProccesedSum = 0;
                 List<OrderViewModel> DayOrdersProccesed = await OrderViewModel.GetDayOrdersToMethod((DateOnly)SelectedDReport.Data!, 2);
                 if (DayOrdersProccesed.Count > 0)
-                    DayOrdersProccesedSum = (double)DayOrdersProccesed.Sum(x => x.SellCost)! + SelectedDReport.CashOnStart;
-                else
-                    DayOrdersProccesedSum = SelectedDReport.CashOnStart;
+                    DayOrdersProccesedSum = (int)DayOrdersProccesed.Sum(x => x.SellCostWithDiscount)!;
                 DailyReportViewModel drvm = await DailyReportViewModel.EndShift((DateOnly)SelectedDReport.Data!, new(23, 59, 59), DayOrdersProccesedSum, SelectedDReport.UserId);
                 await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
             }

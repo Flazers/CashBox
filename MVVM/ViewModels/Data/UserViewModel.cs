@@ -14,7 +14,7 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<UserViewModel?> CreateUser(int pincode, string name, string surname, string patronymic, string location, string phone, RoleViewModel role) => await User.CreateUser(pincode, name, surname, patronymic, location, phone, role);
         public static async Task<List<UserViewModel>> GetListUsers(bool ShowAllUsers = false) => await User.GetListUsers(ShowAllUsers);
         public static async Task<bool> EditUser(UserViewModel userVM) => await User.EditUser(userVM);
-        public static async Task<bool> TakeSalary(UserViewModel userVM, double money) => await User.TakeSalary(userVM, money);
+        public static async Task<bool> TakeSalary(UserViewModel userVM, int money) => await User.TakeSalary(userVM, money);
 
         public void SetUserInfo(UserInfoViewModel? userInfoViewModel)
         {

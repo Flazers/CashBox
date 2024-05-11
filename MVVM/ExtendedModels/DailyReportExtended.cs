@@ -36,7 +36,7 @@ namespace Cashbox.MVVM.Models
                     Data = date,
                     OpenTime = time,
                     UserId = user.Id,
-                    CashOnStart = MoneyBox.GetMoney,
+                    TakedSalary = false
                 };
                 CashBoxDataContext.Context.Add(dailyReport);
                 await CashBoxDataContext.Context.SaveChangesAsync();
@@ -52,19 +52,49 @@ namespace Cashbox.MVVM.Models
 
         }
 
-        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double Proceeds, int userId)
+        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, int Proceeds, int userId)
         {
             try
             {
                 DailyReport DR = await CashBoxDataContext.Context.DailyReports.FirstOrDefaultAsync(x => x.Data == date && x.UserId == userId);
                 DR.CloseTime = time;
-                DR.Proceeds = Proceeds - DR.CashOnStart;
+                DR.Proceeds = Proceeds;
                 return new(DR);
             }
             catch (Exception ex)
             {
                 AppCommand.ErrorMessage(ex.Message);
                 return new(null!);
+            }
+        }
+
+        public static async Task<bool> TakeSalary(DailyReportViewModel drvm, int award, int salary)
+        {
+            try
+            {
+                if (drvm == null)
+                    return false;
+                int allsalary = salary + award;
+                int tempsalary = 0;
+                drvm.AutoDreportVM.Salary = allsalary;
+                drvm.AutoDreportVM.Award = award;
+                drvm.TakedSalary = true;
+                int money = MoneyBoxViewModel.GetMoney;
+                if (money < allsalary)
+                {
+                    tempsalary = allsalary - money;
+                    AppCommand.InfoMessage($"Денег в кассе недостаточно для выдачи полной зарплаты, напишите администратору для получения остатка зарплаты: {tempsalary} ₽");
+                }
+                await MoneyBoxViewModel.UpdateMoney(allsalary - tempsalary, 2);
+                await AdminMoneyLogViewModel.CreateTransitMB($"Сотрудник (id: {drvm.UserId}) {drvm.UserInfoVM.FullName} забрал из кассы {allsalary - tempsalary} ₽", allsalary - tempsalary);
+                drvm.UserInfoVM.Salary = 0;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
             }
         }
 

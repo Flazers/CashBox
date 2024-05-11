@@ -82,7 +82,7 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        public static async Task<bool> TakeSalary(UserViewModel userVMdata, double money)
+        public static async Task<bool> TakeSalary(UserViewModel userVMdata, int money)
         {
             try
             {

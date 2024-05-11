@@ -357,6 +357,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         {
                             product.SellCost = sellcost;
                             product.AmountRes += amount;
+                            product.IsAvailable = true;
                             listProductVM.Add(product);
                             editedcount++;
                             continue;
@@ -577,7 +578,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             if (resultOpen == true)
             {
                 List<ProductViewModel> products = await ProductViewModel.GetProducts(true);
-                products = [.. products.OrderByDescending(x => x.IsAvailable)];
+                products = [.. products.OrderByDescending(x => x.Brand)];
                 List<ProductCategoryViewModel> category = await ProductCategoryViewModel.GetProductCategory();
                 category.Remove(category[0]);
 

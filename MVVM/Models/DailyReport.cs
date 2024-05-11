@@ -12,9 +12,8 @@ public partial class DailyReport
 
     public int UserId { get; set; }
 
-    public double? Proceeds { get; set; }
-
-    public double CashOnStart { get; set; }
+    public int? Proceeds { get; set; }
+    public bool TakedSalary { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = [];
 

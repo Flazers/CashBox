@@ -78,7 +78,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         #endregion
 
-        private double _startCash = 0;
+        private double _startCash = AppSettingsViewModel.Settings.StartCash;
         public double StartCash
         {
             get => _startCash;
@@ -159,18 +159,39 @@ namespace Cashbox.MVVM.ViewModels.Employee
         public TimeOnly? StartShiftTime
         {
             get => _startShiftTime;
-            set => Set(ref _startShiftTime, value);
+            set
+            {
+                _startShiftTime = value;
+                StartShiftTimeString = value.ToString();
+                OnPropertyChanged();
+            }
         }
 
         private TimeOnly? _endShiftTime;
         public TimeOnly? EndShiftTime
         {
             get => _endShiftTime;
-            set => Set(ref _endShiftTime, value);
+            set
+            {
+                _endShiftTime = value;
+                EndShiftTimeString = value.ToString();
+                OnPropertyChanged();
+            }
         }
 
-        public string? StartShiftTimeString => StartShiftTime.ToString();
-        public string? EndShiftTimeString => EndShiftTime.ToString();
+        private string? _startShiftTimeString;
+        public string? StartShiftTimeString
+        {
+            get => _startShiftTimeString;
+            set => Set(ref _startShiftTimeString, value);
+        }
+
+        private string? _endShiftTimeString;
+        public string? EndShiftTimeString
+        {
+            get => _endShiftTimeString;
+            set => Set(ref _endShiftTimeString, value);
+        }
         
 
         private DateOnly _currentDate = DateOnly.FromDateTime(DateTime.Today);
@@ -178,6 +199,20 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             get => _currentDate;
             set => Set(ref _currentDate, value);
+        }
+
+        private int _salary = 0;
+        public int Salary
+        {
+            get => _salary;
+            set => Set(ref _salary, value);
+        }
+
+        private int _award = 0;
+        public int Award
+        {
+            get => _award;
+            set => Set(ref _award, value);
         }
         #endregion
 
@@ -206,7 +241,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 EndShiftVisibility = Visibility.Collapsed;
                 AppCommand.InfoMessage($"Смена {DailyReportVMobj.Id} открыта");
             }
-           
         }
 
         public RelayCommand EndShiftCommand { get; set; }
@@ -221,7 +255,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
             if (AppCommand.QuestionMessage("После закрытия смены, новую можно открыть только на следующий день. \nВы уверены, что хотите ее закрыть?") == MessageBoxResult.Yes)
             {
                 EndShiftTime = TimeOnly.FromDateTime(DateTime.Now);
-                DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, double.Parse(CurrentCash), UserViewModel.GetCurrentUser().Id);
+                DailyReportViewModel drvm = await DailyReportViewModel.EndShift(CurrentDate, EndShiftTime, int.Parse(CurrentCash), UserViewModel.GetCurrentUser().Id);
                 AutoDailyReportViewModel adreport = await AutoDailyReportViewModel.GenEndShiftAuto(drvm!);
                 StartShiftVisibility = Visibility.Collapsed;
                 ProcessShiftVisibility = Visibility.Visible;
@@ -230,6 +264,23 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 AutoShift = adreport;
                 AppCommand.InfoMessage($"Смена {drvm.Id} закрыта в {EndShiftTimeString}");
             }
+        }
+
+        public RelayCommand TakeSalaryCommand { get; set; }
+        private bool CanTakeSalaryCommandExecute(object p) => true;
+        private async void OnTakeSalaryCommandExecuted(object p)
+        {
+            if (DailyReportVMobj.TakedSalary)
+            {
+                AppCommand.WarningMessage("Зарплата уже собрана.");
+                return;
+            }
+            if (!await DailyReportViewModel.TakeSalary(DailyReportVMobj, Award, Salary))
+            {
+                AppCommand.ErrorMessage("Не удалось получить зарплату");
+                return;
+            }
+            Salary = DailyReportVMobj.UserInfoVM.Salary;
 
         }
 
@@ -281,31 +332,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         public override async void OnLoad()
         {
-            DateOnly dateOnly = DateOnly.FromDateTime(DateTime.Today);
-            CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCostWithDiscount!);
-            NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCostWithDiscount!);
-            SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCostWithDiscount!);
-            DailyReportViewModel drvm = DailyReportViewModel.GetCurrentShift();
-            if (drvm != null)
-            {
-                OrderCollection = new(await OrderViewModel.GetAllDayOrders((DateOnly)drvm.Data!));
-                StartCash = drvm.CashOnStart;
-            }
-            else
-                StartCash = MoneyBoxViewModel.GetMoney;
-            FullTransit = SendTransit + CardTransit + NalTransit;
-            if (StartShiftVisibility == Visibility.Collapsed)
-                OrderCollection = new(Order.GetAllDayOrders(dateOnly).Result);
-        }
-
-        public ShiftViewModel()
-        {
-            SeeOrderListCommand = new RelayCommand(OnSeeOrderListCommandExecuted, CanSeeOrderListCommandExecute);
-            GoBackOrderCommand = new RelayCommand(OnGoBackOrderCommandExecuted, CanGoBackOrderCommandExecute);
-            StartShiftCommand = new RelayCommand(OnStartShiftCommandExecuted, CanStartShiftCommandExecute);
-            EndShiftCommand = new RelayCommand(OnEndShiftCommandExecuted, CanEndShiftCommandExecute);
-            SeeCheckPanelCommand = new RelayCommand(OnSeeCheckPanelCommandExecuted, CanSeeCheckPanelCommandExecute);
-            SeeShiftPanelCommand = new RelayCommand(OnSeeShiftPanelCommandExecuted, CanSeeShiftPanelCommandExecute);
             if (DailyReportVMobj != null)
             {
                 StartShiftTime = DailyReportVMobj.OpenTime;
@@ -324,6 +350,29 @@ namespace Cashbox.MVVM.ViewModels.Employee
                     EndShiftVisibility = Visibility.Collapsed;
                 }
             }
+            DateOnly dateOnly = DateOnly.FromDateTime(DateTime.Today);
+            CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCostWithDiscount!);
+            NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCostWithDiscount!);
+            SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCostWithDiscount!);
+            FullTransit = SendTransit + CardTransit + NalTransit;
+            DailyReportViewModel drvm = DailyReportViewModel.GetCurrentShift();
+            if (drvm != null)
+            {
+                List<OrderViewModel> orders = await OrderViewModel.GetAllDayOrders((DateOnly)drvm.Data!);
+                OrderCollection = new([.. orders.OrderBy(x => x.PaymentMethodId)]);
+            }
+            
+        }
+
+        public ShiftViewModel()
+        {
+            TakeSalaryCommand = new RelayCommand(OnTakeSalaryCommandExecuted, CanTakeSalaryCommandExecute);
+            SeeOrderListCommand = new RelayCommand(OnSeeOrderListCommandExecuted, CanSeeOrderListCommandExecute);
+            GoBackOrderCommand = new RelayCommand(OnGoBackOrderCommandExecuted, CanGoBackOrderCommandExecute);
+            StartShiftCommand = new RelayCommand(OnStartShiftCommandExecuted, CanStartShiftCommandExecute);
+            EndShiftCommand = new RelayCommand(OnEndShiftCommandExecuted, CanEndShiftCommandExecute);
+            SeeCheckPanelCommand = new RelayCommand(OnSeeCheckPanelCommandExecuted, CanSeeCheckPanelCommandExecute);
+            SeeShiftPanelCommand = new RelayCommand(OnSeeShiftPanelCommandExecuted, CanSeeShiftPanelCommandExecute);
         }
     }
 }

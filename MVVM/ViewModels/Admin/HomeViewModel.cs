@@ -64,15 +64,15 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
         }
 
-        private double _cashInBox = MoneyBoxViewModel.GetMoney;
-        public double CashInBox
+        private int _cashInBox = MoneyBoxViewModel.GetMoney;
+        public int CashInBox
         {
             get => _cashInBox;
             set => Set(ref _cashInBox, value);
         }
 
-        private double _newCashInBox = 0;
-        public double NewCashInBox
+        private int _newCashInBox = 0;
+        public int NewCashInBox
         {
             get => _newCashInBox;
             set => Set(ref _newCashInBox, value);

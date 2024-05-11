@@ -344,50 +344,60 @@ namespace Cashbox.MVVM.ViewModels.Employee
         }
         private void OnAddProductInBasketCommandExecuted(object p)
         {
-            ProductViewModel tempselectedprod = CollectionProducts.FirstOrDefault(x => x.Id == (int)p);
-            if (tempselectedprod.IsAvailable == false || tempselectedprod.Stock.Amount == 0)
+            try
             {
-                if (ReturnPanelVisibility != Visibility.Visible && CrackPanelVisibility != Visibility.Visible)
+
+
+                ProductViewModel tempselectedprod = CollectionProducts.FirstOrDefault(x => x.Id == (int)p);
+                if (tempselectedprod.IsAvailable == false || tempselectedprod.Stock.Amount == 0)
                 {
-                    AppCommand.WarningMessage("Товар снят с продажи / нет в наличии");
+                    if (ReturnPanelVisibility != Visibility.Visible && CrackPanelVisibility != Visibility.Visible)
+                    {
+                        AppCommand.WarningMessage("Товар снят с продажи / нет в наличии");
+                        return;
+                    }
+                    SelectedProductRef = [];
+                    SelectedProductRef.Add(CollectionProducts.FirstOrDefault(x => x.Id == (int)p));
                     return;
                 }
-                SelectedProductRef = [];
-                SelectedProductRef.Add(CollectionProducts.FirstOrDefault(x => x.Id == (int)p));
-                return;
+
+                if (ReturnPanelVisibility == Visibility.Visible || CrackPanelVisibility == Visibility.Visible || DrawPanelVisibility == Visibility.Visible)
+                {
+                    SelectedProductRef = [];
+                    SelectedProductRef.Add(CollectionProducts.FirstOrDefault(x => x.Id == (int)p));
+                    return;
+                }
+
+                if (SelectedOrder == null) return;
+
+                OrderProductViewModel AddedProduct = OrderProductsBasket.FirstOrDefault(x => x.ProductId == (int)p);
+                ProductViewModel SelectedProduct = CollectionProducts.FirstOrDefault(x => x.Id == (int)p);
+
+                if (AddedProduct != null)
+                {
+                    OrderProductsBasket.FirstOrDefault(x => x.OrderId == OrderViewModel.OrderComposition.Id && x.ProductId == SelectedProduct.Id).Amount += 1;
+                    return;
+                }
+                if (SelectedProduct != null)
+                {
+                    OrderProductsBasket.Add(
+                        new(
+                            new()
+                            {
+                                ProductId = SelectedProduct.Id,
+                                SellCost = SelectedProduct.SellCost,
+                                OrderId = OrderViewModel.OrderComposition.Id,
+                                Amount = 1,
+                            }
+                        )
+                        { ProductVM = SelectedProduct }
+                    );
+                }
             }
-
-            if (ReturnPanelVisibility == Visibility.Visible || CrackPanelVisibility == Visibility.Visible || DrawPanelVisibility == Visibility.Visible)
+            catch (Exception)
             {
-                SelectedProductRef = [];
-                SelectedProductRef.Add(CollectionProducts.FirstOrDefault(x => x.Id == (int)p));
+                AppCommand.ErrorMessage("Непредвиденная ошибка.");
                 return;
-            }
-
-            if (SelectedOrder == null) return;
-
-            OrderProductViewModel AddedProduct = OrderProductsBasket.FirstOrDefault(x => x.ProductId == (int)p);
-            ProductViewModel SelectedProduct = CollectionProducts.FirstOrDefault(x => x.Id == (int)p);
-
-            if (AddedProduct != null)
-            {
-                OrderProductsBasket.FirstOrDefault(x => x.OrderId == OrderViewModel.OrderComposition.Id && x.ProductId == SelectedProduct.Id).Amount += 1;
-                return;
-            }
-            if (SelectedProduct != null)
-            {
-                OrderProductsBasket.Add(
-                    new(
-                        new()
-                        {
-                            ProductId = SelectedProduct.Id,
-                            SellCost = SelectedProduct.SellCost,
-                            OrderId = OrderViewModel.OrderComposition.Id,
-                            Amount = 1,
-                        }
-                    )
-                    { ProductVM = SelectedProduct }
-                );
             }
         }
 

@@ -82,6 +82,7 @@ public partial class CashBoxDataContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Salary).HasColumnName("salary");
+            entity.Property(e => e.StartCash).HasColumnName("start_cash");
         });
 
         modelBuilder.Entity<AuthHistory>(entity =>
@@ -130,7 +131,7 @@ public partial class CashBoxDataContext : DbContext
             entity.Property(e => e.Data).HasColumnName("data");
             entity.Property(e => e.OpenTime).HasColumnName("open_time");
             entity.Property(e => e.Proceeds).HasColumnName("proceeds");
-            entity.Property(e => e.CashOnStart).HasColumnName("cash_on_start");
+            entity.Property(e => e.TakedSalary).HasColumnName("taked_salary");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.User).WithMany(p => p.DailyReports)

@@ -22,7 +22,7 @@ namespace Cashbox.MVVM.Models
             var data = await GetAllDayOrders(dateOnly);
             double sum = 0;
             foreach (var item in data)
-                sum += (double)item.SellCost!;
+                sum += (double)item.SellCostWithDiscount!;
             return sum;
         }
 

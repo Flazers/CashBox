@@ -114,7 +114,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double Salary
+        public int Salary
         {
             get => _userInfo.Salary;
             set

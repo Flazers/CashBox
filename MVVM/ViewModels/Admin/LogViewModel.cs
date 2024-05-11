@@ -40,6 +40,20 @@ namespace Cashbox.MVVM.ViewModels.Admin
             set => Set(ref _moneySet, value);
         }
 
+        private int _startCashtDef = AppSettingsViewModel.Settings.StartCash;
+        public int StartCashtDef
+        {
+            get => _startCashtDef;
+            set => Set(ref _startCashtDef, value);
+        }
+
+        private string _startCash = AppSettingsViewModel.Settings.StartCash.ToString();
+        public string StartCash
+        {
+            get => _startCash;
+            set => Set(ref _startCash, value);
+        }
+
         private string _searchStr = string.Empty;
         public string SearchStr
         {
@@ -60,10 +74,18 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 AppCommand.WarningMessage("Введите зарплату за выход");
                 return;
             }
-            await AppSettingsViewModel.EditSetting(int.Parse(MoneySet));
+            if (string.IsNullOrEmpty(StartCash))
+            {
+                AppCommand.WarningMessage("Введите деньги на начало смены");
+                return;
+            }
             UserViewModel user = UserViewModel.GetCurrentUser();
-            await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} отредактировал зарплату за выход ( {MoneySetDef} ₽ => {MoneySet} ₽)", int.Parse(MoneySet));
-            AppCommand.InfoMessage("Новая зарплата за выход установлена");
+            await AppSettingsViewModel.EditSetting(int.Parse(MoneySet), int.Parse(StartCash));
+            if (StartCash != StartCashtDef.ToString())
+                await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} отредактировал деньги на начало смены ( {StartCashtDef} ₽ => {StartCash} ₽)", int.Parse(StartCash));
+            if (MoneySet != MoneySetDef.ToString())
+                await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} отредактировал зарплату за выход ( {MoneySetDef} ₽ => {MoneySet} ₽)", int.Parse(MoneySet));
+            AppCommand.InfoMessage("Успех");
             await Update();
         }
 

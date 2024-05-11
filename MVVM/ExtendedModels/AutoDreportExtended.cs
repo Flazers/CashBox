@@ -45,14 +45,10 @@ namespace Cashbox.MVVM.Models
                     autoDreport.AutoProceeds = AutoPro.Sum(x => (double)x.SellCostWithDiscount!);
                 autoDreport.FullTransit = await OrderViewModel.GetSumInDay(dailyReport.Data);
                 double forfeit = (double)autoDreport.AutoProceeds! - (double)dailyReport.Proceeds!;
-                if (forfeit <= 0)
-                    autoDreport.Forfeit = 0;
-                else
-                {
-                    autoDreport.Forfeit = forfeit;
+                autoDreport.Forfeit = forfeit;
+                if (forfeit < 0)
                     autoDreport.Salary -= Convert.ToInt32(forfeit);
-                }
-                await MoneyBoxViewModel.UpdateMoney((double)dailyReport.Proceeds, 1);
+                await MoneyBoxViewModel.UpdateMoney((int)dailyReport.Proceeds, 1);
                 dailyReport.UserInfoVM.Salary += autoDreport.Salary;
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return new(autoDreport);

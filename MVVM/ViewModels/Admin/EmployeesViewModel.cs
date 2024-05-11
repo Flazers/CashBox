@@ -249,7 +249,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
             UserViewModel user = UserViewModel.GetCurrentUser();
             await AdminMoneyLogViewModel.CreateTransitSalary($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} выдал зарплату сотруднику (id: {SelectedUser.Id}) {SelectedUser.UserInfo.FullName} в размере {GivenSalary} ₽", double.Parse(GivenSalary), SelectedUser.Id);
-            await UserViewModel.TakeSalary(SelectedUser, double.Parse(GivenSalary));
+            await UserViewModel.TakeSalary(SelectedUser, int.Parse(GivenSalary));
             AppCommand.InfoMessage("Зарплата выдана");
             GivenSalary = "0";
             Update();

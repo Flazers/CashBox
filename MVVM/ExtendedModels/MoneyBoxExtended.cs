@@ -25,7 +25,7 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        public async static Task<bool> UpdateMoney(double money, int operation)
+        public async static Task<bool> UpdateMoney(int money, int operation)
         {
             try
             {
@@ -53,6 +53,6 @@ namespace Cashbox.MVVM.Models
 
         }
 
-        public static double GetMoney => CashBoxDataContext.Context.MoneyBoxes.FirstOrDefault(x => x.Id == 1).Money;
+        public static int GetMoney => CashBoxDataContext.Context.MoneyBoxes.FirstOrDefault(x => x.Id == 1).Money;
     }
 }

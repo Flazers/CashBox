@@ -16,6 +16,7 @@ namespace Cashbox.MVVM.Models
                 AppSettings appsetting = new()
                 {
                     Salary = 1000,
+                    StartCash = 1500,
                 };
                 CashBoxDataContext.Context.AppSettings.Add(appsetting);
                 await CashBoxDataContext.Context.SaveChangesAsync();
@@ -28,13 +29,16 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        private static async Task<bool> EditSettings(int salary)
+        private static async Task<bool> EditSettings(int salary, int startcash)
         {
             try
             {
                 AppSettings appsetting = CashBoxDataContext.Context.AppSettings.FirstOrDefault(x => x.Id == 1)!;
-                if (salary != 0)
+                if (salary != 0 && startcash != 0)
+                {
                     appsetting.Salary = salary;
+                    appsetting.StartCash = startcash;
+                }
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }
@@ -46,6 +50,6 @@ namespace Cashbox.MVVM.Models
         }
 
         public static async Task<bool> CreateSetting() => await CreateSettings();
-        public static async Task<bool> EditSetting(int salary) => await EditSettings(salary);
+        public static async Task<bool> EditSetting(int salary, int startcash) => await EditSettings(salary, startcash);
     }
 }

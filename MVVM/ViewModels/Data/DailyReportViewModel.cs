@@ -9,7 +9,8 @@ namespace Cashbox.MVVM.ViewModels.Data
 
         public static DailyReportViewModel? GetCurrentShift() => DailyReport.CurrentShift;
         public static async Task<DailyReportViewModel?> StartShift(DateOnly date, TimeOnly time) => await DailyReport.StartShift(date, time);
-        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, double processed, int userId) => await DailyReport.EndShift(date, time, processed, userId);
+        public static async Task<DailyReportViewModel?> EndShift(DateOnly date, TimeOnly? time, int processed, int userId) => await DailyReport.EndShift(date, time, processed, userId);
+        public static async Task<bool> TakeSalary (DailyReportViewModel drvm, int award, int salary) => await DailyReport.TakeSalary(drvm, award, salary);
         public static async Task<List<DailyReportViewModel>> GetPeriodReports(DateOnly startDate, DateOnly endDate) => await DailyReport.GetPeriodReports(startDate, endDate);
         public static async Task<DailyReportViewModel?> GetReport(DateOnly date) => await DailyReport.GetReport(date);
         public static async Task<List<DailyReportViewModel>> GetNotCloseReports() => await DailyReport.GetNotCloseReports();
@@ -69,7 +70,7 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
-        public double? Proceeds
+        public int? Proceeds
         {
             get => _dailyReport.Proceeds;
             set
@@ -77,14 +78,14 @@ namespace Cashbox.MVVM.ViewModels.Data
                 _dailyReport.Proceeds = value;
                 OnPropertyChanged();
             }
-        }
-
-        public double CashOnStart
+        }        
+        
+        public bool TakedSalary
         {
-            get => _dailyReport.CashOnStart;
+            get => _dailyReport.TakedSalary;
             set
             {
-                _dailyReport.CashOnStart = value;
+                _dailyReport.TakedSalary = value;
                 OnPropertyChanged();
             }
         }

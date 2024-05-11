@@ -119,8 +119,8 @@
                         </StackPanel>
                     </DockPanel>
 
-                    <DockPanel Visibility="{Binding EndShiftVisibility}" Margin="10 0 10 10">
-                        <StackPanel Height="690">
+                    <Grid Visibility="{Binding EndShiftVisibility}" Height="750" Margin="10 0 10 10">
+                        <StackPanel VerticalAlignment="Top">
                             <Grid>
                                 <StackPanel Orientation="Horizontal">
                                     <Icon:PackIconMaterial Kind="Account" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
@@ -149,8 +149,8 @@
                             </Grid>
                             <Grid Margin="0 10 0 0">
                                 <StackPanel Orientation="Horizontal">
-                                    <Icon:PackIconMaterial Kind="CashMinus" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
-                                    <TextBlock Margin="10 0 0 0" Text="Штраф" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
+                                    <Icon:PackIconMaterial Kind="CashRefund" Foreground="{StaticResource BasicW}" Height="60" Width="60"/>
+                                    <TextBlock Margin="10 0 0 0" Text="Неустойка" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                                 </StackPanel>
                                 <TextBlock HorizontalAlignment="Right" Text="{Binding AutoShift.Forfeit}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
@@ -161,8 +161,15 @@
                                 </StackPanel>
                                 <TextBlock HorizontalAlignment="Right" Text="{Binding AutoShift.Salary}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
+                            <StackPanel Margin="0 170 0 0" VerticalAlignment="Bottom">
+                                <StackPanel Orientation="Horizontal" Margin="0 0 0 40">
+                                    <TextBox Style="{StaticResource InputTB}" Tag="Премия" Width="220" PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding Award}" Margin="0 0 40 0"/>
+                                    <TextBox Style="{StaticResource InputTB}" Tag="Зарплата за выход" PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding Salary}" Width="300"/>
+                                </StackPanel>
+                                <Button Style="{StaticResource ButtonInPanelGreen}" Command="{Binding TakeSalaryCommand}" Content="Забрать из кассы"/>
+                            </StackPanel>
                         </StackPanel>
-                    </DockPanel>
+                    </Grid>
                 </StackPanel>
             </Border>
             
@@ -185,7 +192,7 @@
                                             <Grid>
                                                 <StackPanel Height="60">
                                                     <TextBlock Height="30" Margin="0 0 0 5" Text="{Binding Id, StringFormat='\Чек №{0}'}" Style="{StaticResource TitleText}"/>
-                                                    <TextBlock Text="{Binding SellCost, StringFormat='\Сумма чека {0} ₽'}" Style="{StaticResource RegularText}"/>
+                                                    <TextBlock Text="{Binding SellCostWithDiscount, StringFormat='\Сумма чека {0} ₽'}" Style="{StaticResource RegularText}"/>
                                                 </StackPanel>
 
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
