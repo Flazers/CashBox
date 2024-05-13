@@ -145,7 +145,7 @@
                                                     <StackPanel>
                                                         <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" TextWrapping="Wrap"/>
                                                         <TextBlock Style="{StaticResource RegularText}" Text="{Binding Title}" TextWrapping="Wrap"/>
-                                                        <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}" />
+                                                        <TextBlock TextWrapping="Wrap" Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}" />
                                                     </StackPanel>
                                                     <StackPanel VerticalAlignment="Bottom">
                                                         <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Right" Text="{Binding SellCost, StringFormat='Цена: \{0} ₽'}" Foreground="{StaticResource TextB}"/>

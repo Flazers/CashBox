@@ -205,7 +205,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             List<DailyReportViewModel> dailyReports = await DailyReportViewModel.GetPeriodReports(DateOnly.FromDateTime(StartDate), DateOnly.FromDateTime(EndDate));
             foreach (var item in dailyReports)
                 ExpensesSalary += item.AutoDreportVM.Salary + item.AutoDreportVM.Award;
-            List<ComingProductViewModel> comingProducts = await ComingProductViewModel.GetComingFromData(StartDate, EndDate);
+            List<ComingProductViewModel> comingProducts = await ComingProductViewModel.GetComingFromData(StartDate, EndDate.AddDays(1));
             foreach (var item in comingProducts)
                 ExpensesProduct += item.BuyCost;
             ExpensesDiscount = Math.Round(Income - ExpensesDiscount, 1);

@@ -540,7 +540,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
         }
 
-        public static void SetRowStyle(Workbook wb, int i, int cell, Aspose.Cells.Style style)
+        public static void SetRowStyle(Workbook wb, int i, int cell, Aspose.Cells.Style style, bool ignoreG = false)
         {
             wb.Worksheets[i].Cells[$"A{cell}"].SetStyle(style);
             wb.Worksheets[i].Cells[$"B{cell}"].SetStyle(style);
@@ -548,7 +548,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
             wb.Worksheets[i].Cells[$"D{cell}"].SetStyle(style);
             wb.Worksheets[i].Cells[$"E{cell}"].SetStyle(style);
             wb.Worksheets[i].Cells[$"F{cell}"].SetStyle(style);
-            wb.Worksheets[i].Cells[$"G{cell}"].SetStyle(style);
+            if (!ignoreG)
+                wb.Worksheets[i].Cells[$"G{cell}"].SetStyle(style);
         }
 
         public static void AddProductRow(Workbook wb, int i, int cell, ProductViewModel product)
@@ -569,81 +570,94 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanExportProductDataCommandExecute(object p) => true;
         private async void OnExportProductDataCommandExecuted(object p)
         {
-            SaveFileDialog sfd = new()
+            try
             {
-                Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
-                FileName = "ExportedProductData"
-            };
-            bool? resultOpen = sfd.ShowDialog();
-            if (resultOpen == true)
-            {
-                List<ProductViewModel> products = await ProductViewModel.GetProducts(true);
-                products = [.. products.OrderByDescending(x => x.Brand)];
-                List<ProductCategoryViewModel> category = await ProductCategoryViewModel.GetProductCategory();
-                category.Remove(category[0]);
-
-                CellsFactory cellsFactory = new();
-                Aspose.Cells.Style style = cellsFactory.CreateStyle();
-                style.Borders.SetStyle(CellBorderType.Thin);
-                style.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
-                style.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
-                style.Borders.SetColor(Color.Black);
-
-                CellsFactory cellsHeader = new();
-                Aspose.Cells.Style styleHeader = cellsHeader.CreateStyle();
-                styleHeader.Borders.SetStyle(CellBorderType.Thin);
-                styleHeader.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
-                styleHeader.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
-                styleHeader.Borders.SetColor(Color.Black);
-                styleHeader.HorizontalAlignment = TextAlignmentType.Center;
-                styleHeader.VerticalAlignment = TextAlignmentType.Center;
-                styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
-
-                static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
+                SaveFileDialog sfd = new()
                 {
-                    Worksheet sheet = wb.Worksheets[i];
-                    sheet.Cells[0, cell].PutValue(title);
-                    sheet.Cells.SetColumnWidth(cell, width);
-                }
-
-                if (sfd.FileName != "")
+                    Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
+                    FileName = "ExportedProductData"
+                };
+                bool? resultOpen = sfd.ShowDialog();
+                if (resultOpen == true)
                 {
-                    Workbook wb = new();
+                    List<ProductViewModel> products = await ProductViewModel.GetProducts(true);
+                    products = [.. products.OrderByDescending(x => x.Brand)];
+                    List<ProductCategoryViewModel> category = await ProductCategoryViewModel.GetProductCategory();
+                    category.Remove(category[0]);
 
-                    for (int i = 0; i < category.Count; i++)
+                    CellsFactory cellsFactory = new();
+                    Aspose.Cells.Style style = cellsFactory.CreateStyle();
+                    style.Borders.SetStyle(CellBorderType.Thin);
+                    style.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
+                    style.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
+                    style.Borders.SetColor(Color.Black);
+
+                    CellsFactory cellsHeader = new();
+                    Aspose.Cells.Style styleHeader = cellsHeader.CreateStyle();
+                    styleHeader.Borders.SetStyle(CellBorderType.Thin);
+                    styleHeader.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
+                    styleHeader.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
+                    styleHeader.Borders.SetColor(Color.Black);
+                    styleHeader.HorizontalAlignment = TextAlignmentType.Center;
+                    styleHeader.VerticalAlignment = TextAlignmentType.Center;
+                    styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
+
+                    static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
                     {
-                        if (i == 0)
-                            wb.Worksheets[i].Name = category[i].Category;
-                        else
-                            wb.Worksheets.Add(category[i].Category);
-                        SetRowHeader(wb, i, 0, "id*", 10);
-                        SetRowHeader(wb, i, 1, "Производитель", 17);
-                        SetRowHeader(wb, i, 2, "Название", 27);
-                        SetRowHeader(wb, i, 3, "Описание", 17);
-                        SetRowHeader(wb, i, 4, "Продажа", 10);
-                        SetRowHeader(wb, i, 5, "Колличество", 14);
-                        SetRowHeader(wb, i, 6, "В продаже / Снят с продаж", 26);
-
-                        wb.Worksheets[i].Cells.SetRowHeight(0, 30);
-                        SetRowStyle(wb, i, 1, styleHeader);
+                        Worksheet sheet = wb.Worksheets[i];
+                        sheet.Cells[0, cell].PutValue(title);
+                        sheet.Cells.SetColumnWidth(cell, width);
                     }
 
-                    for (int i = 0; i < category.Count; i++)
+                    if (sfd.FileName != "")
                     {
-                        int count = 1;
-                        int position = 2;
-                        foreach (ProductViewModel item in products.Where(x => x.CategoryId == category[i].Id))
+                        Workbook wb = new();
+
+                        for (int i = 0; i < category.Count; i++)
                         {
-                            AddProductRow(wb, i, position, item);
-                            SetRowStyle(wb, i, position, style);
-                            wb.Worksheets[i].Cells.SetRowHeight(count, 16);
-                            position++;
-                        }
-                    }
+                            if (i == 0)
+                                wb.Worksheets[i].Name = category[i].Category;
+                            else
+                                wb.Worksheets.Add(category[i].Category);
+                            SetRowHeader(wb, i, 0, "id*", 10);
+                            SetRowHeader(wb, i, 1, "Производитель", 17);
+                            SetRowHeader(wb, i, 2, "Название", 27);
+                            SetRowHeader(wb, i, 3, "Описание", 17);
+                            SetRowHeader(wb, i, 4, "Продажа", 10);
+                            SetRowHeader(wb, i, 5, "Колличество", 14);
+                            SetRowHeader(wb, i, 6, "В продаже / Снят с продаж", 26);
 
-                    wb.Save(sfd.FileName);
-                    AppCommand.InfoMessage("Готово");
+                            wb.Worksheets[i].Cells.SetRowHeight(0, 30);
+                            SetRowStyle(wb, i, 1, styleHeader);
+                        }
+
+                        for (int i = 0; i < category.Count; i++)
+                        {
+                            int count = 1;
+                            int position = 2;
+                            foreach (ProductViewModel item in products.Where(x => x.CategoryId == category[i].Id))
+                            {
+                                AddProductRow(wb, i, position, item);
+                                SetRowStyle(wb, i, position, style);
+                                wb.Worksheets[i].Cells.SetRowHeight(count, 16);
+                                position++;
+                            }
+                        }
+
+                        wb.Save(sfd.FileName);
+                        AppCommand.InfoMessage("Готово");
+                    }
                 }
+            }
+            catch (IOException)
+            {
+                AppCommand.WarningMessage("Процесс используется другим приложением (Возможно файл открыт).");
+                return;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return;
             }
         }
 
@@ -651,63 +665,69 @@ namespace Cashbox.MVVM.ViewModels.Admin
         private bool CanFileForImportCommandExecute(object p) => true;
         private void OnFileForImportCommandExecuted(object p)
         {
-            SaveFileDialog sfd = new()
+            try
             {
-                Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
-                FileName = "ExampleImport"
-            };
-            bool? resultOpen = sfd.ShowDialog();
-            if (resultOpen == true)
+                SaveFileDialog sfd = new()
+                {
+                    Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
+                    FileName = "ExampleImport"
+                };
+                bool? resultOpen = sfd.ShowDialog();
+                if (resultOpen == true)
+                {
+                    CellsFactory cellsFactory = new();
+                    Aspose.Cells.Style style = cellsFactory.CreateStyle();
+                    style.Borders.SetStyle(CellBorderType.Thin);
+                    style.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
+                    style.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
+                    style.Borders.SetColor(Color.Black);
+
+                    CellsFactory cellsHeader = new();
+                    Aspose.Cells.Style styleHeader = cellsHeader.CreateStyle();
+                    styleHeader.Borders.SetStyle(CellBorderType.Thin);
+                    styleHeader.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
+                    styleHeader.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
+                    styleHeader.Borders.SetColor(Color.Black);
+                    styleHeader.HorizontalAlignment = TextAlignmentType.Center;
+                    styleHeader.VerticalAlignment = TextAlignmentType.Center;
+                    styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
+
+                    static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
+                    {
+                        Worksheet sheet = wb.Worksheets[i];
+                        sheet.Cells[0, cell].PutValue(title);
+                        sheet.Cells.SetColumnWidth(cell, width);
+                    }
+
+                    if (sfd.FileName != string.Empty)
+                    {
+                        Workbook wb = new();
+
+                        wb.Worksheets[0].Name = "Категория";
+                        SetRowHeader(wb, 0, 0, "id*", 10);
+                        SetRowHeader(wb, 0, 1, "Производитель", 17);
+                        SetRowHeader(wb, 0, 2, "Название", 27);
+                        SetRowHeader(wb, 0, 3, "Описание", 17);
+                        SetRowHeader(wb, 0, 4, "Продажа", 10);
+                        SetRowHeader(wb, 0, 5, "Колличество", 14);
+                        wb.Worksheets[0].Cells.SetRowHeight(0, 30);
+                        SetRowStyle(wb, 0, 1, styleHeader, true);
+
+                        wb.Save(sfd.FileName);
+
+                        AppCommand.InfoMessage("Шаблон готов");
+                    }
+                }
+            }
+            catch (IOException)
             {
-                CellsFactory cellsFactory = new();
-                Aspose.Cells.Style style = cellsFactory.CreateStyle();
-                style.Borders.SetStyle(CellBorderType.Thin);
-                style.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
-                style.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
-                style.Borders.SetColor(Color.Black);
-
-                CellsFactory cellsHeader = new();
-                Aspose.Cells.Style styleHeader = cellsHeader.CreateStyle();
-                styleHeader.Borders.SetStyle(CellBorderType.Thin);
-                styleHeader.Borders[BorderType.DiagonalDown].LineStyle = CellBorderType.None;
-                styleHeader.Borders[BorderType.DiagonalUp].LineStyle = CellBorderType.None;
-                styleHeader.Borders.SetColor(Color.Black);
-                styleHeader.HorizontalAlignment = TextAlignmentType.Center;
-                styleHeader.VerticalAlignment = TextAlignmentType.Center;
-                styleHeader.SetPatternColor(BackgroundType.Solid, Color.LightGreen, Color.LightGreen);
-
-                static void SetRowHeader(Workbook wb, int i, int cell, string title, int width)
-                {
-                    Worksheet sheet = wb.Worksheets[i];
-                    sheet.Cells[0, cell].PutValue(title);
-                    sheet.Cells.SetColumnWidth(cell, width);
-                }
-
-                if (sfd.FileName != string.Empty)
-                {
-                    Workbook wb = new();
-
-                    wb.Worksheets[0].Name = "Категория";
-                    SetRowHeader(wb, 0, 0, "id*", 10);
-                    SetRowHeader(wb, 0, 1, "Производитель", 17);
-                    SetRowHeader(wb, 0, 2, "Название", 27);
-                    SetRowHeader(wb, 0, 3, "Описание", 17);
-                    SetRowHeader(wb, 0, 4, "Продажа", 10);
-                    SetRowHeader(wb, 0, 5, "Колличество", 14);
-                    wb.Worksheets[0].Cells.SetRowHeight(0, 30);
-                    SetRowStyle(wb, 0, 1, styleHeader);
-
-                    wb.Worksheets[0].Cells[$"A2"].PutValue(1);
-                    wb.Worksheets[0].Cells[$"B2"].PutValue("Хаски");
-                    wb.Worksheets[0].Cells[$"C2"].PutValue("Киви яблоко");
-                    wb.Worksheets[0].Cells[$"D2"].PutValue("20 mg strong");
-                    wb.Worksheets[0].Cells[$"E2"].PutValue("450");
-                    wb.Worksheets[0].Cells[$"F2"].PutValue(10);
-
-                    wb.Save(sfd.FileName);
-
-                    AppCommand.InfoMessage("Шаблон готов");
-                }
+                AppCommand.WarningMessage("Процесс используется другим приложением (Возможно файл открыт).");
+                return;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return;
             }
         }
 
@@ -778,7 +798,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             }
             catch (Exception)
             {
-                AppCommand.ErrorMessage("Возник конфликт потоков. Повторите операцию");
+                AppCommand.WarningMessage("Возник конфликт потоков.");
                 return;
             }
             VisibilityLoadProduct = Visibility.Collapsed;

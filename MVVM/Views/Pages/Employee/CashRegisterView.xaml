@@ -91,7 +91,7 @@
                                                 <StackPanel>
                                                 <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" TextWrapping="Wrap"/>
                                                 <TextBlock Style="{StaticResource RegularText}" Text="{Binding Title}" TextWrapping="Wrap"/>
-                                                <TextBlock Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}"/>
+                                                <TextBlock TextWrapping="Wrap" Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}"/>
                                             </StackPanel>
                                             <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0 100 0 0">
                                                 <StackPanel Height="50" Width="220">
