@@ -46,8 +46,8 @@ public partial class CashBoxDataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        //optionsBuilder.UseSqlite("Data Source=Data.db");
-        optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\source\\repos\\CashBox\\MVVM\\Models\\Data.db");
+        optionsBuilder.UseSqlite("Data Source=Data.db");
+        //optionsBuilder.UseSqlite("Data Source=C:\\Users\\StateUser\\source\\repos\\CashBox\\MVVM\\Models\\Data.db");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

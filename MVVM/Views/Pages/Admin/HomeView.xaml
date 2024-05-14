@@ -10,7 +10,6 @@
              xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"  
              mc:Ignorable="d" 
              d:DesignHeight="880" d:DesignWidth="1700">
-
     <StackPanel>
         <StackPanel Orientation="Horizontal">
             <StackPanel Margin="0 0 40 0" Width="1100">

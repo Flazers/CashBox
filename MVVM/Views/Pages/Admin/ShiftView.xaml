@@ -179,13 +179,13 @@
                                         <ItemsControl d:ItemsSource="{d:SampleData ItemCount=3}" ItemsSource="{Binding SelectedOrderProduct}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Border Height="100" Margin="0 0 20 20" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
+                                                    <Border MinHeight="100" Margin="0 0 20 20" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
                                                         <DockPanel>
                                                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                                                                 <DockPanel>
-                                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
-                                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
-                                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                                    <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Width="340" HorizontalAlignment="Left" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
+                                                                    <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Width="340" HorizontalAlignment="Left" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
+                                                                    <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Width="340" HorizontalAlignment="Left" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                                 </DockPanel>
                                                             </StackPanel>
                                                             <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center">
@@ -245,10 +245,10 @@
                                         <DataTemplate>
                                             <Border Margin="0 0 20 20" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
                                                 <StackPanel>
-                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Product.Brand}" Foreground="{StaticResource TextB}"/>
-                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Product.Title}" Foreground="{StaticResource TextB}"/>
-                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Product.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
-                                                    <TextBlock Style="{StaticResource RegularText}" Text="{Binding Reason, StringFormat='\Причина возврата: {0}'}" Foreground="{StaticResource BasicRed}"/>
+                                                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Product.Brand}" Foreground="{StaticResource TextB}"/>
+                                                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Product.Title}" Foreground="{StaticResource TextB}"/>
+                                                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Product.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                    <TextBlock Style="{StaticResource RegularText}" TextWrapping="Wrap" HorizontalAlignment="Left" Text="{Binding Reason, StringFormat='\Причина возврата: {0}'}" Foreground="{StaticResource BasicRed}"/>
                                                 </StackPanel>
                                             </Border>
                                         </DataTemplate>
@@ -285,11 +285,11 @@
                                                                 </MultiBinding>
                                                             </TextBlock.Text>
                                                         </TextBlock>
-                                                        <TextBlock Style="{StaticResource TitleText}" Text="{Binding Product.Brand}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock Style="{StaticResource RegularText}" Text="{Binding Product.Title}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock Style="{StaticResource SmallText}" Text="{Binding Product.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                        <TextBlock Style="{StaticResource TitleText}" TextWrapping="Wrap" Width="340" HorizontalAlignment="Left" Text="{Binding Product.Brand}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" TextWrapping="Wrap" Width="340" HorizontalAlignment="Left" Text="{Binding Product.Title}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource SmallText}" TextWrapping="Wrap" Width="340" HorizontalAlignment="Left" Text="{Binding Product.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                         <TextBlock Style="{StaticResource RegularText}" Visibility="{Binding CrackVisibility}" Text="{Binding Reason, StringFormat='\Причина: {0}'}" Width="350" TextWrapping="Wrap" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
-                                                        <TextBlock Style="{StaticResource RegularText}" Visibility="{Binding DrawVisibility}" Text="{Binding BuyDateString, StringFormat='\Дата проведения: {0}'}" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" Visibility="{Binding DrawVisibility}" Text="{Binding BuyDateString, StringFormat='\Дата проведения: {0}'}" TextWrapping="Wrap" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
                                                     </StackPanel>
                                                     <StackPanel>
                                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 10">
@@ -339,11 +339,11 @@
                                                                 </MultiBinding>
                                                             </TextBlock.Text>
                                                         </TextBlock>
-                                                        <TextBlock Style="{StaticResource TitleText}" Text="{Binding Product.Brand}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock Style="{StaticResource RegularText}" Text="{Binding Product.Title}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock Style="{StaticResource SmallText}" Text="{Binding Product.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                        <TextBlock Style="{StaticResource TitleText}" TextWrapping="Wrap" Width="340" HorizontalAlignment="Left" Text="{Binding Product.Brand}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" TextWrapping="Wrap" Width="340" HorizontalAlignment="Left" Text="{Binding Product.Title}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock Style="{StaticResource SmallText}" TextWrapping="Wrap" Width="340" HorizontalAlignment="Left" Text="{Binding Product.Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                         <TextBlock Style="{StaticResource RegularText}" Visibility="{Binding CrackVisibility}" Text="{Binding Reason, StringFormat='\Причина: {0}'}" Width="350" TextWrapping="Wrap" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
-                                                        <TextBlock Style="{StaticResource RegularText}" Visibility="{Binding DrawVisibility}" Text="{Binding BuyDateString, StringFormat='\Дата проведения: {0}'}" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
+                                                        <TextBlock Style="{StaticResource RegularText}" Visibility="{Binding DrawVisibility}" Text="{Binding BuyDateString, StringFormat='\Дата проведения: {0}'}" TextWrapping="Wrap" HorizontalAlignment="Left" Foreground="{StaticResource BasicRed}"/>
                                                     </StackPanel>
                                                     <StackPanel>
                                                         <TextBlock Text="{Binding TypeRefund}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 10" Style="{StaticResource RegularText}"/>

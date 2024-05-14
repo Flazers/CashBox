@@ -9,6 +9,9 @@
       xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       mc:Ignorable="d"
       d:DesignHeight="1080" d:DesignWidth="1920">
+    <UserControl.RenderTransform>
+        <ScaleTransform x:Name="scale" ScaleX="0.712" ScaleY="0.712"/>
+    </UserControl.RenderTransform>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="140"/>

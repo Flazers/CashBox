@@ -120,12 +120,12 @@
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
                     <StackPanel Height="650" Margin="10 0">
-                        <TextBox Style="{StaticResource InputTB}" x:Name="EditSurname" KeyDown="EditSurname_KeyDown" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" x:Name="EditName" KeyDown="EditName_KeyDown" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" x:Name="EditPatronymic" KeyDown="EditPatronymic_KeyDown" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" x:Name="EditLocation" KeyDown="EditLocation_KeyDown" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" x:Name="EditPhone" KeyDown="EditPhone_KeyDown" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" x:Name="EditPin" Text="{Binding Pincode}" Tag="Пинкод" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="EditSurname" KeyDown="EditSurname_KeyDown" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="EditName" KeyDown="EditName_KeyDown" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="EditPatronymic" KeyDown="EditPatronymic_KeyDown" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="EditLocation" KeyDown="EditLocation_KeyDown" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="EditPhone" KeyDown="EditPhone_KeyDown" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="EditPin" Text="{Binding Pincode}" Tag="Пинкод" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="10 40 10 0">
                         <Button Style="{DynamicResource ButtonInPanelRed}" Command="{Binding ClosePanelEditUserCommand}" Width="230" Margin="0 0 20 0" Content="Закрыть"/>
@@ -143,11 +143,11 @@
                         <Border Background="{StaticResource TextW}" Height="2" VerticalAlignment="Bottom" CornerRadius="1"/>
                     </Grid>
                     <StackPanel Height="650" Margin="10 0">
-                        <TextBox Style="{StaticResource InputTB}" x:Name="Surname" KeyDown="Surname_KeyDown" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" x:Name="Name" KeyDown="Name_KeyDown" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" x:Name="Patronymic" KeyDown="Patronymic_KeyDown" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" x:Name="Location" KeyDown="Location_KeyDown" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" x:Name="Phone" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="Surname" KeyDown="Surname_KeyDown" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="Name" KeyDown="Name_KeyDown" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="Patronymic" KeyDown="Patronymic_KeyDown" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="Location" KeyDown="Location_KeyDown" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="Phone" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>
                         <ComboBox Tag="Роль" Style="{DynamicResource InputCB}" ItemsSource="{Binding CollectionUserRoles}" DisplayMemberPath="Role1" 
                             SelectedValuePath="Id" SelectedItem="{Binding Role}" Margin="0 0 0 20"/>
                         <TextBox Style="{StaticResource InputTB}" Text="{Binding Pincode}" Tag="Пинкод" PreviewTextInput="TextBox_PreviewTextInput" Margin="0 0 0 20"/>

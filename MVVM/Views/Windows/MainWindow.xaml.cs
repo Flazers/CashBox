@@ -13,6 +13,5 @@ namespace Cashbox.Views.Windows
         {
             InitializeComponent();
         }
-
     }
 }

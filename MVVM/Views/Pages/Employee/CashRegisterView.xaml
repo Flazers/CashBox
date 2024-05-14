@@ -88,7 +88,7 @@
                                     <Border Padding="20" Width="310" Height="210" Background="{Binding BackGroundColor}" CornerRadius="20" Margin="10">
                                         <Grid>
                                             <TextBlock Width="100" VerticalAlignment="Top" Margin="-10" Style="{StaticResource SmallText}" TextAlignment="Right" HorizontalAlignment="Right" Text="{Binding CountSell}"/>
-                                                <StackPanel>
+                                            <StackPanel>
                                                 <TextBlock Style="{StaticResource TitleText}" Text="{Binding Brand}" TextWrapping="Wrap"/>
                                                 <TextBlock Style="{StaticResource RegularText}" Text="{Binding Title}" TextWrapping="Wrap"/>
                                                 <TextBlock TextWrapping="Wrap" Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" Text="{Binding Description}"/>
@@ -175,8 +175,8 @@
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                                                     <DockPanel>
                                                         <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Style="{StaticResource TitleText}" Text="{Binding ProductVM.Brand}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Width="340" Style="{StaticResource RegularText}" Text="{Binding ProductVM.Title}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Style="{StaticResource SmallText}" Text="{Binding ProductVM.Description}" Foreground="{StaticResource TextG}"/>
+                                                        <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Left" TextWrapping="Wrap" Width="340" Style="{StaticResource RegularText}" Text="{Binding ProductVM.Title}" Foreground="{StaticResource TextB}"/>
+                                                        <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Left" Width="340" TextWrapping="Wrap" Style="{StaticResource SmallText}" Text="{Binding ProductVM.Description}" Foreground="{StaticResource TextG}"/>
                                                     </DockPanel>
                                                 </StackPanel>
                                                 <Grid Height="110" HorizontalAlignment="Right">
@@ -268,13 +268,13 @@
                             <ItemsControl ItemsSource="{Binding SelectedProductRef}" d:ItemsSource="{d:SampleData ItemCount=1}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Height="100" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
+                                        <Border MinHeight="100" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
                                             <DockPanel>
                                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                                                     <DockPanel>
                                                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
                                                         <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
-                                                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                        <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Width="340" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                     </DockPanel>
                                                 </StackPanel>
                                                 <Grid>
@@ -324,7 +324,7 @@ Command="{Binding DataContext.ClearSelectedProductCommand, RelativeSource={Relat
                         <ItemsControl ItemsSource="{Binding SelectedProductRef}" Height="490" d:ItemsSource="{d:SampleData ItemCount=1}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Height="100"
+                                    <Border MinHeight="100"
                                                 Background="{StaticResource PanelW}" Padding="10" 
                                                 CornerRadius="5">
                                         <DockPanel>
@@ -332,7 +332,7 @@ Command="{Binding DataContext.ClearSelectedProductCommand, RelativeSource={Relat
                                                 <DockPanel>
                                                     <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
                                                     <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
-                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                    <TextBlock DockPanel.Dock="Top" Width="340" TextWrapping="Wrap" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                 </DockPanel>
                                             </StackPanel>
                                             <Grid>
@@ -377,7 +377,7 @@ Command="{Binding DataContext.ClearSelectedProductCommand, RelativeSource={Relat
                         <ItemsControl ItemsSource="{Binding SelectedProductRef}" Height="510" d:ItemsSource="{d:SampleData ItemCount=1}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Height="100"
+                                    <Border MinHeight="100"
                                                 Background="{StaticResource PanelW}" Padding="10" 
                                                 CornerRadius="5">
                                         <DockPanel>
@@ -385,7 +385,7 @@ Command="{Binding DataContext.ClearSelectedProductCommand, RelativeSource={Relat
                                                 <DockPanel>
                                                     <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
                                                     <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
-                                                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                    <TextBlock DockPanel.Dock="Top" Width="340" TextWrapping="Wrap" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                 </DockPanel>
                                             </StackPanel>
                                             <Grid>

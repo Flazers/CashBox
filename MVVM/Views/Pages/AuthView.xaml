@@ -9,6 +9,9 @@
       xmlns:local="clr-namespace:Cashbox.MVVM.Views.Pages" 
       mc:Ignorable="d"
       d:DesignHeight="1080" d:DesignWidth="1920">
+    <UserControl.RenderTransform>
+        <ScaleTransform x:Name="scale" ScaleX="0.712" ScaleY="0.712"/>
+    </UserControl.RenderTransform>
     <Grid Background="{StaticResource BasicW}">
         <Button Style="{StaticResource ButtonInPanelBase}" HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding CloseApplicationCommand}" Margin="20" Content="Закрыть приложение"/>
         <Border Style="{StaticResource MainBorder}" MaxWidth="1200" MaxHeight="800">

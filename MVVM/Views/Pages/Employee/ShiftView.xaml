@@ -212,13 +212,13 @@
                                 <ItemsControl d:ItemsSource="{d:SampleData ItemCount=3}" ItemsSource="{Binding ProductCollection}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Height="100" Margin="0 0 20 20" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
+                                            <Border MinHeight="100" Margin="0 0 20 20" Background="{StaticResource PanelW}" Padding="10" CornerRadius="5">
                                                 <DockPanel>
                                                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                                                         <DockPanel>
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
-                                                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
+                                                            <TextBlock DockPanel.Dock="Top" Width="340" TextWrapping="Wrap" Style="{StaticResource TitleText}" Text="{Binding Brand}" Foreground="{StaticResource TextB}"/>
+                                                            <TextBlock DockPanel.Dock="Top" Width="340" TextWrapping="Wrap" Style="{StaticResource RegularText}" Text="{Binding Title}" Foreground="{StaticResource TextB}"/>
+                                                            <TextBlock DockPanel.Dock="Top" Width="340" TextWrapping="Wrap" Style="{StaticResource SmallText}" Text="{Binding Description}" Foreground="{StaticResource TextG}" VerticalAlignment="Bottom"/>
                                                         </DockPanel>
                                                     </StackPanel>
                                                     <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center">
