@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Cashbox.Core;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -48,6 +49,12 @@ namespace Cashbox.MVVM.Views.Pages
                 ((dynamic)DataContext).SecurePassword = Pin.Password;
                 Pin.Focus();
             }
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            scale.ScaleX = (UICommand.SizeWidth - 14 ) / 1920;
+            scale.ScaleY = scale.ScaleX;
         }
     }
 }

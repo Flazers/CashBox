@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using Cashbox.Core;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Cashbox.MVVM.Views.Pages.Employee
 {
@@ -10,6 +12,12 @@ namespace Cashbox.MVVM.Views.Pages.Employee
         public EMainView()
         {
             InitializeComponent();
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            scale.ScaleX = (UICommand.SizeWidth - 14) / 1920;
+            scale.ScaleY = scale.ScaleX;
         }
     }
 }

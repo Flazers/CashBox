@@ -8,11 +8,11 @@
         mc:Ignorable="d"
         Title="MainWindow" 
         Height="720" Width="1200"
-        WindowState="Maximized"
         WindowStyle="None"
+        WindowState="Maximized"
+        SizeChanged="Window_SizeChanged"
         Icon="/Assets/Icons/64x64.png"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource BasicB}">
-    <ContentControl Width="1920" Height="1080" Content="{Binding NavigationService.CurrentView}">
-    </ContentControl>
+    <ContentControl Width="1920" Height="1080" Content="{Binding NavigationService.CurrentView}"/>
 </Window>
