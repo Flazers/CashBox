@@ -1,7 +1,10 @@
-﻿namespace Cashbox.MVVM.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Cashbox.MVVM.Models;
 
 public partial class DailyReport
 {
+    [Key]
     public int Id { get; set; }
 
     public DateOnly? Data { get; set; }

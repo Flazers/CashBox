@@ -1,7 +1,10 @@
-﻿namespace Cashbox.MVVM.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Cashbox.MVVM.Models;
 
 public partial class UserInfo
 {
+    [Key]
     public int UserId { get; set; }
 
     public string Name { get; set; } = null!;

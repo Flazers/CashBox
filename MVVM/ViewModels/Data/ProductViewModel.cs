@@ -13,7 +13,9 @@ namespace Cashbox.MVVM.ViewModels.Data
         public static async Task<ProductViewModel?> CreateProduct(ProductViewModel? productVM) => await Product.CreateProducts(productVM);
         public static async Task<ProductViewModel?> RemoveProduct(int id) => await Product.AvailableProducts(id, false);
         public static async Task<ProductViewModel?> UnRemoveProduct(int id) => await Product.AvailableProducts(id, true);
+        public static async Task<bool> EditProductAmount(int product_id, int amount) => await Product.EditProductAmountVM(product_id, amount);
         public static async Task<bool> ImportProducts(List<ProductViewModel> productVM) => await Product.ImportProductsVM(productVM);
+        public static async Task<bool> ClearCountSell() => await Product.ClearCountSellVM();
         public static async Task<bool> EditProducts(List<ProductViewModel> productVM) => await Product.EditProductsVM(productVM);
 
         public int Id => _product.Id;

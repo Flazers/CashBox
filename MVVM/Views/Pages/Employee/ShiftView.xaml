@@ -161,7 +161,7 @@
                                 </StackPanel>
                                 <TextBlock HorizontalAlignment="Right" Text="{Binding AutoShift.Salary}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                             </Grid>
-                            <StackPanel Margin="0 170 0 0" VerticalAlignment="Bottom">
+                            <StackPanel  Margin="0 170 0 0" VerticalAlignment="Bottom">
                                 <StackPanel Orientation="Horizontal" Margin="0 0 0 40">
                                     <TextBox Style="{StaticResource InputTB}" Tag="Премия" Width="220" PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding Award}" Margin="0 0 40 0"/>
                                     <TextBox Style="{StaticResource InputTB}" Tag="Зарплата за выход" PreviewTextInput="TextBox_PreviewTextInput" Text="{Binding Salary}" Width="300"/>

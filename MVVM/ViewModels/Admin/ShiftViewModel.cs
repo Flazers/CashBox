@@ -400,12 +400,14 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 return;
             if (AppCommand.QuestionMessage($"Отклонить {refund.TypeRefund}?") == MessageBoxResult.Yes)
             {
-
                 if (!await RefundViewModel.RejectRefund(refund.Id))
                 {
-                    AppCommand.ErrorMessage($"Не удалось подтвердить {refund.TypeRefund}");
+                    AppCommand.ErrorMessage($"Не удалось отклонить {refund.TypeRefund}");
                     return;
                 }
+                else if (refund.TypeRefund == "Розыгрыш")
+                    await ProductViewModel.EditProductAmount((int)refund.ProductId!, 1);
+                
                 AppCommand.InfoMessage("Успех");
             }
             UpdateRefund();

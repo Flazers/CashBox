@@ -69,7 +69,9 @@
                         </StackPanel>
                         <TextBlock HorizontalAlignment="Right" Text="{Binding StartCashtDef, StringFormat='\{0} ₽'}" Style="{StaticResource RegularText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}"/>
                     </Grid>
-                    <TextBox Style="{StaticResource InputTB}" Text="{Binding StartCash}" Tag="Денег на начало смены" PreviewTextInput="TextBox_PreviewTextInput"/>
+                    <TextBox Style="{StaticResource InputTB}" Margin="0 0 0 40" Text="{Binding StartCash}" Tag="Денег на начало смены" PreviewTextInput="TextBox_PreviewTextInput"/>
+
+                    <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding ClearCountSellCommand}" Content="Очистить кол-во проданных товаров"/>
                 </StackPanel>
                 <Button Style="{DynamicResource ButtonInPanelGreen}" Command="{Binding SaveSettingsCommand}" Margin="10 0" Content="Сохранить"/>
             </StackPanel>

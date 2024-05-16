@@ -11,7 +11,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
     {
         #region Props
         public static UserViewModel? User { get => Models.User.CurrentUser; }
-        bool canupdate = false;
+        bool canupdate = true;
 
         #region Visibility
 
@@ -631,15 +631,15 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         public override async void OnLoad()
         {
-            canupdate = false;
             CollectionProductCategories = new(await ProductCategoryViewModel.GetProductCategory());
             SelectedProductCategory = CollectionProductCategories[0];
-            await Update();
-            canupdate = true;
         }
 
         private async Task Update()
         {
+            if (!canupdate)
+                return;
+            canupdate = false;
             VisibilityProduct = Visibility.Collapsed;
             VisibilityLoadProduct = Visibility.Visible;
             await Task.Run(async () =>
@@ -693,6 +693,7 @@ namespace Cashbox.MVVM.ViewModels.Employee
                     return;
                 }
             });
+            canupdate = true;
         }
 
         #endregion

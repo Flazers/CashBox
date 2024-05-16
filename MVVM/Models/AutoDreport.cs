@@ -1,7 +1,10 @@
-﻿namespace Cashbox.MVVM.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Cashbox.MVVM.Models;
 
 public partial class AutoDreport
 {
+    [Key]
     public int DailyReportId { get; set; }
 
     public int Salary { get; set; }

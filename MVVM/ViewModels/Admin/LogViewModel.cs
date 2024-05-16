@@ -94,6 +94,20 @@ namespace Cashbox.MVVM.ViewModels.Admin
             await Update();
         }
 
+        public RelayCommand ClearCountSellCommand { get; set; }
+        private bool CanClearCountSellCommandExecute(object p) => true;
+        private async void OnClearCountSellCommandExecuted(object p)
+        {
+            if (AppCommand.QuestionMessage("Вы уверены что хотите очистить колличество проданных товаров за все время?") == MessageBoxResult.Yes)
+            {
+                await ProductViewModel.ClearCountSell();
+                UserViewModel user = UserViewModel.GetCurrentUser();
+                await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} очистил колличество проданных товаров за все время", 0);
+                AppCommand.InfoMessage("Успех");
+                await Update();
+            }
+        }
+
         public RelayCommand UpdateLogCommand { get; set; }
         private bool CanUpdateLogCommandExecute(object p) => true;
         private async void OnUpdateLogCommandExecuted(object p) => await Update();
@@ -120,6 +134,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public LogViewModel()
         {
+            ClearCountSellCommand = new RelayCommand(OnClearCountSellCommandExecuted, CanClearCountSellCommandExecute);
             SaveSettingsCommand = new RelayCommand(OnSaveSettingsCommandExecuted, CanSaveSettingsCommandExecute);
             UpdateLogCommand = new RelayCommand(OnUpdateLogCommandExecuted, CanUpdateLogCommandExecute);
         }

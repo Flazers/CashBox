@@ -98,6 +98,41 @@ namespace Cashbox.MVVM.Models
             }
         }
 
+        private static async Task<bool> EditProductAmount(int product_id, int amount)
+        {
+            try
+            {
+                Product? product = CashBoxDataContext.Context.Products.FirstOrDefault(x => x.Id == product_id);
+                if (product == null) return false;
+                product.Stock.Amount += amount;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
+        }
+
+        private static async Task<bool> ClearCountSell()
+        {
+            try
+            {
+                List<Product> products = [.. CashBoxDataContext.Context.Products.Where(x => x.CountSell > 0)];
+                if (products.Count == 0) return false;
+                foreach (var item in products)
+                    item.CountSell = 0;
+                await CashBoxDataContext.Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                AppCommand.ErrorMessage(ex.Message);
+                return false;
+            }
+        }
+
         private static async Task<ProductViewModel> AvailableProduct(int id, bool Available)
         {
             try
@@ -116,5 +151,7 @@ namespace Cashbox.MVVM.Models
         public static async Task<ProductViewModel?> AvailableProducts(int id, bool Available) => await AvailableProduct(id, Available);
         public static async Task<bool> ImportProductsVM(List<ProductViewModel> productVM) => await ImportProducts(productVM);
         public static async Task<bool> EditProductsVM(List<ProductViewModel> productVM) => await EditProducts(productVM);
+        public static async Task<bool> ClearCountSellVM() => await ClearCountSell();
+        public static async Task<bool> EditProductAmountVM(int product_id, int amount) => await EditProductAmount(product_id, amount);
     }
 }

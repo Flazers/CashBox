@@ -129,7 +129,11 @@
                                 <TextBox Height="50" Width="180" PreviewTextInput="TextBox_PreviewTextInput" x:Name="show" KeyDown="TextBox_KeyDown" Text="{Binding ShowProductCount}" Style="{StaticResource TbPlaceholderTag}" Tag="Товаров на стр."/>
                             </StackPanel>
                             <Border Height="570" DockPanel.Dock="Top" Visibility="{Binding VisibilityLoadProduct}">
-                                <TextBlock Text="Загрузка..." Style="{StaticResource TitleText}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource TextG}"/>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}" MaxWidth="300" TextWrapping="Wrap" TextAlignment="Center" Text="{Binding TitleLoad}" HorizontalAlignment="Center"/>
+                                    <ProgressBar Margin="0 10 0 20" Style="{DynamicResource ProgBar}" Value="{Binding ProgressLoad}" Maximum="{Binding MaxProgress}" Width="400" Height="40"/>
+                                    <TextBlock Foreground="{StaticResource TextW}" Text="{Binding ProgressLoadText}" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="400" Style="{StaticResource RegularText}" HorizontalAlignment="Center"/>
+                                </StackPanel>
                             </Border>
                             <ScrollViewer DockPanel.Dock="Top" Height="570" Visibility="{Binding VisibilityProduct}">
                                 <ItemsControl Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=10}"  ItemsSource="{Binding CollectionProducts}">

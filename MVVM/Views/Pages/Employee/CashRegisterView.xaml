@@ -85,7 +85,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Padding="20" Width="310" Height="210" Background="{Binding BackGroundColor}" CornerRadius="20" Margin="10">
+                                    <Border Padding="20" Width="310" MinHeight="210" Background="{Binding BackGroundColor}" CornerRadius="20" Margin="10">
                                         <Grid>
                                             <TextBlock Width="100" VerticalAlignment="Top" Margin="-10" Style="{StaticResource SmallText}" TextAlignment="Right" HorizontalAlignment="Right" Text="{Binding CountSell}"/>
                                             <StackPanel>

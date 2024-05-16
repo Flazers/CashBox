@@ -266,12 +266,17 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             if (DailyReportVMobj.UserId != UserViewModel.GetCurrentUser().Id)
             {
-                AppCommand.WarningMessage("Вы не можете собрать зарплату за другого.");
+                AppCommand.WarningMessage("Вы не можете собрать зарплату за другого человека.");
                 return;
             }
             if (DailyReportVMobj.TakedSalary)
             {
                 AppCommand.WarningMessage("Зарплата уже собрана.");
+                return;
+            }
+            if (Salary == 0)
+            {
+                AppCommand.WarningMessage("Укажите значение > 0");
                 return;
             }
             if (!await DailyReportViewModel.TakeSalary(DailyReportVMobj, Award, Salary))
