@@ -250,6 +250,7 @@ public partial class CashBoxDataContext : DbContext
             entity.ToTable("ProductCategory");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IsAvailable).HasColumnName("IsAvailable");
             entity.Property(e => e.Category)
                 .HasMaxLength(50)
                 .IsUnicode(false)

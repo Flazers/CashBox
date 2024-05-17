@@ -69,6 +69,21 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 SubNavigationService?.NavigateTo<LogViewModel>();
         }
 
+        public RelayCommand CloseAppCommand { get; set; }
+        private bool CanCloseAppCommandExecute(object p) => true;
+        private void OnCloseAppCommandExecuted(object p)
+        {
+            if (AppCommand.QuestionMessage("Вы уверены, что хотите закрыть программу?") == MessageBoxResult.No) return;
+            Application.Current.Shutdown();
+        }
+
+        public RelayCommand MinimizeAppCommand { get; set; }
+        private bool CanMinimizeAppCommandExecute(object p) => true;
+        private void OnMinimizeAppCommandExecuted(object p)
+        {
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+        }
+
         public RelayCommand LogOutCommand { get; set; }
         private bool CanLogOutCommandExecute(object p) => true;
         private void OnLogOutCommandExecuted(object p)
@@ -109,6 +124,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public AMainViewModel(ISubNavigationService subNavService, INavigationService navService)
         {
+            MinimizeAppCommand = new RelayCommand(OnMinimizeAppCommandExecuted, CanMinimizeAppCommandExecute);
+            CloseAppCommand = new RelayCommand(OnCloseAppCommandExecuted, CanCloseAppCommandExecute);
             SubNavigationService = subNavService;
             NavigationService = navService;
             NavigateSubViewCommand = new RelayCommand(OnNavigateSubViewCommandExecuted, CanNavigateSubViewCommandExecute);

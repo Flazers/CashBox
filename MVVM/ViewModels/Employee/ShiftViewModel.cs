@@ -217,6 +217,20 @@ namespace Cashbox.MVVM.ViewModels.Employee
         #endregion
 
         #region Command
+        public RelayCommand CloseAppCommand { get; set; }
+        private bool CanCloseAppCommandExecute(object p) => true;
+        private void OnCloseAppCommandExecuted(object p)
+        {
+            if (AppCommand.QuestionMessage("Вы уверены, что хотите закрыть программу?") == MessageBoxResult.No) return;
+            Application.Current.Shutdown();
+        }
+
+        public RelayCommand MinimizeAppCommand { get; set; }
+        private bool CanMinimizeAppCommandExecute(object p) => true;
+        private void OnMinimizeAppCommandExecuted(object p)
+        {
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+        }
 
         public RelayCommand StartShiftCommand { get; set; }
         private bool CanStartShiftCommandExecute(object p) => true;
@@ -381,6 +395,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         public ShiftViewModel()
         {
+            MinimizeAppCommand = new RelayCommand(OnMinimizeAppCommandExecuted, CanMinimizeAppCommandExecute);
+            CloseAppCommand = new RelayCommand(OnCloseAppCommandExecuted, CanCloseAppCommandExecute);
             TakeSalaryCommand = new RelayCommand(OnTakeSalaryCommandExecuted, CanTakeSalaryCommandExecute);
             SeeOrderListCommand = new RelayCommand(OnSeeOrderListCommandExecuted, CanSeeOrderListCommandExecute);
             GoBackOrderCommand = new RelayCommand(OnGoBackOrderCommandExecuted, CanGoBackOrderCommandExecute);

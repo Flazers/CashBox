@@ -14,7 +14,14 @@
         <ScaleTransform x:Name="scale" ScaleX="0.712" ScaleY="0.712"/>
     </UserControl.RenderTransform>
     <Grid Background="{StaticResource BasicW}">
-        <Button Style="{StaticResource ButtonInPanelBase}" HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding CloseApplicationCommand}" Margin="20" Content="Закрыть приложение"/>
+        <StackPanel Orientation="Horizontal" Margin="20" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <Button Style="{StaticResource ButtonInPanelBase}" Margin="0 0 20 0" Height="40" Width="80" Command="{Binding MinimizeAppCommand}">
+                <Icon:PackIconMaterial Kind="Minus"/>
+            </Button>
+            <Button Style="{StaticResource ButtonInPanelBase}" Height="40" Width="80" Command="{Binding CloseApplicationCommand}">
+                <Icon:PackIconMaterial Kind="Close"/>
+            </Button>
+        </StackPanel>
         <Border Style="{StaticResource MainBorder}" MaxWidth="1200" MaxHeight="800">
             <Grid>
                 <Grid.ColumnDefinitions>

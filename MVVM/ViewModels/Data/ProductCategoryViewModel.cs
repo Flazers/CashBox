@@ -23,6 +23,16 @@ namespace Cashbox.MVVM.ViewModels.Data
             }
         }
 
+        public bool IsAvailable
+        {
+            get => _productCategory.IsAvailable;
+            set
+            {
+                _productCategory.IsAvailable = value;
+                OnPropertyChanged();
+            }
+        }
+
         public virtual ICollection<Product> Products => _productCategory.Products;
     }
 }

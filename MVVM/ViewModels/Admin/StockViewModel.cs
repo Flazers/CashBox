@@ -5,6 +5,7 @@ using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using ExcelDataReader;
 using Microsoft.Win32;
+using ScottPlot.Colormaps;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
@@ -207,15 +208,16 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 AppCommand.WarningMessage("Данную категорию нельзя удалить");
                 return;
             }
-            if (SelectedProductCategory.Products.Count != 0)
+            if (AppCommand.QuestionMessage($"Вы действительно хотите удалить категорию \"{SelectedProductCategory.Category}\"? (Товары из категории так же будут удалены)") == MessageBoxResult.Yes)
             {
-                AppCommand.WarningMessage("В выбранной категории присутствуют товары.\n Для удаления выполните экспорт товаров,\n а затем переместите все товары в нужную категорию (лист) и повторите попытку.");
-                return;
+                if (!await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id))
+                    return;
+                UpdateCategory();
+                UserViewModel user = UserViewModel.GetCurrentUser();
+                await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} удалил категорию \"{SelectedProductCategory.Category}\" ₽", 0);
+                SelectedProductCategory = CollectionProductCategories.First();
+                AppCommand.InfoMessage("Категория удалена");
             }
-            if (!await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id))
-                return;
-            UpdateCategory();
-            AppCommand.InfoMessage("Категория удалена");
         }
 
         public RelayCommand SelectCategoryCommand { get; set; }
@@ -298,9 +300,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
             try
             {
+                using IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
                 using IExcelDataReader readerCategory = ExcelReaderFactory.CreateReader(stream);
                 List<ProductViewModel> listProducts = new(await ProductViewModel.GetProducts(true));
-                using IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
 
                 do
                 {
@@ -347,7 +349,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     {
                         line++;
                         ProgressLoad++;
-                        await Task.Delay(40);
+                        await Task.Delay(10);
                         string error = string.Empty;
                         int id = 0;
                         string brand = string.Empty;
@@ -358,14 +360,14 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         int IsAvailable = 0;
                         int errorline = 0;
 
-                        for (int i = 0; i <= 6; i++)
-                            if (reader.GetValue(i) == null)
-                                errorline++;
-                        if (errorline == 7)
-                            continue;
-
                         if (isEdit)
                         {
+                            for (int i = 0; i <= 6; i++)
+                                if (reader.GetValue(i) == null)
+                                    errorline++;
+                            if (errorline == 7)
+                                continue;
+
                             if (reader.GetValue(0) == null)
                                 error += "Поле \"id\" пустое\n";
                             else if (!int.TryParse(reader.GetValue(0).ToString(), out id))
@@ -375,6 +377,14 @@ namespace Cashbox.MVVM.ViewModels.Admin
                                 error += "Поле \"В продаже / Снят с продаж\" пустое\n";
                             else if (!int.TryParse(reader.GetValue(6).ToString(), out IsAvailable) || IsAvailable < 0 || IsAvailable > 1)
                                 error += "Поле \"В продаже / Снят с продаж\" допускает только 1 и 0\n";
+                        }
+                        else
+                        {
+                            for (int i = 0; i <= 5; i++)
+                                if (reader.GetValue(i) == null)
+                                    errorline++;
+                            if (errorline == 6)
+                                continue;
                         }
 
                         if (reader.GetValue(1) != null)
@@ -472,7 +482,8 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     AppCommand.InfoMessage(info);
 
                 TitleLoad = "Сохраняю изменения";
-                await Task.Delay(1300);
+                ProgressLoadText = string.Empty;
+                await Task.Delay(1200);
                 if (isEdit)
                 {
                     if (!await ProductViewModel.EditProducts(listProductVM))
@@ -685,6 +696,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         Worksheet sheet = wb.Worksheets[i];
                         sheet.Cells[0, cell].PutValue(title);
                         sheet.Cells.SetColumnWidth(cell, width);
+                        sheet.Cells[0, cell].GetStyle().IsLocked = true;
                     }
 
                     if (sfd.FileName != "")
@@ -721,14 +733,14 @@ namespace Cashbox.MVVM.ViewModels.Admin
                                 AddProductRow(wb, i, position, item);
                                 SetRowStyle(wb, i, position, style);
                                 wb.Worksheets[i].Cells.SetRowHeight(count, 16);
-                                await Task.Delay(40);
+                                await Task.Delay(10);
                                 position++;
                                 ProgressLoad++;
                             }
                         }
                         TitleLoad = $"Сохраняю файл";
-                        ProgressLoadText = "";
-                        await Task.Delay(1000);
+                        ProgressLoadText = string.Empty;
+                        await Task.Delay(1200);
                         wb.Save(sfd.FileName);
                         VisibilityProduct = Visibility.Visible;
                         VisibilityLoadProduct = Visibility.Collapsed;

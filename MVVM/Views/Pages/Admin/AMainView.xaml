@@ -71,7 +71,17 @@
         <Border Padding="40" Background="{StaticResource PanelW}" Grid.Column="1">
             <StackPanel>
                 <Border Grid.Column="1" Style="{StaticResource PanelBorder}" VerticalAlignment="Top" Padding="20" Height="80">
-                    <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Администратор: \{0}'}"/>
+                    <Grid>
+                        <TextBlock Style="{StaticResource TitleText}" VerticalAlignment="Center" Foreground="{StaticResource TextW}" Text="{Binding User.UserInfo.FullName, StringFormat='Администратор: \{0}'}"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource AuthBT}" Margin="0 0 20 0" Height="40" Width="80" Command="{Binding MinimizeAppCommand}">
+                                <Icon:PackIconMaterial Kind="Minus"/>
+                            </Button>
+                            <Button Style="{StaticResource AuthBT}" Height="40" Width="80" Command="{Binding CloseAppCommand}">
+                                <Icon:PackIconMaterial Kind="Close"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
                 </Border>
                 <ContentControl Margin="0 40 0 0" Content="{Binding SubNavigationService.CurrentView}"/>
             </StackPanel>

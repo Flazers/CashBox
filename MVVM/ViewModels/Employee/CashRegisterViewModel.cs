@@ -279,6 +279,21 @@ namespace Cashbox.MVVM.ViewModels.Employee
 
         #region Command
 
+        public RelayCommand CloseAppCommand { get; set; }
+        private bool CanCloseAppCommandExecute(object p) => true;
+        private void OnCloseAppCommandExecuted(object p)
+        {
+            if (AppCommand.QuestionMessage("Вы уверены, что хотите закрыть программу?") == MessageBoxResult.No) return;
+            Application.Current.Shutdown();
+        }
+
+        public RelayCommand MinimizeAppCommand { get; set; }
+        private bool CanMinimizeAppCommandExecute(object p) => true;
+        private void OnMinimizeAppCommandExecuted(object p)
+        {
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+        }
+
         public RelayCommand SearchDataCommand { get; set; }
         private bool CanSearchDataCommandExecute(object p) => true;
         private async void OnSearchDataCommandExecuted(object p) => await Update();
@@ -346,8 +361,6 @@ namespace Cashbox.MVVM.ViewModels.Employee
         {
             try
             {
-
-
                 ProductViewModel tempselectedprod = CollectionProducts.FirstOrDefault(x => x.Id == (int)p);
                 if (tempselectedprod.IsAvailable == false || tempselectedprod.Stock.Amount == 0)
                 {
@@ -647,6 +660,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 try
                 {
                     List<ProductViewModel> products = await ProductViewModel.GetProducts(IsShowAllProduct);
+                    if (!IsShowAllProduct)
+                        products = products.Where(x => x.Stock.Amount > 0).ToList();
                     if (SelectedProductCategory != null && SelectedProductCategory.Category != "Все категории")
                         products = products.Where(x => x.CategoryId == SelectedProductCategory.Id).ToList();
                     ProductCount = products.Count;
@@ -699,6 +714,8 @@ namespace Cashbox.MVVM.ViewModels.Employee
         #endregion
         public CashRegisterViewModel()
         {
+            MinimizeAppCommand = new RelayCommand(OnMinimizeAppCommandExecuted, CanMinimizeAppCommandExecute);
+            CloseAppCommand = new RelayCommand(OnCloseAppCommandExecuted, CanCloseAppCommandExecute);
             SortSwapCommand = new RelayCommand(OnSortSwapCommandExecuted, CanSortSwapCommandExecute);
             SearchDataCommand = new RelayCommand(OnSearchDataCommandExecuted, CanSearchDataCommandExecute);
 

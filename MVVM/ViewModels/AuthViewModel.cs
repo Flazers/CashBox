@@ -41,6 +41,12 @@ namespace Cashbox.MVVM.ViewModels
         {
             Application.Current.Shutdown();
         }
+        public RelayCommand MinimizeAppCommand { get; set; }
+        private bool CanMinimizeAppCommandExecute(object p) => true;
+        private void OnMinimizeAppCommandExecuted(object p)
+        {
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+        }
 
         public RelayCommand AuthByPinCommand { get; set; }
         private bool CanAuthByPinCommandExecute(object p) => true;
@@ -141,6 +147,7 @@ namespace Cashbox.MVVM.ViewModels
 
         public AuthViewModel(INavigationService? navService)
         {
+            MinimizeAppCommand = new RelayCommand(OnMinimizeAppCommandExecuted, CanMinimizeAppCommandExecute);
             NavigationService = navService;
             NavigateViewCommand = new RelayCommand(OnNavigateViewCommandExecuted, CanNavigateViewCommandExecute);
             AuthByPinCommand = new RelayCommand(OnAuthByPinCommandExecuted, CanAuthByPinCommandExecute);

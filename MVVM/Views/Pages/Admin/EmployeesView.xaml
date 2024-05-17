@@ -144,7 +144,7 @@
                     </Grid>
                     <StackPanel Height="650" Margin="10 0">
                         <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="Surname" KeyDown="Surname_KeyDown" Text="{Binding Surname}" Tag="Фамилия" Margin="0 0 0 20"/>
-                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="Name" KeyDown="Name_KeyDown" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
+                        <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="NameUs" KeyDown="Name_KeyDown" Text="{Binding Name}" Tag="Имя" Margin="0 0 0 20"/>
                         <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="Patronymic" KeyDown="Patronymic_KeyDown" Text="{Binding Patronymic}" Tag="Отчество" Margin="0 0 0 20"/>
                         <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="Location" KeyDown="Location_KeyDown" Text="{Binding Location}" Tag="Место жительства" Margin="0 0 0 20"/>
                         <TextBox Style="{StaticResource InputTB}" Width="480" x:Name="Phone" Text="{Binding Phone}" Tag="Телефон" Margin="0 0 0 20"/>

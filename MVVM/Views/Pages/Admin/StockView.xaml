@@ -41,7 +41,7 @@
                                 </ItemsControl>
                             </ScrollViewer>
 
-                            <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Удалить выбранную категорию" FontSize="18" Height="40" Padding="-5" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCategoryCommand}"/>
+                            <Button VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Удалить категорию" FontSize="18" Height="40" Padding="-5" Style="{StaticResource ButtonInPanelRed}" Command="{Binding RemoveCategoryCommand}"/>
                         </Grid>
                     </DockPanel>
                 </Border>
@@ -84,7 +84,7 @@
                                 <TextBlock Style="{DynamicResource TitleText}" Foreground="{StaticResource TextW}" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Товары"/>
                                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                     <ToggleButton VerticalAlignment="Center" IsChecked="{Binding IsShowAllProduct}" Style="{StaticResource ToggleSettings}"/>
-                                    <TextBlock Text="Снятые с продаж / нет в наличии" TextWrapping="Wrap" Width="160" Margin="10 0 40 0" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}"/>
+                                    <TextBlock Text="Снятые с продаж" TextWrapping="Wrap" Width="160" Margin="10 0 40 0" VerticalAlignment="Center" Style="{StaticResource SmallText}" Foreground="{StaticResource TextW}"/>
                                     <TextBox Style="{StaticResource Search}" x:Name="Search" KeyDown="Search_KeyDown" Text="{Binding SearchStr}" Margin="0 0 40 0" Width="300" Height="50"/>
                                     <Button Height="50" Width="50" x:Name="SearchBtn" Command="{Binding SearchDataCommand}" Style="{StaticResource ButtonInPanelWhite}">
                                         <Icon:PackIconMaterialDesign Kind="Search" Width="30" Height="30"/>
@@ -129,11 +129,13 @@
                                 <TextBox Height="50" Width="180" PreviewTextInput="TextBox_PreviewTextInput" x:Name="show" KeyDown="TextBox_KeyDown" Text="{Binding ShowProductCount}" Style="{StaticResource TbPlaceholderTag}" Tag="Товаров на стр."/>
                             </StackPanel>
                             <Border Height="570" DockPanel.Dock="Top" Visibility="{Binding VisibilityLoadProduct}">
-                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}" MaxWidth="300" TextWrapping="Wrap" TextAlignment="Center" Text="{Binding TitleLoad}" HorizontalAlignment="Center"/>
-                                    <ProgressBar Margin="0 10 0 20" Style="{DynamicResource ProgBar}" Value="{Binding ProgressLoad}" Maximum="{Binding MaxProgress}" Width="400" Height="40"/>
-                                    <TextBlock Foreground="{StaticResource TextW}" Text="{Binding ProgressLoadText}" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="400" Style="{StaticResource RegularText}" HorizontalAlignment="Center"/>
-                                </StackPanel>
+                                <Grid HorizontalAlignment="Center">
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}" MaxWidth="400" TextWrapping="Wrap" TextAlignment="Center" Text="{Binding TitleLoad}" HorizontalAlignment="Center"/>
+                                        <ProgressBar Margin="0 10 0 20" Style="{DynamicResource ProgBar}" Value="{Binding ProgressLoad}" Maximum="{Binding MaxProgress}" Width="400" Height="40"/>
+                                    </StackPanel>
+                                    <TextBlock VerticalAlignment="Bottom" Margin="10 0 0 0" Foreground="{StaticResource TextW}" Text="{Binding ProgressLoadText}" TextWrapping="Wrap" TextAlignment="Center" MaxWidth="400" Style="{StaticResource RegularText}" HorizontalAlignment="Center"/>
+                                </Grid>
                             </Border>
                             <ScrollViewer DockPanel.Dock="Top" Height="570" Visibility="{Binding VisibilityProduct}">
                                 <ItemsControl Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=10}"  ItemsSource="{Binding CollectionProducts}">

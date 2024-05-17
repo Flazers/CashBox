@@ -9,5 +9,7 @@ public partial class ProductCategory
 
     public string Category { get; set; } = null!;
 
+    public bool IsAvailable { get; set; }
+
     public virtual ICollection<Product> Products { get; set; } = [];
 }

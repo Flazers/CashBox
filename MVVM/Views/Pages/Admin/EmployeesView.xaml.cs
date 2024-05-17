@@ -86,7 +86,7 @@ namespace Cashbox.MVVM.Views.Pages.Admin
         private void Surname_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
-                Name.Focus();
+                NameUs.Focus();
         }
 
         private void Name_KeyDown(object sender, KeyEventArgs e)

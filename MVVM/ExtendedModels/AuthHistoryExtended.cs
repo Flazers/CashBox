@@ -12,25 +12,7 @@ namespace Cashbox.MVVM.Models
         public static async Task<AuthHistoryViewModel?> NewAuthUser()
         {
             DateTime dateTime = DateTime.Now;
-            HttpClient client = new();
-            try
-            {
-                HttpResponseMessage? response = await client.GetAsync("https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Saratov");
-
-                if (!response.IsSuccessStatusCode)
-                    return CreateNewAuthDataTime(dateTime) ? new AuthHistoryViewModel(CashBoxDataContext.Context.AuthHistories.FirstOrDefault(x => x.Datetime == dateTime)!) : null;
-
-                var resultJSON = JsonNode.Parse(await response.Content.ReadAsStringAsync());
-                string? dataSTR = resultJSON?["currentLocalTime"]?.ToString();
-                if (dataSTR != null)
-                    dateTime = DateTime.Parse(dataSTR);
-            }
-            catch (HttpRequestException)
-            {
-                // нет интернета
-                return CreateNewAuthDataTime(dateTime) ? new AuthHistoryViewModel(CashBoxDataContext.Context.AuthHistories.FirstOrDefault(x => x.Datetime == dateTime)!) : null;
-            }
-            return CreateNewAuthDataTime(dateTime) ? new AuthHistoryViewModel(CashBoxDataContext.Context.AuthHistories.FirstOrDefault(x => x.Datetime == dateTime)!) : null;
+            return CreateNewAuthDataTime(dateTime) ? new(await CashBoxDataContext.Context.AuthHistories.FirstOrDefaultAsync(x => x.Datetime == dateTime)) : null;
         }
 
         public static bool CreateNewAuthDataTime(DateTime dataTime)
