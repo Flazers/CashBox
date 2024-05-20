@@ -5,7 +5,7 @@ using Cashbox.MVVM.Models;
 using Cashbox.MVVM.ViewModels.Data;
 using ExcelDataReader;
 using Microsoft.Win32;
-using ScottPlot.Colormaps;
+using System.Buffers;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing;
@@ -19,6 +19,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
         #region Props
 
         private bool canupdate = true;
+        private bool canAction = true;
 
         private Visibility _panelMainProductVisibility = Visibility.Visible;
         public Visibility PanelMainProductVisibility
@@ -200,7 +201,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
 
         public RelayCommand RemoveCategoryCommand { get; set; }
-        private bool CanRemoveCategoryCommandExecute(object p) => true;
+        private bool CanRemoveCategoryCommandExecute(object p) => canAction;
         private async void OnRemoveCategoryCommandExecuted(object p)
         {
             if (SelectedProductCategory.Category == "Все категории")
@@ -208,14 +209,19 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 AppCommand.WarningMessage("Данную категорию нельзя удалить");
                 return;
             }
+            canAction = false;
             if (AppCommand.QuestionMessage($"Вы действительно хотите удалить категорию \"{SelectedProductCategory.Category}\"? (Товары из категории так же будут удалены)") == MessageBoxResult.Yes)
             {
                 if (!await ProductCategoryViewModel.RemoveProductCategory(SelectedProductCategory.Id))
+                {
+                    canAction = true;
                     return;
-                UpdateCategory();
+                }
                 UserViewModel user = UserViewModel.GetCurrentUser();
-                await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} удалил категорию \"{SelectedProductCategory.Category}\" ₽", 0);
+                await AdminMoneyLogViewModel.CreateTransitMB($"Администратор (id: {user.Id}) {user.UserInfo.ShortName} удалил категорию \"{SelectedProductCategory.Category}\"", 0);
+                UpdateCategory();
                 SelectedProductCategory = CollectionProductCategories.First();
+                canAction = true;
                 AppCommand.InfoMessage("Категория удалена");
             }
         }
@@ -285,6 +291,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         private async Task<List<ProductViewModel>> Analyzer(FileStream stream, bool isEdit)
         {
+            canAction = false;
             List<ProductCategoryViewModel> categories = [];
             int MaxLine = 0;
             List<ProductViewModel> listProductVM = [];
@@ -498,6 +505,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 await Task.Delay(200);
                 VisibilityLoadProduct = Visibility.Collapsed;
                 VisibilityProduct = Visibility.Visible;
+                canAction = true;
                 return listProductVM;
             }
             catch (Exception)
@@ -506,9 +514,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 foreach (var item in categories)
                     await ProductCategoryViewModel.RemoveProductCategory(item.Id);
                 UpdateCategory();
+                canAction = true;
                 return null!;
             }
-            
         }
 
         private static IExcelDataReader CheckFileStream(FileStream stream, string extension)
@@ -525,9 +533,10 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
 
         public RelayCommand EditProductDataCommand { get; set; }
-        private bool CanEditProductDataCommandExecute(object p) => true;
+        private bool CanEditProductDataCommandExecute(object p) => canAction;
         private async void OnEditProductDataCommandExecuted(object p)
         {
+            canAction = false;
             OpenFileDialog openFileDialog = new() { Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*", RestoreDirectory = true };
             bool? resultOpen = openFileDialog.ShowDialog();
             if (resultOpen == true)
@@ -536,7 +545,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 {
                     using FileStream stream = File.Open(openFileDialog.FileName, FileMode.Open, FileAccess.Read);
                     using IExcelDataReader edr = CheckFileStream(stream, openFileDialog.FileName[openFileDialog.FileName.LastIndexOf('.')..]);
-                    
+
                     List<ProductViewModel> Products = await Analyzer(stream, true);
 
                     edr.Close();
@@ -550,17 +559,27 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
                     UpdateCategory();
                     await Update();
+                    canAction = true;
+                    AppCommand.InfoMessage("Готово");
                 }
                 catch (IOException)
                 {
+                    canAction = true;
                     AppCommand.WarningMessage("Процесс используется другим приложением (Возможно файл открыт).");
                     return;
                 }
+                catch (Exception ex)
+                {
+                    canAction = true;
+                    AppCommand.ErrorMessage(ex.Message);
+                    return;
+                }
             }
+            canAction = true;
         }
 
         public RelayCommand ImportProductDataCommand { get; set; }
-        private bool CanImportProductDataCommandExecute(object p) => true;
+        private bool CanImportProductDataCommandExecute(object p) => canAction;
         private async void OnImportProductDataCommandExecuted(object p)
         {
             if (string.IsNullOrEmpty(StringCostImport))
@@ -573,7 +592,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 AppCommand.WarningMessage("Укажите стоимость в виде целого или десятичного числа.");
                 return;
             }
-
+            canAction = false;
             OpenFileDialog openFileDialog = new() { Filter = "EXCEL Files (*.xlsx)|*.xlsx|EXCEL Files 2003 (*.xls)|*.xls|All files (*.*)|*.*", RestoreDirectory = true };
             bool? resultOpen = openFileDialog.ShowDialog();
             if (resultOpen == true)
@@ -582,9 +601,9 @@ namespace Cashbox.MVVM.ViewModels.Admin
                 {
                     using FileStream stream = File.Open(openFileDialog.FileName, FileMode.Open, FileAccess.Read);
                     using IExcelDataReader edr = CheckFileStream(stream, openFileDialog.FileName[openFileDialog.FileName.LastIndexOf('.')..]);
-                    
+
                     List<ProductViewModel> Products = await Analyzer(stream, false);
-                    
+
                     edr.Close();
 
                     if (Products == null)
@@ -600,18 +619,23 @@ namespace Cashbox.MVVM.ViewModels.Admin
                     StringCostImport = string.Empty;
                     UpdateCategory();
                     await Update();
+                    canAction = true;
+                    AppCommand.InfoMessage("Готово");
                 }
                 catch (IOException)
                 {
+                    canAction = true;
                     AppCommand.WarningMessage("Процесс используется другим приложением (Возможно файл открыт).");
                     return;
                 }
                 catch (Exception ex)
                 {
+                    canAction = true;
                     AppCommand.ErrorMessage(ex.Message);
                     return;
                 }
             }
+            canAction = true;
         }
 
         public static void SetRowStyle(Workbook wb, int i, int cell, Aspose.Cells.Style style, bool ignoreG = false)
@@ -641,11 +665,12 @@ namespace Cashbox.MVVM.ViewModels.Admin
         }
 
         public RelayCommand ExportProductDataCommand { get; set; }
-        private bool CanExportProductDataCommandExecute(object p) => true;
+        private bool CanExportProductDataCommandExecute(object p) => canAction;
         private async void OnExportProductDataCommandExecuted(object p)
         {
             try
             {
+                canAction = false;
                 SaveFileDialog sfd = new()
                 {
                     Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
@@ -747,25 +772,29 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         AppCommand.InfoMessage("Готово");
                     }
                 }
+                canAction = true;
             }
             catch (IOException)
             {
+                canAction = true;
                 AppCommand.WarningMessage("Процесс используется другим приложением (Возможно файл открыт).");
                 return;
             }
             catch (Exception ex)
             {
+                canAction = true;
                 AppCommand.ErrorMessage(ex.Message);
                 return;
             }
         }
 
         public RelayCommand FileForImportCommand { get; set; }
-        private bool CanFileForImportCommandExecute(object p) => true;
+        private bool CanFileForImportCommandExecute(object p) => canAction;
         private async void OnFileForImportCommandExecuted(object p)
         {
             try
             {
+                canAction = false;
                 SaveFileDialog sfd = new()
                 {
                     Filter = "Excel Standart(*.xlsx)|*.xlsx|Excel 97-2003 (*.xls)|*.xls|All files(*.*)|*.*",
@@ -840,14 +869,17 @@ namespace Cashbox.MVVM.ViewModels.Admin
                         AppCommand.InfoMessage("Шаблон готов");
                     }
                 }
+                canAction = true;
             }
             catch (IOException)
             {
+                canAction = true;
                 AppCommand.WarningMessage("Процесс используется другим приложением (Возможно файл открыт).");
                 return;
             }
             catch (Exception ex)
             {
+                canAction= true;
                 AppCommand.ErrorMessage(ex.Message);
                 return;
             }

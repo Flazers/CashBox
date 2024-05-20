@@ -16,7 +16,7 @@
     <Grid Background="{StaticResource BasicW}">
         <Border Padding="30" Style="{StaticResource MainBorder}" MaxWidth="1200" MaxHeight="800">
             <Grid>
-                <TextBlock Text="A5 Detailing" Style="{StaticResource BigText}" VerticalAlignment="Top" Foreground="{StaticResource TextW}" HorizontalAlignment="Center"/>
+                <TextBlock Text="SmokeScreen" Style="{StaticResource BigText}" VerticalAlignment="Top" Foreground="{StaticResource TextW}" HorizontalAlignment="Center"/>
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Foreground="{StaticResource TextW}" Style="{StaticResource TitleText}" MaxWidth="300" TextWrapping="Wrap" TextAlignment="Center" Text="{Binding Title}" HorizontalAlignment="Center"/>
                     <Grid Margin="0 10 0 20">

@@ -380,10 +380,10 @@ namespace Cashbox.MVVM.ViewModels.Employee
                 }
             }
             DateOnly dateOnly = DateOnly.FromDateTime(DateTime.Today);
-            CardTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCostWithDiscount!);
-            NalTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCostWithDiscount!);
-            SendTransit = (await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCostWithDiscount!);
-            FullTransit = SendTransit + CardTransit + NalTransit;
+            CardTransit = Math.Round((await OrderViewModel.GetDayOrdersToMethod(dateOnly, 1)).Sum(x => (double)x.SellCostWithDiscount!), 1);
+            NalTransit = Math.Round((await OrderViewModel.GetDayOrdersToMethod(dateOnly, 2)).Sum(x => (double)x.SellCostWithDiscount!), 1);
+            SendTransit = Math.Round((await OrderViewModel.GetDayOrdersToMethod(dateOnly, 3)).Sum(x => (double)x.SellCostWithDiscount!), 1);
+            FullTransit = Math.Round(SendTransit + CardTransit + NalTransit, 1);
             DailyReportViewModel drvm = DailyReportViewModel.GetCurrentShift();
             if (drvm != null)
             {

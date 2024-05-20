@@ -37,7 +37,7 @@
 
                 <Grid Margin="50 40" Grid.Column="0">
 
-                    <TextBlock VerticalAlignment="Top" Text="A5 Detailing" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 16"/>
+                    <TextBlock VerticalAlignment="Top" Text="SmokeScreen" Style="{StaticResource BigText}" Foreground="{StaticResource TextW}" HorizontalAlignment="Center" Margin="0 0 0 16"/>
 
                     <StackPanel VerticalAlignment="Center">
                         <StackPanel Margin="0 0 0 40" Orientation="Horizontal">
@@ -51,6 +51,7 @@
                         <Button Style="{DynamicResource AuthBT}" Command="{Binding AuthByPinCommand}" x:Name="unpin" Height="90" Content="ОК" FontSize="32"/>
                     </StackPanel>
                     
+                    <TextBlock VerticalAlignment="Bottom" Text="v.1558.20052024" Style="{StaticResource SmallText}" Foreground="{StaticResource TextG}" HorizontalAlignment="Center" Margin="0 0 0 16"/>
 
                 </Grid>
             </Grid>

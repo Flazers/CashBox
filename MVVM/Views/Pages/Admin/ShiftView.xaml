@@ -192,8 +192,9 @@
                                                             <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center">
                                                                 <TextBlock Style="{StaticResource TitleText}" HorizontalAlignment="Right" 
                                                                             Text="{Binding SellCost, StringFormat='\{0} ₽'}" Foreground="{StaticResource TextB}"/>
-                                                                <TextBlock Style="{StaticResource RegularText}" FontWeight="Bold" Foreground="{StaticResource BasicRed}" Visibility="{Binding ReSellCostVisibility}" HorizontalAlignment="Right" 
-                                                                            Text="{Binding ReSellCost, StringFormat='\Продано за {0} ₽'}"/>
+                                                                <TextBlock Style="{StaticResource SmallText}" TextWrapping="Wrap" FontWeight="Bold" Foreground="{StaticResource BasicRed}" 
+                                                                           Visibility="{Binding ReSellCostVisibility}" HorizontalAlignment="Right" 
+                                                                            Text="{Binding ReSellCost, StringFormat='\Продано за {0}₽'}"/>
                                                                 <TextBlock Style="{StaticResource SmallText}" HorizontalAlignment="Right" 
                                                                             Text="{Binding AmountRes, StringFormat='\{0} шт.'}" Foreground="{StaticResource TextB}"/>
                                                             </StackPanel>
