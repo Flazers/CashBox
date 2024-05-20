@@ -183,7 +183,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
             Profit = 0;
             ExpensesDiscount = 0;
 
-            List<ProductCategoryViewModel> productCategory = await ProductCategoryViewModel.GetProductCategory();
+            List<ProductCategoryViewModel> productCategory = await ProductCategoryViewModel.GetProductCategory(false);
             productCategory.Remove(productCategory[0]);
             List<ProductViewModel> product = await ProductViewModel.GetProducts(true);
             foreach (var category in productCategory)
@@ -218,6 +218,7 @@ namespace Cashbox.MVVM.ViewModels.Admin
 
         public override async void OnLoad()
         {
+            CashInBox = MoneyBoxViewModel.GetMoney;
             NewCashInBox = CashInBox;
             List<AuthHistoryViewModel> authHistoryViewModels = await AuthHistoryViewModel.GetAuthHistories();
             AuthHistory = new([.. authHistoryViewModels.TakeLast(3).OrderByDescending(x => x.Datetime)]);

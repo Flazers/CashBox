@@ -27,6 +27,7 @@ namespace Cashbox.MVVM.Models
         {
             try
             {
+                int cantremove = 0;
                 ProductCategory? productCategory = await CashBoxDataContext.Context.ProductCategories.FirstOrDefaultAsync(x => x.Id == id_category);
                 if (productCategory == null) return false;
                 foreach (var item in productCategory.Products)
@@ -37,6 +38,7 @@ namespace Cashbox.MVVM.Models
                         {
                             item.IsAvailable = false;
                             item.Brand = $"[Удалено] {item.Brand}";
+                            cantremove++;
                         } 
                         else
                         {
@@ -50,7 +52,10 @@ namespace Cashbox.MVVM.Models
                         return false;
                     }
                 }
-                productCategory.IsAvailable = false;
+                if (cantremove > 0)
+                    productCategory.IsAvailable = false;
+                else
+                   CashBoxDataContext.Context.ProductCategories.Remove(productCategory);
                 await CashBoxDataContext.Context.SaveChangesAsync();
                 return true;
             }
@@ -61,11 +66,14 @@ namespace Cashbox.MVVM.Models
             }
         }
 
-        public static async Task<List<ProductCategoryViewModel>> GetProductCategories() 
+        public static async Task<List<ProductCategoryViewModel>> GetProductCategories(bool HideCategory) 
         {
             List<ProductCategoryViewModel> productsCategory = [];
             productsCategory.Add(new(new() { Category = "Все категории", IsAvailable = true }));
-            productsCategory.AddRange(await CashBoxDataContext.Context.ProductCategories.Where(x => x.IsAvailable == true).Select(s => new ProductCategoryViewModel(s)).ToListAsync());
+            if (HideCategory)
+                productsCategory.AddRange(await CashBoxDataContext.Context.ProductCategories.Where(x => x.IsAvailable == true).Select(s => new ProductCategoryViewModel(s)).ToListAsync());
+            else
+                productsCategory.AddRange(await CashBoxDataContext.Context.ProductCategories.Select(s => new ProductCategoryViewModel(s)).ToListAsync());
             return new(productsCategory);
         }
         public static async Task<ProductCategoryViewModel> CreateProductCategories(string category) => await NewProductCategory(category);
